@@ -59,5 +59,5 @@ def signup_view(request):
             return redirect('activation_sent')
     else:
         form = SignUpForm()
-    return render(request, 'signup.html', {'form': form})
+    return render(request, 'signup_components.html', {'form': form})
 

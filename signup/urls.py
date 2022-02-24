@@ -1,4 +1,4 @@
-"""signup URL Configuration
+"""signup_components URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
@@ -21,7 +21,7 @@ from accounts.views import home_view, signup_view, activation_sent_view, activat
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view, name="home"),
-    path('signup/', signup_view, name="signup"),
+    path('signup_components/', signup_view, name="signup_components"),
     path('sent/', activation_sent_view, name="activation_sent"),
     path('activate/<slug:uidb64>/<slug:token>/', activate, name='activate'),
 ]
