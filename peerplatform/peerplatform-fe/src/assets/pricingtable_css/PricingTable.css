@@ -1,0 +1,134 @@
+* {
+  box-sizing: border-box;
+  /* justify-content: center;
+  align-items: center; */
+}
+
+.innerDiv {
+    display: flex;
+    justify-content: space-around;
+}
+
+
+
+.table {
+  margin-left: 110px;
+  margin-top: 48px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-around;
+}
+.column {
+    flex-grow: 1;
+}
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+/* Style the list */
+.price {
+  list-style-type: none;
+  /* border: 1px solid #eee; */
+  margin: 0;
+  margin-right: 0px;
+  padding: 0;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+}
+
+.price {
+  margin-right: 61px;
+}
+
+.price li {
+  padding: 16px;
+}
+
+/* Add shadows on hover */
+.price:hover {
+  box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Pricing header */
+.price .header {
+  /* background-color: rgb(116, 66, 66); */
+  color: white;
+  font-size: 25px;
+}
+
+/* List items */
+.price li {
+  border-bottom: 1px solid #eee;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Grey list item */
+.price .grey {
+  background-color: #eee;
+  font-size: 20px;
+}
+
+/* The "Sign Up" button */
+.button {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+/* Change the width of the three columns to 100%
+  (to stack horizontally on small screens) */
+@media only screen and (max-width: 600px) {
+  .columns {
+    width: 100%;
+  }
+}
+p {
+  font-family: Arial;
+  font-size: 15px;
+  color: white;
+}
+
+/* .column {
+  float: left;
+  width: 33.33%;
+} */
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.dollar:before {
+  content: "$";
+  font-size: small;
+}
+.btn {
+  background: #282727;
+  color: #ffffff !important;
+  font-weight: 20;
+  padding: 5px;
+  /* text-transform: uppercase; */
+  border-radius: 8px;
+  display: inline-block;
+  transition: all 0.3s ease 0s;
+}
+.btn:hover {
+  color: #404040 !important;
+  font-weight: 200 !important;
+  letter-spacing: 3px;
+  background: none;
+  -webkit-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+  -moz-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+  transition: all 0.3s ease 0s;
+}
+
