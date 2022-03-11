@@ -1,7 +1,7 @@
-"""signup_components URL Configuration
+"""restapi URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/2.2/topics/http/urls/
+    https://docs.djangoproject.com/en/4.0/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -14,14 +14,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from django.conf.urls import url
-from accounts.views import home_view, signup_view, activation_sent_view, activate
+from django.urls import path, include
+from rest_framework import routers
+from . import views
+from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, TokenVerifyView)
+from .api import RegisterApi
+
+router = routers.DefaultRouter()
+router.register(r'users', views.UserViewSet)
+# router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('', home_view, name="home"),
-    path('signup_components/', signup_view, name="signup_components"),
-    path('sent/', activation_sent_view, name="activation_sent"),
-    path('activate/<slug:uidb64>/<slug:token>/', activate, name='activate'),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    #addded based on simplejwt tutorial
+    path('api/register', RegisterApi.as_view()),
+    # path('token-auth/', obtain_jwt_token)
 ]

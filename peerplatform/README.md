@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+# peerprogrammingplatform
+Peer to Peer programming platform randomly matching similarly skilled users to solve timed randomly generated programming challenges
+
+
+Built using: Django and React
+=======
 # django-advanced-signup-tutorial
 Create Advanced User Sign Up View in Django | Step-by-Step
 
@@ -12,3 +19,4 @@ python3 manage.py makemigrations accounts
 python3 manage.py migrate
 python3 manage.py runserver
 ```
+>>>>>>> 39affa0 (initial commit)
