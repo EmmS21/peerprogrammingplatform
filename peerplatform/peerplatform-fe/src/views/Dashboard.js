@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import "../../assets/scss/core/signup_components/_signup.scss"
+import React from "react";
 import {
   Button,
   Card,
@@ -14,10 +13,9 @@ import {
   Col,
 } from "reactstrap";
 
-
-const Profile = () => {
-    return (
-          <>
+function Dashboard() {
+  return (
+    <>
       <div className="content">
         <Row>
           <Col md="4">
@@ -194,7 +192,7 @@ const Profile = () => {
         </Row>
       </div>
     </>
-    );
+  );
 }
 
-export default Profile;
+export default Dashboard;

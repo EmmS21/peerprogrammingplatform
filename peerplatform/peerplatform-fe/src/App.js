@@ -6,7 +6,8 @@ import ReactGA from 'react-ga';
 import Login from './components/login_components/Login';
 import Signup from './components/signup_components/Signup';
 import Profile from './components/profile_components/Profile'
-import Hello from './components/login_components/Hello';
+import AdminLayout from "./layouts/Admin.js"
+//import Dashboard from './views/Dashboard';
 
 // Layouts
 import LayoutDefault from './layouts/LayoutDefault';
@@ -43,8 +44,7 @@ const App = () => {
           <AppRoute exact path="/" component={Home} layout={LayoutDefault} />
           <AppRoute exact path="/login" component={Login} />
           <AppRoute exact path="/signup" component={Signup} />
-          <AppRoute exact path="/profile" component={Profile} />
-          <AppRoute exact path="/hello/" component={Hello} />
+          <AppRoute exact path="/profile" component={Profile} render={(props) => <AdminLayout {...props} />} />
         </Switch>
       )} />
   );

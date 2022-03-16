@@ -13,9 +13,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         #removed url from fields
         fields = ['username', 'email', 'password']
         extra_kwargs = {
-            'password': {'write_only':True},
+            'password': {'write_only': True},
         }
-        #added based on simplejwt tutorial
         def create(self,validated_data):
             user = User.objects.create_user(validated_data['username'],
                                             password=validated_data['password'],

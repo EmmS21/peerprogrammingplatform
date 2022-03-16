@@ -29,7 +29,7 @@ const Signup = () => {
             password: password,
         };
         console.log(user);
-        fetch('http://127.0.0.1:8000/users/', {
+        fetch('http://127.0.0.1:8000/api/register', {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json'

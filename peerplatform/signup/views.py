@@ -4,12 +4,9 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from .serializers import RegisterSerializer, PasswordSerializer
-
+from rest_framework.permissions import AllowAny
 
 class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
     queryset = User.objects.all().order_by('-date_joined')
     #changed name from UserSerializer to RegisterSerializer
     serializer_class = RegisterSerializer
