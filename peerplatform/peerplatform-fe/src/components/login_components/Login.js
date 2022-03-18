@@ -1,30 +1,41 @@
-import React, { Component,useState,useEffect } from "react";
+import React, { Component,useState,useEffect,useContext } from "react";
 import secure_login from "../../assets/images/secure_login.svg"
 import "../../assets/scss/core/signup_components/_signup.scss"
 import AxiosInstance from "../../AxiosApi.js";
 
+import { connect } from "react-redux";
+import { login } from "./LoginActions.js";
+import { withRouter } from "react-router-dom";  // new import
+import PropTypes from "prop-types";             // new import
+import axios from 'axios'
+import AuthContext from '../../context/AuthContext'
+
 const Login = () => {
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
+    //if user login details are incorrect
+    const [loginError, setLoginError] = useState('');
+    let {loginUser} = useContext(AuthContext)
 
     const handleSubmit = e => {
-        e.preventDefault()
-        try {
-            const response = AxiosInstance.post('http://127.0.0.1:8000/api/token/',{
-                username: username,
-                password: password
-                });
-                console.log('from api/token we get this:')
-                console.log(response)
-                AxiosInstance.defaults.headers['Authorization'] = "JWT " + response.access;
-                localStorage.setItem('access_token', response.access);
-                localStorage.setItem('refresh_token', response.refresh);
-                console.log('JWT response.access to refresh: ')
-                return response;
-        } catch (error) {
-            throw error;
+        e.preventDefault();
+        const newLoginData = {
+            username: username,
+            password: password,
         }
+        console.log('user login info is working', newLoginData)
+        loginUser(newLoginData);
     }
+    //post login details to Django Rest API and store access and refresh tokens in localstorage
+//    const newLoginRequest = newLoginData => {
+//        axios.post('http://127.0.0.1:8000/api/token/', newLoginData)
+//            .then(res=> {
+//                console.log(res.data.refresh)
+//                localStorage.setItem('access_token', JSON.stringify(res.data.access))
+//                localStorage.setItem('refresh_token', JSON.stringify(res.data.refresh))
+//            })
+//            .catch(err => setLoginError(err.response.data.detail));
+//        }
      return (
       <div className="base-container">
         <div className="header">Login</div>
@@ -32,7 +43,7 @@ const Login = () => {
           <div className="image">
             <img src={secure_login} />
           </div>
-          <div className="form">
+          <form className="form">
             <div className="form-group">
               <label htmlFor="username">Username</label>
               <input
@@ -51,11 +62,12 @@ const Login = () => {
                 name="password"
                 placeholder="password"
                 value= {password}
-                onChange = { e=> setPassword(e.target.value)}
+                onChange = { e => setPassword(e.target.value)}
                 required
               />{' '}
             </div>
-          </div>
+            <p>{loginError}</p>
+          </form>
         </div>
         <div className="footer">
           <button type="button"
@@ -67,4 +79,20 @@ const Login = () => {
       </div>
     );
 }
-export default Login;
+
+Login.propTypes = {
+    login: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+//const ConnectedComponent = connect(mapStateToProps)(login)
+export default withRouter(Login)
+
+//export default connect(mapStateToProps, {
+//    login
+//}) (withRouter(Login));
+//export default Login;

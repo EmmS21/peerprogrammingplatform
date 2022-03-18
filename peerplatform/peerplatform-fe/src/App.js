@@ -1,12 +1,14 @@
 import React, { useRef, useEffect } from 'react';
-import { useLocation, Switch } from 'react-router-dom';
+import { useLocation, Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 import AppRoute from './utils/AppRoute';
 import ScrollReveal from './utils/ScrollReveal';
 import ReactGA from 'react-ga';
 import Login from './components/login_components/Login';
+import Header from './components/login_components/Header';
 import Signup from './components/signup_components/Signup';
 import Profile from './components/profile_components/Profile'
 import AdminLayout from "./layouts/Admin.js"
+
 //import Dashboard from './views/Dashboard';
 
 // Layouts
@@ -14,6 +16,9 @@ import LayoutDefault from './layouts/LayoutDefault';
 
 // Views 
 import Home from './views/Home';
+
+import PrivateRoute from './utils/PrivateRoute'
+import { AuthProvider } from './context/AuthContext'
 
 // Initialize Google Analytics
 ReactGA.initialize(process.env.REACT_APP_GA_CODE);
@@ -41,10 +46,13 @@ const App = () => {
       ref={childRef}
       children={() => (
         <Switch>
-          <AppRoute exact path="/" component={Home} layout={LayoutDefault} />
-          <AppRoute exact path="/login" component={Login} />
-          <AppRoute exact path="/signup" component={Signup} />
-          <AppRoute exact path="/profile" component={Profile} render={(props) => <AdminLayout {...props} />} />
+            <AuthProvider>
+                <Header/>
+                <AppRoute exact path="/" component={Home} layout={LayoutDefault} />
+                <AppRoute exact path="/login" component={Login} />
+                <AppRoute exact path="/signup" component={Signup} />
+                <PrivateRoute exact path="/profile" component={Profile} render={(props) => <AdminLayout {...props} />} />
+            </AuthProvider>
         </Switch>
       )} />
   );

@@ -5,6 +5,25 @@ from rest_framework import viewsets, status
 from rest_framework import permissions
 from .serializers import RegisterSerializer, PasswordSerializer
 from rest_framework.permissions import AllowAny
+#restrict type of request that can be made to post request
+from rest_framework.decorators import api_view
+from rest_framework.permissions import AllowAny
+
+#
+# @api_view(['POST',])
+# def registration_view(request):
+#     if request.method == 'POST':
+#         serializer = RegisterSerializer(data=request.data)
+#         data = {}
+#         if serializer.is_valid():
+#             user = serializer.save()
+#             data['response'] = 'successfully registered new user'
+#             data['email'] = user.email
+#             data['username'] = user.username
+#         else:
+#             data ='error';
+#         return Response(data)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
