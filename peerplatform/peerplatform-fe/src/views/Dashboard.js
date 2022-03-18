@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useContext} from 'react';
 import "../assets/demo/demo.css";
 import "../assets/dashboard_scss/paper-dashboard.scss";
 import "bootstrap/dist/css/bootstrap.css";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
+import AuthContext from '../context/AuthContext';
 
 import {
   Button,
@@ -19,6 +20,7 @@ import {
 } from "reactstrap";
 
 function Dashboard() {
+  let { user } = useContext(AuthContext)
   return (
     <>
       <div className="content">
@@ -28,7 +30,7 @@ function Dashboard() {
               <div className="image">
                 <img
                   alt="..."
-//                  src={require("assets/img/damir-bosnjak.jpg").default}
+                  src={require("https://monstar-lab.com/global/wp-content/uploads/sites/11/2019/04/male-placeholder-image.jpeg").default}
                 />
               </div>
               <CardBody>
@@ -39,13 +41,11 @@ function Dashboard() {
                       className="avatar border-gray"
 //                      src={require("assets/img/mike.jpg").default}
                     />
-                    <h5 className="title">Chet Faker</h5>
+                    <h5 className="title">{ user }</h5>
                   </a>
-                  <p className="description">@chetfaker</p>
                 </div>
                 <p className="description text-center">
-                  "I like the way you work it <br />
-                  No diggity <br />I wanna bag it up"
+                "PlaceHolder text"
                 </p>
               </CardBody>
               <CardFooter>
@@ -83,16 +83,6 @@ function Dashboard() {
               <CardBody>
                 <Form>
                   <Row>
-                    <Col className="pr-1" md="5">
-                      <FormGroup>
-                        <label>Company (disabled)</label>
-                        <Input
-                          defaultValue="Creative Code Inc."
-                          placeholder="Company"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
                     <Col className="px-1" md="3">
                       <FormGroup>
                         <label>Username</label>
