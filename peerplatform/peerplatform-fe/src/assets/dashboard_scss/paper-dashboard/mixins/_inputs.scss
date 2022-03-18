@@ -21,6 +21,7 @@
    }
 }
 
+
 @mixin placeholder() {
   &::-moz-placeholder {@content; } // Firefox
   &:-ms-input-placeholder {@content; } // Internet Explorer 10+
