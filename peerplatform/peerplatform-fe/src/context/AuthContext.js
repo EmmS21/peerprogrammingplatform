@@ -48,7 +48,7 @@ export const AuthProvider = ({children}) => {
         setAuthTokens(null)
         setUser(null)
         localStorage.removeItem('authTokens')
-        history.push('/login')
+        history.push('/')
     }
 
     //method to update token - token is refreshed every 5 minutes
@@ -73,9 +73,8 @@ export const AuthProvider = ({children}) => {
             localStorage.setItem('authTokens',JSON.stringify(authTokens))
             }
         catch(err) {
-        //if fail, something is wrong with refresh token
-//            logOutUser()
-            console.log(err.response)
+            //if fail, something is wrong with refresh token
+            logOutUser()
         }
     }
 

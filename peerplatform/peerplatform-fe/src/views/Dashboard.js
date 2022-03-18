@@ -1,4 +1,9 @@
 import React from "react";
+import "../assets/demo/demo.css";
+import "../assets/dashboard_scss/paper-dashboard.scss";
+import "bootstrap/dist/css/bootstrap.css";
+import "perfect-scrollbar/css/perfect-scrollbar.css";
+
 import {
   Button,
   Card,

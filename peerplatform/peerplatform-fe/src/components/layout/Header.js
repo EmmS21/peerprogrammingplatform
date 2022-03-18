@@ -1,8 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect,useContext } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import Logo from './partials/Logo';
+import AuthContext from '../../context/AuthContext';
+import "../../assets/other_css/index.css";
+
 
 const propTypes = {
   navPosition: PropTypes.string,
@@ -31,6 +34,8 @@ const Header = ({
 }) => {
 
   const [isActive, setIsactive] = useState(false);
+  let { user,logOutUser } = useContext(AuthContext)
+
 
   const nav = useRef(null);
   const hamburger = useRef(null);
@@ -117,7 +122,16 @@ const Header = ({
                       className="list-reset header-nav-right"
                     >
                       <li>
-                        <Link to={"/signup"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Sign up</Link>
+                        { user ? (
+                                    <div className="parentButtons">
+                                        {user && <p>Welcome back {user.username}</p>}
+                                        <Link to={"/profile"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Dashboard</Link>
+                                        <button className="button button-primary button-wide-mobile button-sm" onClick={logOutUser}>Logout</button>
+                                    </div>
+                        ): (
+                            <Link to={"/signup"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Sign up</Link>
+                            )
+                        }
                       </li>
                     </ul>}
                 </div>
@@ -128,6 +142,17 @@ const Header = ({
     </header>
   );
 }
+//
+//            <Link to="/">Home</Link>
+//            <span> | </span>
+//            { user ? (
+//                        <p onClick={logOutUser}>Logout</p>
+//            ): (
+//                <Link to="/login">Login</Link>
+//            )}
+//            <Link to="/login" >Login</Link>
+//
+//            {user && <p>Hello {user.username}</p>}
 
 Header.propTypes = propTypes;
 Header.defaultProps = defaultProps;

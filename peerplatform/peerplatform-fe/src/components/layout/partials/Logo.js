@@ -21,7 +21,7 @@ const Logo = ({
       <h1 className="m-0">
         <Link to="/">
           <Image
-            src={require('./../../../assets/images/thegradientboostlogo.jpg')}
+            src={require('./../../../assets/images/thegradientboostlogo.png')}
             alt="tgb"
             width={50}
             height={50} />
