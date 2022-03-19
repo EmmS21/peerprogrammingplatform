@@ -23,7 +23,7 @@ const Login = () => {
             username: username,
             password: password,
         }
-        console.log('user login info is working', newLoginData)
+        console.log('user login info is working')
         loginUser(newLoginData);
     }
     //post login details to Django Rest API and store access and refresh tokens in localstorage

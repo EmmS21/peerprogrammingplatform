@@ -7,21 +7,26 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer;
 from rest_framework_simplejwt.views import TokenObtainPairView;
+from accounts.models import Profile
 
 
 #changed from serializers.HyperLinked to ModelSerializer
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Profile
         #removed url from fields
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'bio']
         extra_kwargs = {
             'password': {'write_only': True},
         }
         def create(self,validated_data):
-            user = User.objects.create_user(
+            user = Profile.objects.create_user(
                                             username=validated_data['username'],
-                                            # password=validated_data['password'],
+                                            first_name=validated_data['first_name'],
+                                            last_name=validated_data['last_name'],
+                                            city=validated_data['city'],
+                                            country=validated_data['country'],
+                                            bio=validated_data['bio'],
                                             email=validated_data['email'])
             user.set_password(validated_data['password'])
             user.save()
@@ -33,6 +38,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         token['username'] = user.username
+        token['first_name'] = user.first_name
+        token['last_name'] = user.last_name
+        # token['country'] = user.country
+        # token['city'] = user.city
+        # token['bio'] = user.bio
         return token
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -41,7 +51,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Profile
         fields = '__all__'
 
 class UserSerializerWithToken(serializers.ModelSerializer):

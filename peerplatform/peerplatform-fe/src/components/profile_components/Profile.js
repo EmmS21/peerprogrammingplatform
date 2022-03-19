@@ -1,5 +1,11 @@
-import React, { Component } from "react";
+import React, { Component,useContext } from "react";
 import "../../assets/scss/core/signup_components/_signup.scss"
+import "../../assets/demo/demo.css";
+import "../../assets/dashboard_scss/paper-dashboard.scss";
+import "bootstrap/dist/css/bootstrap.css";
+import "perfect-scrollbar/css/perfect-scrollbar.css";
+import AuthContext from '../../context/AuthContext';
+
 import {
   Button,
   Card,
@@ -16,9 +22,17 @@ import {
 
 
 const Profile = () => {
+    let { user,logOutUser } = useContext(AuthContext)
     return (
           <>
       <div className="content">
+      <button
+        className="btn-round"
+        color="primary"
+        onClick={logOutUser}
+      >
+      Logout
+      </button>
         <Row>
           <Col md="4">
             <Card className="card-user">
@@ -36,13 +50,11 @@ const Profile = () => {
                       className="avatar border-gray"
 //                      src={require("assets/img/mike.jpg").default}
                     />
-                    <h5 className="title">Chet Faker</h5>
+                    <h5 className="title">{ user.username }</h5>
                   </a>
-                  <p className="description">@chetfaker</p>
                 </div>
                 <p className="description text-center">
-                  "I like the way you work it <br />
-                  No diggity <br />I wanna bag it up"
+                  { user.first_name }
                 </p>
               </CardBody>
               <CardFooter>
@@ -80,27 +92,17 @@ const Profile = () => {
               <CardBody>
                 <Form>
                   <Row>
-                    <Col className="pr-1" md="5">
-                      <FormGroup>
-                        <label>Company (disabled)</label>
-                        <Input
-                          defaultValue="Creative Code Inc."
-                          placeholder="Company"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-1" md="3">
+                    <Col className="pr-1" md="6">
                       <FormGroup>
                         <label>Username</label>
                         <Input
-                          defaultValue="michael23"
+                          value={ user.username }
                           placeholder="Username"
                           type="text"
                         />
                       </FormGroup>
                     </Col>
-                    <Col className="pl-1" md="4">
+                    <Col className="pr-1" md="6">
                       <FormGroup>
                         <label htmlFor="exampleInputEmail1">
                           Email address
@@ -114,64 +116,19 @@ const Profile = () => {
                       <FormGroup>
                         <label>First Name</label>
                         <Input
-                          defaultValue="Chet"
-                          placeholder="Company"
+                          value= {user.first_name}
+                          placeholder="Enter your first name"
                           type="text"
                         />
                       </FormGroup>
                     </Col>
-                    <Col className="pl-1" md="6">
+                    <Col className="pr-1" md="6">
                       <FormGroup>
                         <label>Last Name</label>
                         <Input
-                          defaultValue="Faker"
-                          placeholder="Last Name"
+                          value= { user.last_name }
+                          placeholder="Enter your last name"
                           type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <FormGroup>
-                        <label>Address</label>
-                        <Input
-                          defaultValue="Melbourne, Australia"
-                          placeholder="Home Address"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="4">
-                      <FormGroup>
-                        <label>City</label>
-                        <Input
-                          defaultValue="Melbourne"
-                          placeholder="City"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-1" md="4">
-                      <FormGroup>
-                        <label>Country</label>
-                        <Input
-                          defaultValue="Australia"
-                          placeholder="Country"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="12">
-                      <FormGroup>
-                        <label>About Me</label>
-                        <Input
-                          type="textarea"
-                          defaultValue="Oh so, your weak rhyme You doubt I'll bother, reading into it"
                         />
                       </FormGroup>
                     </Col>
@@ -198,3 +155,37 @@ const Profile = () => {
 }
 
 export default Profile;
+//
+//                  <Row>
+//                    <Col className="pr-1" md="6">
+//                      <FormGroup>
+//                        <label>City</label>
+//                        <Input
+//                          value="Melbourne"
+//                          placeholder="Enter your city"
+//                          type="text"
+//                        />
+//                      </FormGroup>
+//                    </Col>
+//                    <Col className="pr-1" md="6">
+//                      <FormGroup>
+//                        <label>Country</label>
+//                        <Input
+//                          defaultValue="Australia"
+//                          placeholder="Country"
+//                          type="text"
+//                        />
+//                      </FormGroup>
+//                    </Col>
+//                  </Row>
+//                  <Row>
+//                    <Col md="12">
+//                      <FormGroup>
+//                        <label>Bio</label>
+//                        <Input
+//                          type="textarea"
+//                          defaultValue="Oh so, your weak rhyme You doubt I'll bother, reading into it"
+//                        />
+//                      </FormGroup>
+//                    </Col>
+//                  </Row>
