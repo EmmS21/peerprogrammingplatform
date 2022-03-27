@@ -1,10 +1,14 @@
-import React, { Component,useContext } from "react";
+import React, { Component,useContext, useState } from "react";
 import "../../assets/scss/core/signup_components/_signup.scss"
+import "../../assets/scss/modal.scss"
 import "../../assets/demo/demo.css";
 import "../../assets/dashboard_scss/paper-dashboard.scss";
 import "bootstrap/dist/css/bootstrap.css";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import AuthContext from '../../context/AuthContext';
+//import modal and custom hook
+import StartModal from './StartModal';
+import useModal from './useModalCustomHook'
 
 import {
   Button,
@@ -21,18 +25,30 @@ import {
 } from "reactstrap";
 
 
-const Profile = () => {
-    let { user,logOutUser } = useContext(AuthContext)
-    return (
-          <>
-      <div className="content">
-      <button
-        className="btn-round"
-        color="primary"
-        onClick={logOutUser}
-      >
-      Logout
-      </button>
+    const Profile = () => {
+        let { user,logOutUser } = useContext(AuthContext)
+        //modal state
+        const { isShowing, toggle } = useModal();
+        return (
+              <>
+          <div className="content">
+          <button
+            className="btn-round"
+            color="primary"
+            onClick={logOutUser}
+          >
+          Logout
+          </button>
+          <button
+            className="md-trigger"
+            onClick={toggle}
+          >
+          Start Coding
+          </button>
+          <StartModal
+            isShowing={isShowing}
+            hide={toggle}
+          />
         <Row>
           <Col md="4">
             <Card className="card-user">
@@ -134,6 +150,26 @@ const Profile = () => {
                     </Col>
                   </Row>
                   <Row>
+                    <Col className="pr-1" md="6">
+                        <FormGroup>
+                            <label>City</label>
+                            <Input
+                                value = { user.city }
+                                placeholder="Enter your city"
+                                type="text"
+                            />
+                        </FormGroup>
+                    </Col>
+                    <Col className="pr-1" md="6">
+                        <FormGroup>
+                            <label>Country</label>
+                            <Input
+                                value = { user.country }
+                                placeholder="Enter your country"
+                                type="text"
+                            />
+                        </FormGroup>
+                    </Col>
                     <div className="update ml-auto mr-auto">
                       <Button
                         className="btn-round"
