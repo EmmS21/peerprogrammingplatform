@@ -59,6 +59,7 @@ import {
                 />
               </div>
               <CardBody>
+                <div> {user.photo}</div>
                 <div className="author">
                   <a href="#pablo" onClick={(e) => e.preventDefault()}>
                     <img

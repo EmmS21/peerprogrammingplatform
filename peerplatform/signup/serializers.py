@@ -8,9 +8,9 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer;
 from rest_framework_simplejwt.views import TokenObtainPairView;
+import json
 
 # User = get_user_model()
-
 #changed from serializers.HyperLinked to ModelSerializer and then to RegisterSerializer to accurately reflect what this does
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,7 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                                             city=validated_data['city'],
                                             country=validated_data['country'],
                                             bio=validated_data['bio'],
-                                            email=validated_data['email'])
+                                            email=validated_data['email']),
             user.set_password(validated_data['password'])
             user.save()
             return user
@@ -44,6 +44,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['country'] = user.profile.country
         token['city'] = user.profile.city
         token['bio'] = user.profile.bio
+        token['photo'] = json.dumps(str(user.profile.profile_pic))
         return token
 
 class CustomTokenObtainPairView(TokenObtainPairView):

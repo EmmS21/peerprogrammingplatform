@@ -4,6 +4,8 @@ from rest_framework import routers
 from . import views
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, TokenVerifyView)
 from .serializers import CustomTokenObtainPairView
+from django.conf import settings
+from django.conf.urls.static import static
 
 from .api import RegisterApi
 # from .views import registration_view
@@ -11,6 +13,9 @@ from .api import RegisterApi
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 # router.register(r'groups', views.GroupViewSet)
+#create dynamic class to store media files
+def get_img_upload_path(instance,filename):
+    return f'{instance.name}/images/{filename}'
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -24,4 +29,9 @@ urlpatterns = [
     # path('api/register', registration_view, name='register'),
     # path('api/users', view.UserCreate.as_view(),name='account-create'),
     # path('token-auth/', obtain_jwt_token)
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+admin.site.header = 'The Gradient Boost'
+admin.site.site_title = f'The Gradient Boost Admin Portal'
+admin.site.index_title = f'Welcome to the admin portal Emmanuel'
+
