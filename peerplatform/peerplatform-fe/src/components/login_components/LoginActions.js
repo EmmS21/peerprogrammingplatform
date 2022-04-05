@@ -4,6 +4,15 @@ import { toast } from "react-toastify";
 import { SET_TOKEN, SET_CURRENT_USER, UNSET_CURRENT_USER } from "./LoginTypes";
 import { setAxiosAuthToken, toastOnError } from "../../utils/Utils";
 
+//update profile information
+export const updateProfile = (userData) => dispatch => {
+    axios
+        .put('http://127.0.0.1:8000/update_profile/', userData)
+        .then(res => {
+            console.log(res)
+        })
+}
+
 export const login = (userData, redirectTo) => dispatch => {
   axios
     .post("http://127.0.0.1:8000/api/token/", userData)
@@ -56,6 +65,7 @@ export const setToken = token => dispatch => {
     payload: token
   });
 };
+
 
 export const unsetCurrentUser = () => dispatch => {
   setAxiosAuthToken("");

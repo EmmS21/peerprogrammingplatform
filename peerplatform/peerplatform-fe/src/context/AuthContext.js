@@ -4,6 +4,7 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 //we are importing history to have the ability to redirect user to home page
 import { useHistory } from 'react-router-dom';
+import axiosWithAuth from "../axios"
 
 const AuthContext = createContext()
 
@@ -42,6 +43,26 @@ export const AuthProvider = ({children}) => {
         catch(err) {
             alert(err.response.data.detail);
         }
+    }
+    //update profile information
+    const updateProfile = (userData) => {
+        console.log('userData', userData)
+        //we pass profile information through token payload, so let's get a new token
+        const refreshToken = {
+            'refresh': authTokens.refresh
+        }
+        axios.put(`http://127.0.0.1:8000/update_profile/${userData.user_id}`, userData)
+//            {
+//                headers: {
+//                    'Authorization': "jwt" + JSON.parse(window.localStorage.getItem('authTokens')).access,
+//                    'Accept' : 'application/json',
+//                    'Content-Type': 'application/json'
+//                },
+//                body: userData
+//                })
+            .then(res => {
+                console.log(res)
+            })
     }
 
     let logOutUser = () => {
@@ -83,6 +104,8 @@ export const AuthProvider = ({children}) => {
         user:user,
         loginUser:loginUser,
         logOutUser:logOutUser,
+        updateToken: updateToken,
+        updateProfile: updateProfile
     }
 
     //so we refresh our refresh token and update state every 4 minutes

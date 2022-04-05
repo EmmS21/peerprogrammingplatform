@@ -26,16 +26,7 @@ const Login = () => {
         console.log('user login info is working')
         loginUser(newLoginData);
     }
-    //post login details to Django Rest API and store access and refresh tokens in localstorage
-//    const newLoginRequest = newLoginData => {
-//        axios.post('http://127.0.0.1:8000/api/token/', newLoginData)
-//            .then(res=> {
-//                console.log(res.data.refresh)
-//                localStorage.setItem('access_token', JSON.stringify(res.data.access))
-//                localStorage.setItem('refresh_token', JSON.stringify(res.data.refresh))
-//            })
-//            .catch(err => setLoginError(err.response.data.detail));
-//        }
+
      return (
       <div className="base-container">
         <div className="header">Login</div>

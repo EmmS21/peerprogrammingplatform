@@ -21,6 +21,12 @@ export const loginReducer = (state = initialState, action) => {
       };
     case UNSET_CURRENT_USER:
       return initialState;
+//     case UPDATE_PROFILE:
+//     return {
+//        ...state,
+//        isAuthenticated: true,
+//        user: action.payload
+//     }
     default:
       return state;
   }

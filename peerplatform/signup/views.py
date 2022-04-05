@@ -1,13 +1,15 @@
 from django.contrib.auth.models import User, Group
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework import permissions
-from .serializers import RegisterSerializer, PasswordSerializer
+from .serializers import RegisterSerializer, PasswordSerializer, UpdateUserSerializer, CustomTokenObtainPairSerializer
 from rest_framework.permissions import AllowAny
 #restrict type of request that can be made to post request
 from rest_framework.decorators import api_view
-from rest_framework.permissions import AllowAny
+from rest_framework import generics
+from rest_framework.decorators import action
 
 #
 # @api_view(['POST',])
@@ -43,6 +45,34 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
+# class UpdateProfileView(generics.UpdateAPIView):
+#     # permission_classes = [permissions.IsAuthenticated]
+#     # authentication_classes = (TokenAuthentication,)
+#     # lookup_field = 'username'
+#     queryset = User.objects.all()
+#     serializer_class = UpdateUserSerializer
+#
+#     @action(detail=True, methods=['PUT'])
+#     def perform_update(self, serializer, pk=None):
+#         serializer.save(user=self.request.user.id)
+
+class UpdateProfileView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UpdateUserSerializer
+    def profile(request):
+        if request.method == 'PUT':
+            try:
+                user = User.objects.get(id=request.user.id)
+                serializer_user = UpdateUserSerializer(user, many=True)
+                if serializer_user.is_valid():
+                    serializer_user.save()
+                    res = dict(user=serializer_user, token=CustomTokenObtainPairSerializer.get_token(serializer_user))
+                    # CustomTokenObtainPairSerializer
+                    # return Response(res)
+            except User.DoesNotExist:
+                return Response(data='no such user!', status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # class GroupViewSet(viewsets.ModelViewSet):

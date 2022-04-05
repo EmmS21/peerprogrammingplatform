@@ -9,6 +9,9 @@ import AuthContext from '../../context/AuthContext';
 //import modal and custom hook
 import StartModal from './StartModal';
 import useModal from './useModalCustomHook'
+//update profile information
+//import { updateProfile } from "../login_components/LoginActions.js";
+
 
 import {
   Button,
@@ -26,9 +29,29 @@ import {
 
 
     const Profile = () => {
-        let { user,logOutUser } = useContext(AuthContext)
+        let { user,logOutUser, updateProfile } = useContext(AuthContext)
+//        let [ updateProfile ] = useContext(AuthContext)
+        //store users in state
+        const[profileUser, setProfileUser] = useState({user})
         //modal state
         const { isShowing, toggle } = useModal();
+        //handle form submission
+
+        const handleSubmit = e => {
+            e.preventDefault();
+            console.log('handle submit',profileUser)
+            const updatedProfileInfo = {
+                username: profileUser.username,
+                email: profileUser.email,
+                first_name: profileUser.first_name,
+                last_name: profileUser.last_name,
+                user_id: profileUser.user.user_id,
+//                city: profileUser.city,
+//                country: profileUser.country
+            }
+            console.log(updateProfile)
+            updateProfile(updatedProfileInfo);
+    }
         return (
               <>
           <div className="content">
@@ -55,24 +78,31 @@ import {
               <div className="image">
                 <img
                   alt="..."
-//                  src={require("assets/img/damir-bosnjak.jpg").default}
+                  src={`http://127.0.0.1:8000/media/${user.photo.replace(/['"]+/g, '')}`}
                 />
               </div>
               <CardBody>
-                <div> {user.photo}</div>
                 <div className="author">
                   <a href="#pablo" onClick={(e) => e.preventDefault()}>
                     <img
                       alt="..."
                       className="avatar border-gray"
-//                      src={require("assets/img/mike.jpg").default}
+                      src={`http://127.0.0.1:8000/media/${user.photo.replace(/['"]+/g, '')}`}
                     />
-                    <h5 className="title">{ user.username }</h5>
+                    <h5 className="title">{ profileUser.username }</h5>
                   </a>
                 </div>
                 <p className="description text-center">
-                  { user.first_name }
+
                 </p>
+                <Button
+                    className="btn-round"
+                    color="primary"
+                    type="submit"
+                    name="first_name"
+                    >
+                    Change Profile pic
+                </Button>
               </CardBody>
               <CardFooter>
                 <hr />
@@ -113,9 +143,11 @@ import {
                       <FormGroup>
                         <label>Username</label>
                         <Input
-                          value={ user.username }
+//                          value={ user.username }
                           placeholder="Username"
                           type="text"
+                          name="username"
+                          onChange={ e => setProfileUser({...profileUser, 'username': e.target.value}) }
                         />
                       </FormGroup>
                     </Col>
@@ -124,7 +156,13 @@ import {
                         <label htmlFor="exampleInputEmail1">
                           Email address
                         </label>
-                        <Input placeholder="Email" type="email" />
+                        <Input
+                            placeholder="Email"
+                            type="email"
+                            name="email"
+                            value={profileUser.email}
+                            onChange={ e => setProfileUser({...profileUser, 'email': e.target.value}) }
+                        />
                       </FormGroup>
                     </Col>
                   </Row>
@@ -133,9 +171,11 @@ import {
                       <FormGroup>
                         <label>First Name</label>
                         <Input
-                          value= {user.first_name}
+//                          value= {user.first_name}
                           placeholder="Enter your first name"
                           type="text"
+                          name="first_name"
+                          onChange={ e => setProfileUser({...profileUser, 'first_name': e.target.value}) }
                         />
                       </FormGroup>
                     </Col>
@@ -143,9 +183,11 @@ import {
                       <FormGroup>
                         <label>Last Name</label>
                         <Input
-                          value= { user.last_name }
+//                          value= { user.last_name }
                           placeholder="Enter your last name"
                           type="text"
+                          name="last_name"
+                          onChange={ e => setProfileUser({...profileUser, 'last_name': e.target.value}) }
                         />
                       </FormGroup>
                     </Col>
@@ -155,9 +197,11 @@ import {
                         <FormGroup>
                             <label>City</label>
                             <Input
-                                value = { user.city }
+//                                value = { user.city }
                                 placeholder="Enter your city"
                                 type="text"
+                                name="city"
+                                onChange={ e => setProfileUser({...profileUser, 'city': e.target.value}) }
                             />
                         </FormGroup>
                     </Col>
@@ -165,9 +209,11 @@ import {
                         <FormGroup>
                             <label>Country</label>
                             <Input
-                                value = { user.country }
+//                                value = { user.country }
                                 placeholder="Enter your country"
                                 type="text"
+                                name="country"
+                                onChange={ e => setProfileUser({...profileUser, 'country': e.target.value}) }
                             />
                         </FormGroup>
                     </Col>
@@ -176,6 +222,7 @@ import {
                         className="btn-round"
                         color="primary"
                         type="submit"
+                        onClick={handleSubmit}
                       >
                         Update Profile
                       </Button>
