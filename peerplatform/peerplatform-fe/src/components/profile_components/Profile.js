@@ -1,4 +1,4 @@
-import React, { Component,useContext, useState } from "react";
+import React, { Component,useContext, useState, useRef } from "react";
 import "../../assets/scss/core/signup_components/_signup.scss"
 import "../../assets/scss/modal.scss"
 import "../../assets/demo/demo.css";
@@ -11,7 +11,10 @@ import StartModal from './StartModal';
 import useModal from './useModalCustomHook'
 //update profile information
 //import { updateProfile } from "../login_components/LoginActions.js";
-
+//import monaco code editor
+import CodeEditor from '../code/CodeEditor'
+import { Link } from 'react-router-dom';
+//import App from '../../../editor-ui/src/App.vue'
 
 import {
   Button,
@@ -35,8 +38,13 @@ import {
         const[profileUser, setProfileUser] = useState({user})
         //modal state
         const { isShowing, toggle } = useModal();
-        //handle form submission
+        //open file browser
+        const fileSelector = document.createElement('input');
+        fileSelector.setAttribute('type', 'file');
+//        const InputRef = useRef()
 
+
+        //handle form submission
         const handleSubmit = e => {
             e.preventDefault();
             console.log('handle submit',profileUser)
@@ -51,7 +59,19 @@ import {
             }
             console.log(updateProfile)
             updateProfile(updatedProfileInfo);
-    }
+        }
+        //open file browser on click
+        const openFile = (e) => {
+            fileSelector.click();
+            console.log(e.target)
+//            const { current } = inputRef
+//            console.log(e.target.files[0])
+        }
+
+        const fileSelectedHandler = (e) => {
+            console.log(e.target.files[0]);
+        }
+
         return (
               <>
           <div className="content">
@@ -62,16 +82,9 @@ import {
           >
           Logout
           </button>
-          <button
-            className="md-trigger"
-            onClick={toggle}
-          >
-          Start Coding
-          </button>
-          <StartModal
-            isShowing={isShowing}
-            hide={toggle}
-          />
+          <Link to={"/code_editor"} className="button button-primary button-wide-mobile button-sm">
+            Start Coding
+          </Link>
         <Row>
           <Col md="4">
             <Card className="card-user">
@@ -84,25 +97,29 @@ import {
               <CardBody>
                 <div className="author">
                   <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    <img
-                      alt="..."
-                      className="avatar border-gray"
-                      src={`http://127.0.0.1:8000/media/${user.photo.replace(/['"]+/g, '')}`}
-                    />
-                    <h5 className="title">{ profileUser.username }</h5>
+                    <label htmlFor="photo-upload" className="custom-file-upload fas">
+                        <div className="img-wrap img-upload">
+                            <img
+                                alt="..."
+                                className="avatar border-gray"
+                                src={`http://127.0.0.1:8000/media/${user.photo.replace(/['"]+/g, '')}`}
+                            />
+                        </div>
+                        <Button
+                            id="photo-upload"
+                            type="file"
+                            className="btn-round"
+                            onClick={openFile}
+                            color="primary">
+                            Change Profile Picture
+                        </Button>
+                    </label>
+                    <h5 className="title">Hi, { user.first_name }</h5>
                   </a>
                 </div>
                 <p className="description text-center">
 
                 </p>
-                <Button
-                    className="btn-round"
-                    color="primary"
-                    type="submit"
-                    name="first_name"
-                    >
-                    Change Profile pic
-                </Button>
               </CardBody>
               <CardFooter>
                 <hr />

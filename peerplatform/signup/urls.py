@@ -26,7 +26,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/register', RegisterApi.as_view()),
-    path('update_profile/<int:pk>', views.UpdateProfileView.as_view(), name='update_profile'),
+    path('update_profile/<int:pk>/', views.UpdateProfileView.as_view(), name='update_profile'),
     # path('api/register', registration_view, name='register'),
     # path('api/users', view.UserCreate.as_view(),name='account-create'),
     # path('token-auth/', obtain_jwt_token)

@@ -8,8 +8,10 @@ import Header from './components/login_components/Header';
 import Signup from './components/signup_components/Signup';
 import Profile from './components/profile_components/Profile'
 import AdminLayout from "./layouts/Admin.js"
-
+//import CodeEditor from './editor-ui/src/App.vue'
+import CodeEditor from './components/code/CodeEditor'
 //import Dashboard from './views/Dashboard';
+//import { VueWrapper } from 'vuera'
 
 // Layouts
 import LayoutDefault from './layouts/LayoutDefault';
@@ -50,6 +52,7 @@ const App = () => {
                 <AppRoute exact path="/" component={Home} layout={LayoutDefault} />
                 <AppRoute exact path="/login" component={Login} />
                 <AppRoute exact path="/signup" component={Signup} />
+                <AppRoute exact path="/code_editor" component={CodeEditor} />
                 <PrivateRoute exact path="/profile" component={Profile} render={(props) => <AdminLayout {...props} />} />
             </AuthProvider>
         </Switch>

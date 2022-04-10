@@ -1,3 +1,6 @@
+@import "bourbon";
+
+//General
 html, body {
   min-height: 100%;
 }
@@ -37,14 +40,14 @@ button {
 	min-width: 320px;
 	height: auto;
 	z-index: 2000;
-	visibility: hidden;
-	-webkit-backface-visibility: hidden;
-	-moz-backface-visibility: hidden;
-	backface-visibility: hidden;
+// 	visibility: hidden;
+// 	-webkit-backface-visibility: hidden;
+// 	-moz-backface-visibility: hidden;
+// 	backface-visibility: hidden;
 }
 
 .md-show {
-	visibility: visible;
+// 	visibility: visible;
 }
 
 .md-overlay {
@@ -84,7 +87,7 @@ button {
 
 .md-effect-12 .md-content h3,
 .md-effect-12 .md-content {
-	background: transparent;
+	background: blue;
 }
 
 .md-show.md-effect-12 .md-content {

@@ -67,9 +67,7 @@ class UpdateProfileView(generics.UpdateAPIView):
                 serializer_user = UpdateUserSerializer(user, many=True)
                 if serializer_user.is_valid():
                     serializer_user.save()
-                    res = dict(user=serializer_user, token=CustomTokenObtainPairSerializer.get_token(serializer_user))
-                    # CustomTokenObtainPairSerializer
-                    # return Response(res)
+                    return Response(serializer_user)
             except User.DoesNotExist:
                 return Response(data='no such user!', status=status.HTTP_400_BAD_REQUEST)
 

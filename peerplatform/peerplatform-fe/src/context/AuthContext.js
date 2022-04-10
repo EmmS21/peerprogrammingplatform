@@ -52,6 +52,22 @@ export const AuthProvider = ({children}) => {
             'refresh': authTokens.refresh
         }
         axios.put(`http://127.0.0.1:8000/update_profile/${userData.user_id}`, userData)
+            .then(res => {
+                axios.post('http://127.0.0.1:8000/api/token/refresh/',refreshToken)
+                    .then(res => {
+                        setAuthTokens({'access': res.data.access,
+                                       'refresh': res.data.refresh})
+                        const decoded = jwt_decode(res.data.access)
+                        setUser(user => ({
+                                           ...decoded
+                                    }))
+                        localStorage.setItem('authTokens', JSON.stringify(authTokens))
+                    })
+            })
+    }
+
+
+
 //            {
 //                headers: {
 //                    'Authorization': "jwt" + JSON.parse(window.localStorage.getItem('authTokens')).access,
@@ -60,10 +76,6 @@ export const AuthProvider = ({children}) => {
 //                },
 //                body: userData
 //                })
-            .then(res => {
-                console.log(res)
-            })
-    }
 
     let logOutUser = () => {
         setAuthTokens(null)
@@ -83,7 +95,6 @@ export const AuthProvider = ({children}) => {
             //update state with token
             setAuthTokens({'access': response.data.access,
                             'refresh': refreshToken.refresh})
-            console.log(authTokens.access)
             //update user state
             const decoded = jwt_decode(response.data.access)
             setUser(user => ({
