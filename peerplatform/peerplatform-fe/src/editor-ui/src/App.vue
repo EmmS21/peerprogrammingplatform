@@ -87,14 +87,18 @@ export default {
             this.requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
             axios.post(`${this.baseURL}/submissions`, this.requestBody)
                 .then((res)=> {
-                    console.log('res', res);
+                    console.log('this is what we received:');
+                    console.log(res)
+                    console.log('this is what we sent; request body:')
+                    console.log(this.requestBody)
                     this.token = res.data.token
-                    console.log('token', this.token);
                     this.threeSecondWait().then(()=>{
                         axios.get(`${this.baseURL}/submissions/${this.token}`)
                             .then((res) => {
-                            console.log(res.data.stdout)
-                            this.resp = res.data.stdout
+                            console.log('after token submission')
+                            console.log(res.data)
+                                !res.data.stdout ? this.resp = res.data.stderr
+                                :this.resp = res.data.stdout
                             })
                             .catch((err) => {
                             console.log('err', err)

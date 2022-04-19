@@ -2,13 +2,12 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from . import views
-from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, TokenVerifyView)
+from rest_framework_simplejwt.views import (TokenRefreshView, TokenVerifyView)
 from .serializers import CustomTokenObtainPairView
 from django.conf import settings
 from django.conf.urls.static import static
-
 from .api import RegisterApi
-# from .views import registration_view
+from voice_chat.views import RoomView
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -27,6 +26,7 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/register', RegisterApi.as_view()),
     path('update_profile/<int:pk>/', views.UpdateProfileView.as_view(), name='update_profile'),
+    path('voice_chat/', include('voice_chat.urls')),
     # path('api/register', registration_view, name='register'),
     # path('api/users', view.UserCreate.as_view(),name='account-create'),
     # path('token-auth/', obtain_jwt_token)

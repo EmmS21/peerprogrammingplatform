@@ -1,0 +1,161 @@
+.select-dropdown,
+.select-dropdown * {
+	margin: 0;
+	padding: 0;
+	position: relative;
+	box-sizing: border-box;
+	width: 70%;
+	text-align: center;
+}
+.select-dropdown {
+	position: relative;
+	background-color: #E6E6E6;
+	border-radius: 4px;
+}
+.select-dropdown select {
+	font-size: 1rem;
+	font-weight: normal;
+	max-width: 100%;
+	padding: 8px 24px 8px 10px;
+	border: none;
+	background-color: transparent;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+	appearance: none;
+}
+.select-dropdown select:active, .select-dropdown select:focus {
+	outline: none;
+	box-shadow: none;
+}
+.select-dropdown:after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	right: 8px;
+	width: 0;
+	height: 0;
+	margin-top: -2px;
+	border-top: 5px solid #aaa;
+	border-right: 5px solid transparent;
+	border-left: 5px solid transparent;
+}
+
+.new {
+    margin: 0 auto;
+}
+p {
+  position: relative;
+  font-size: 1.25em;
+  font-family: monospace;
+  white-space: normal;
+  overflow: hidden;
+  width: 0;
+}
+
+.line1 {
+  color: green;
+  -webkit-animation: type .5s 1s steps(20, end) forwards;
+  -moz-animation: type .5s 1s steps(20, end) forwards;
+  -o-animation: type .5s 1s steps(20, end) forwards;
+  animation: type .5s 1s steps(20, end) forwards;
+}
+
+.whiteCol{
+    background-color: grey;
+}
+
+@-webkit-keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@-moz-keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@-o-keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes type {
+  to {
+    width: 17em;
+  }
+}
+
+@-moz-keyframes type {
+  to {
+    width: 17em;
+  }
+}
+
+@-o-keyframes type {
+  to {
+    width: 17em;
+  }
+}
+
+@keyframes type {
+  to {
+    width: 17em;
+  }
+}

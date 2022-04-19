@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts',
+    'voice_chat',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -202,3 +203,10 @@ REST_FRAMEWORK = {
 # CORS_ORIGIN_WHITELIST = (
 #     'localhost:3000',
 # )
+
+#Twilio Account details
+# TWILIO_ACCOUNT_SID = 'ACf952d651a0c3a1374285639576e51479'
+# TWILIO_AUTH_TOKEN = '4abfb0bac7eb72a8ad0260e44fce1486'
+# TWIML_APPLICATION_SID = 'AP736d8cba5dedbd3c4b642511b1c5a78b'
+# TWILIO_API_KEY = '0379f02d607cbd07530d4d8c5887401c'
+# TWILIO_API_SECRET = ''

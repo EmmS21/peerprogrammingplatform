@@ -33,7 +33,6 @@ import {
 
     const Profile = () => {
         let { user,logOutUser, updateProfile } = useContext(AuthContext)
-//        let [ updateProfile ] = useContext(AuthContext)
         //store users in state
         const[profileUser, setProfileUser] = useState({user})
         //modal state
@@ -41,8 +40,6 @@ import {
         //open file browser
         const fileSelector = document.createElement('input');
         fileSelector.setAttribute('type', 'file');
-//        const InputRef = useRef()
-
 
         //handle form submission
         const handleSubmit = e => {
@@ -54,22 +51,21 @@ import {
                 first_name: profileUser.first_name,
                 last_name: profileUser.last_name,
                 user_id: profileUser.user.user_id,
-//                city: profileUser.city,
-//                country: profileUser.country
             }
             console.log(updateProfile)
             updateProfile(updatedProfileInfo);
         }
         //open file browser on click
         const openFile = (e) => {
+            fileSelector.onChange = fileSelectedHandler
             fileSelector.click();
-            console.log(e.target)
+//            console.log(e.target.files[0])
 //            const { current } = inputRef
 //            console.log(e.target.files[0])
         }
-
+        //on change handler
         const fileSelectedHandler = (e) => {
-            console.log(e.target.files[0]);
+            console.log(e);
         }
 
         return (
@@ -95,6 +91,7 @@ import {
                 />
               </div>
               <CardBody>
+            <input type="file"/>
                 <div className="author">
                   <a href="#pablo" onClick={(e) => e.preventDefault()}>
                     <label htmlFor="photo-upload" className="custom-file-upload fas">
@@ -105,16 +102,8 @@ import {
                                 src={`http://127.0.0.1:8000/media/${user.photo.replace(/['"]+/g, '')}`}
                             />
                         </div>
-                        <Button
-                            id="photo-upload"
-                            type="file"
-                            className="btn-round"
-                            onClick={openFile}
-                            color="primary">
-                            Change Profile Picture
-                        </Button>
                     </label>
-                    <h5 className="title">Hi, { user.first_name }</h5>
+                    <h5 className="title">Hi, { user.username[0].toUpperCase()+user.username.slice(1) }</h5>
                   </a>
                 </div>
                 <p className="description text-center">
@@ -125,23 +114,15 @@ import {
                 <hr />
                 <div className="button-container">
                   <Row>
-                    <Col className="ml-auto" lg="3" md="6" xs="6">
-                      <h5>
-                        12 <br />
-                        <small>Files</small>
-                      </h5>
-                    </Col>
                     <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
-                      <h5>
-                        2GB <br />
-                        <small>Used</small>
-                      </h5>
+                      <small>
+                         User score
+                      </small>
                     </Col>
                     <Col className="mr-auto" lg="3">
-                      <h5>
-                        24,6$ <br />
-                        <small>Spent</small>
-                      </h5>
+                      <small>
+                        Monthly Score
+                      </small>
                     </Col>
                   </Row>
                 </div>
@@ -256,37 +237,3 @@ import {
 }
 
 export default Profile;
-//
-//                  <Row>
-//                    <Col className="pr-1" md="6">
-//                      <FormGroup>
-//                        <label>City</label>
-//                        <Input
-//                          value="Melbourne"
-//                          placeholder="Enter your city"
-//                          type="text"
-//                        />
-//                      </FormGroup>
-//                    </Col>
-//                    <Col className="pr-1" md="6">
-//                      <FormGroup>
-//                        <label>Country</label>
-//                        <Input
-//                          defaultValue="Australia"
-//                          placeholder="Country"
-//                          type="text"
-//                        />
-//                      </FormGroup>
-//                    </Col>
-//                  </Row>
-//                  <Row>
-//                    <Col md="12">
-//                      <FormGroup>
-//                        <label>Bio</label>
-//                        <Input
-//                          type="textarea"
-//                          defaultValue="Oh so, your weak rhyme You doubt I'll bother, reading into it"
-//                        />
-//                      </FormGroup>
-//                    </Col>
-//                  </Row>
