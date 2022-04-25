@@ -51,20 +51,24 @@ export const AuthProvider = ({children}) => {
         const refreshToken = {
             'refresh': authTokens.refresh
         }
-        axios.put(`http://127.0.0.1:8000/update_profile/${userData.user_id}`, userData)
+        console.log(refreshToken)
+        axios.put(`http://127.0.0.1:8000/update_profile/${userData.user_id}/`, userData)
             .then(res => {
-                axios.post('http://127.0.0.1:8000/api/token/refresh/',refreshToken)
-                    .then(res => {
-                        setAuthTokens({'access': res.data.access,
-                                       'refresh': res.data.refresh})
-                        const decoded = jwt_decode(res.data.access)
-                        setUser(user => ({
-                                           ...decoded
-                                    }))
-                        localStorage.setItem('authTokens', JSON.stringify(authTokens))
-                    })
+                console.log(res.data)
+//                axios.post('http://127.0.0.1:8000/api/token/refresh/',refreshToken)
+//                    .then(res => {
+//                        console.log('inside refresh token')
+//                        setAuthTokens({'access': res.data.access,
+//                                       'refresh': res.data.refresh})
+//                        const decoded = jwt_decode(res.data.access)
+//                        setUser(user => ({
+//                                           ...decoded
+//                                    }))
+//                        localStorage.setItem('authTokens', JSON.stringify(authTokens))
+//                    })
             })
     }
+
 
 
 

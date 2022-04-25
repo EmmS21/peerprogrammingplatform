@@ -51,36 +51,37 @@ import {
                 first_name: profileUser.first_name,
                 last_name: profileUser.last_name,
                 user_id: profileUser.user.user_id,
+                city: profileUser.city,
+                country: profileUser.country,
+                profile_pic: profileUser.profile_pic,
             }
-            console.log(updateProfile)
+            console.log('sending info:',updatedProfileInfo)
             updateProfile(updatedProfileInfo);
         }
         //open file browser on click
-        const openFile = (e) => {
-            fileSelector.onChange = fileSelectedHandler
-            fileSelector.click();
+//        const openFile = (e) => {
+//            fileSelector.onChange = fileSelectedHandler
+//            fileSelector.click();
 //            console.log(e.target.files[0])
 //            const { current } = inputRef
 //            console.log(e.target.files[0])
-        }
+//        }
         //on change handler
-        const fileSelectedHandler = (e) => {
-            console.log(e);
+        const pictureSelector = (e) => {
+            console.log(e.target.files[0].name)
         }
 
         return (
               <>
           <div className="content">
-          <button
-            className="btn-round"
-            color="primary"
-            onClick={logOutUser}
-          >
-          Logout
-          </button>
-          <Link to={"/code_editor"} className="button button-primary button-wide-mobile button-sm">
-            Start Coding
-          </Link>
+                <div class="d-flex flex-row-reverse">
+                    <button className="button button-primary button-wide-mobile button-sm" color="primary" onClick={logOutUser}>
+                        Logout
+                    </button>
+                    <Link to={"/code_editor"} className="button button-primary button-wide-mobile button-sm">
+                        Start Coding
+                    </Link>
+                </div>
         <Row>
           <Col md="4">
             <Card className="card-user">
@@ -91,7 +92,7 @@ import {
                 />
               </div>
               <CardBody>
-            <input type="file"/>
+            <input type="file" onChange={ e => setProfileUser({...profileUser, 'profile_pic': e.target.files[0].name }) }/>
                 <div className="author">
                   <a href="#pablo" onClick={(e) => e.preventDefault()}>
                     <label htmlFor="photo-upload" className="custom-file-upload fas">

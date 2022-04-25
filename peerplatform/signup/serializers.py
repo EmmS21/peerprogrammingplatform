@@ -35,12 +35,46 @@ class RegisterSerializer(serializers.ModelSerializer):
             user.profile.bio = validated_data['bio']
             return user
 
+
+#upload profile picture using base64 encoding string instead of raw file (not supported by default)
+class Base64ImageField(serializers.ImageField):
+    def to_internal_value(self, data):
+        from django.core.files.base import ContentFile
+        import base64
+        import six
+        import uuid
+
+        #check if this is base64 string
+        if isinstance(data, six.string_types):
+            #check if the base64 is in the data format
+            if 'data:' in data and ';base64' in data:
+                header,data = data.split(';base64,')
+            try:
+                decoded_file = base64.b64decode(data)
+            except TypeError:
+                self.fail('invalid_image')
+
+            #Generate file name:
+            file_name = str(uuid.uuid4())[:12]
+            #Get the file name extension
+            file_extension = self.get_file_extension(file_name, decoded_file)
+            complete_file_name = "%s.%s" % (file_name, file_extension, )
+            data = ContentFile(decoded_file, name=complete_file_name)
+        return super(Base64ImageField, self).to_internal_value(data)
+
+    def get_file_extension(self, file_name, decoded_file):
+        import imghdr
+        extension = imghdr.what(file_name, decoded_file)
+        extension = "jpg" if extension == "jpeg" else extension
+        return extension
+
 #updating user profile
 class UpdateUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=False)
     city = serializers.CharField(source='profile.city', allow_blank=True, required=False)
     country = serializers.CharField(source='profile.country', allow_blank=True, required=False)
-    profile_pic = serializers.ImageField(source='profile.profile_pic', use_url=True, required=False)
+    profile_pic = Base64ImageField(max_length=None, use_url=True, required=False)
+        # serializers.ImageField(source='profile.profile_pic', use_url=True, required=False)
 
     class Meta:
         model = User

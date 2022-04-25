@@ -205,3 +205,11 @@
   outline: none;
   display: none;
 }
+
+groupedDivs {
+    display:flex;
+}
+
+childDivs = {
+    justify-content: flex-end;
+}
