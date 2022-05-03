@@ -2,39 +2,39 @@
 # Project Description
 Pair programming platform randomly matching similarly skilled users to solve timed randomly generated programming challenges
 
-#How it works
+# How it works
 Users can signup creating a profile click on a button immediately matching them to another user. This action redirects the user to a code-editor and initiates an audio voice chat between both matched users. These users are then given a predefined period of time to solve randomly retrieved programming challenges.
 
-###Purpose
+### Purpose
 This platform is designed to enable bootcamp students and other learners better prepare for technical interviews through pair programming. The process helps users get more comfortable communicating their logic to other stakeholders while simultaneously improving their problem-solving skills.
 
-##Backend
+## Backend
 The backend is built on Django and comprises three apps; accounts, signup and voice_chat
 
-###Accounts: 
+### Accounts: 
 The accounts folder/app comprises of two models; 1 being an extension of the custom Django user model enabling us to store additional information about a user namely their city, country, bio and profile picture. The accounts model also comprises of a model enabling us to create and store programming challenges. These models are registered in admin.py in order for us to interact with these data-tables in the admin panel.
 
-####Signup: 
+#### Signup: 
 Signup primarily houses the code creating an API to be consumed by our React frontend app. Our API enables us to create a user and edit their profile information. `urls.py` contains all API endpoints related to our API
 
-####Voice Chat: 
+#### Voice Chat: 
 Voice chat contains all backend code pertaining to our drop in audio chat. The file `urls.py` contains all API end points related to this API.
 
-##FrontEnd
+## FrontEnd
 The front end is built purely on React. All code related to the frontend is contained in the folder; `peerplatform-fe`.
 
 Inside `src` you will find these folders:
 
-###Assets:
+### Assets:
 This folder contains all css and scss used to style this project along with images rendered in our front-end. In most cases the name of the css/scss stylesheet denotes which file this stylesheet is relevant to.
 
-###Axios:
+### Axios:
 This folder currently contains code related to making an axios call to our Django server with authentication tokens included.
 
-###Components:
+### Components:
 Contains all components created. Components are mostly grouped by their functional purpose on the platform. 
 
-#####Code: 
+##### Code: 
 All components related to the coding_editor. Specifically;
 
 `CodeEditor`: A code-editor built using the brace package (Ace Editor). Code written is sent to Judge0, an online code execution system, returning a token which is then resent to Judge0 in order to receive our code's output.
@@ -72,7 +72,7 @@ Similar to elements, but specifically related to our Headers and Footers
 ##### Navbars
 Navigation bar on profile page (needs to be refactored)
 
-#####Profile Components
+##### Profile Components
 Components relevant to profile page
 
 `Profile`: renders profile page
@@ -96,7 +96,7 @@ SideBar shown on home page
 ##### Signup Components
 Components relevant to rendering signup page (CountryList is not currently in use - this was supposed to enable users to select their country from a list of countries- this might not be useful for the platform overall)
 
-###Context:
+### Context:
 
 ##### AuthContext:
 - Passes down props to multiple components
@@ -132,12 +132,12 @@ Defining private routes and other routes (ie. AppRoute). Also other files relate
 `routes.js`: Routes for profile page and Table
 
 
-#Technologies/Frameworks
+# Technologies/Frameworks
 Built using: Django and React
 
 Django Dependencies: `requirements.txt` (Let me know if there are packages not included in requirements.txt)
 
-#How to run
+# How to run
 clone and run the following commands. You will need to install ngrok to interact with Twilio Programming Voice API
 - project is contained inside folder peerplatform (remember to cd into peerplatform - will rectify this issue)
 - https://ngrok.com/
@@ -150,7 +150,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-#Built by: Emmanuel Sibanda
+# Built by: Emmanuel Sibanda
 
 
 >>>>>>> 39affa0 (initial commit)
