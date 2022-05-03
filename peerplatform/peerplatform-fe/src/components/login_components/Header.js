@@ -12,9 +12,3 @@ let { user,logOutUser } = useContext(AuthContext)
 }
 
 export default Header
-
-//            { user ? (
-//                        <p onClick={logOutUser}>Logout</p>
-//            ): (
-//                <Link to="/login">Login</Link>
-//            )}

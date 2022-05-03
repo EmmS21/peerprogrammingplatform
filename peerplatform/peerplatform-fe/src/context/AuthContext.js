@@ -18,6 +18,7 @@ export const AuthProvider = ({children}) => {
     //now  we want the information contained in tokens -> jwt.io
     let [user,setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
     let [loading, setLoading] = useState(true)
+    let [challengeInState, setChallengeInState] = useState([])
 
     const history = useHistory();
 
@@ -68,10 +69,23 @@ export const AuthProvider = ({children}) => {
 //                    })
             })
     }
+    //retrieve programming challenge
+//    return items[Math.floor(Math.random()*items.length)];
 
-
-
-
+    //select random element
+    Array.prototype.random = function() {
+        return this[Math.floor(Math.random()*this.length)]
+    }
+    //retrieve random programming challenge
+    const retrieveChallenge = () => {
+        axios.get('http://127.0.0.1:8000/api/programming_challenges/')
+            .then(res => {
+                setChallengeInState(res.data.random())
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
 //            {
 //                headers: {
 //                    'Authorization': "jwt" + JSON.parse(window.localStorage.getItem('authTokens')).access,
@@ -120,7 +134,9 @@ export const AuthProvider = ({children}) => {
         loginUser:loginUser,
         logOutUser:logOutUser,
         updateToken: updateToken,
-        updateProfile: updateProfile
+        updateProfile: updateProfile,
+        retrieveChallenge: retrieveChallenge,
+        challengeInState: challengeInState
     }
 
     //so we refresh our refresh token and update state every 4 minutes

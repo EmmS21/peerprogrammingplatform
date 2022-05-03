@@ -3,6 +3,8 @@ import { Redirect, Route, RouteProps } from "react-router";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 
+//we need to check for authentication based on what is in our state
+//if we have a user then allow user to see this page
 const ProtectedRoute = (props: RouteProps) => {
   const auth = useSelector((state: RootState) => state.auth);
 

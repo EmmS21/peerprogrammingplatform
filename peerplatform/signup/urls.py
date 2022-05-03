@@ -4,6 +4,7 @@ from rest_framework import routers
 from . import views
 from rest_framework_simplejwt.views import (TokenRefreshView, TokenVerifyView)
 from .serializers import CustomTokenObtainPairView
+from .views import ProgrammingChallengeView
 from django.conf import settings
 from django.conf.urls.static import static
 from .api import RegisterApi
@@ -27,6 +28,7 @@ urlpatterns = [
     path('api/register', RegisterApi.as_view()),
     path('update_profile/<int:pk>/', views.UpdateProfileView.as_view(), name='update_profile'),
     path('voice_chat/', include('voice_chat.urls')),
+    path('api/programming_challenges/', ProgrammingChallengeView.as_view({'get':'list'}), name='programming_challenges'),
     # path('api/register', registration_view, name='register'),
     # path('api/users', view.UserCreate.as_view(),name='account-create'),
     # path('token-auth/', obtain_jwt_token)

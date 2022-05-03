@@ -82,8 +82,3 @@ const mapStateToProps = state => ({
 
 //const ConnectedComponent = connect(mapStateToProps)(login)
 export default withRouter(Login)
-
-//export default connect(mapStateToProps, {
-//    login
-//}) (withRouter(Login));
-//export default Login;

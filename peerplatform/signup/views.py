@@ -4,13 +4,15 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework import permissions
-from .serializers import RegisterSerializer, PasswordSerializer, UpdateUserSerializer, CustomTokenObtainPairSerializer
+from .serializers import RegisterSerializer, PasswordSerializer, UpdateUserSerializer, CustomTokenObtainPairSerializer, ProgrammingChallengeSerializer
 from rest_framework.permissions import AllowAny
 #restrict type of request that can be made to post request
 from rest_framework.decorators import api_view
 from rest_framework import generics
 from rest_framework.decorators import action
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from accounts.models import ProgrammingChallenge
 #
 # @api_view(['POST',])
 # def registration_view(request):
@@ -70,6 +72,15 @@ class UpdateProfileView(generics.UpdateAPIView):
                     return Response(serializer_user)
             except User.DoesNotExist:
                 return Response(data='no such user!', status=status.HTTP_400_BAD_REQUEST)
+
+class ProgrammingChallengeView(ReadOnlyModelViewSet):
+    serializer_class = ProgrammingChallengeSerializer
+    queryset = ProgrammingChallenge.objects.all()
+
+    @action(detail=False)
+    def get_list(self, request):
+        pass
+
 
 
 

@@ -64,6 +64,9 @@ p {
     background-color: grey;
 }
 
+.tabs{
+    display: flex;
+}
 @-webkit-keyframes blink {
   0% {
     opacity: 0;

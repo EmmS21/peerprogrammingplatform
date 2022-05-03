@@ -70,6 +70,8 @@ import {
         const pictureSelector = (e) => {
             console.log(e.target.files[0].name)
         }
+        //retrieveChallenge
+        const { retrieveChallenge } = useContext(AuthContext)
 
         return (
               <>
@@ -78,7 +80,11 @@ import {
                     <button className="button button-primary button-wide-mobile button-sm" color="primary" onClick={logOutUser}>
                         Logout
                     </button>
-                    <Link to={"/code_editor"} className="button button-primary button-wide-mobile button-sm">
+                    <Link
+                        to={"/code_editor"}
+                        className="button button-primary button-wide-mobile button-sm"
+                        onClick= {retrieveChallenge}
+                        >
                         Start Coding
                     </Link>
                 </div>

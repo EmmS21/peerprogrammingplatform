@@ -4,7 +4,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 
-
 #extending user model to include
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -24,14 +23,11 @@ class Profile(models.Model):
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
 
-
-
-# class CustomerUser(AbstractUser):
-#     email = models.EmailField("email address", unique=True)
-#     USERNAME_FIELD = "email"
-#     REQUIRED_FIELDS = ["username"]
-#     city = models.CharField(max_length=50,blank=True)
-#     country = models.CharField(max_length=50, blank=True)
-#     bio = models.CharField(max_length=500, blank=True)
-#     def __str__(self):
-#         return self.user.username
+#creating programming challenges
+class ProgrammingChallenge(models.Model):
+    challenge_id = models.AutoField(primary_key=True)
+    challenge_name = models.CharField(max_length=200)
+    challenge_description = models.TextField()
+    challenge_example_one = models.TextField()
+    challenge_example_two = models.TextField()
+    challenge_example_three = models.TextField()

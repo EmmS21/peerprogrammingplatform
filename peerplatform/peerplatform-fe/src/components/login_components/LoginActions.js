@@ -75,17 +75,3 @@ export const unsetCurrentUser = () => dispatch => {
     type: UNSET_CURRENT_USER
   });
 };
-
-//export const logout = () => dispatch => {
-//  axios
-//    .post("/api/v1/token/logout/")
-//    .then(response => {
-//      dispatch(unsetCurrentUser());
-//      dispatch(push("/"));
-//      toast.success("Logout successful.");
-//    })
-//    .catch(error => {
-//      dispatch(unsetCurrentUser());
-//      toastOnError(error);
-//    });
-//};

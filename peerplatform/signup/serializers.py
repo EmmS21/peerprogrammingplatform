@@ -10,6 +10,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer;
 from rest_framework_simplejwt.views import TokenObtainPairView;
 import json
 # from rest_auth.serializers import UserDetailsSerializer
+from accounts.models import ProgrammingChallenge
 
 # User = get_user_model()
 #changed from serializers.HyperLinked to ModelSerializer and then to RegisterSerializer to accurately reflect what this does
@@ -175,3 +176,10 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 class PasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+class ProgrammingChallengeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProgrammingChallenge
+        fields = '__all__'
+        # def create(self, validated_data):
+        #     return ProgrammingChallenges.create(**validated_data)

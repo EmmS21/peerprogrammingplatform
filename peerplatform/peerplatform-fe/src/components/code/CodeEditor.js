@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { render } from 'react-dom';
 import brace from 'brace';
 import Split from 'react-split';
@@ -21,7 +21,10 @@ import "antd/dist/antd.css";
 import { Steps, Result, Button, Spin } from 'antd'
 import { AudioOutlined, MessageOutlined } from '@ant-design/icons';
 import ClockCounter from '../profile_tabs/ClockCounter';
+import { Tabs } from 'antd';
+import ProgrammingChallenge from './ProgrammingChallenges';
 
+import AuthContext from '../../context/AuthContext';
 
 //change language based on map
 
@@ -35,6 +38,8 @@ const CodeEditor = () => {
     const output = null;
     const [spinnerOn, setSpinnerOn] = useState(false)
     const { Step } = Steps;
+    const { TabPane } = Tabs;
+    const { retrieveChallenge,challengeInState } = useContext(AuthContext)
 
     //change language in select options
     const changeLanguageHandler = (e) => {
@@ -119,12 +124,21 @@ const CodeEditor = () => {
         setTimer(array[index]);
         setKey(key+1)
     }
+
+    console.log(`Programming Challenge ${challengeInState.challenge_name}`)
         return (
         <>
         <div className="row">
             <ClockCounter timer={timer} key={key} handleComplete={handleComplete} index={index} Result={Result} Button={Button} />
-           <div className="col-3 whiteCol">
-                <ProfileTabs index={index}/>
+           <div className="col-4 whiteCol">
+                <Tabs type="card">
+                    <TabPane tab="Stages" key="1">
+                        <ProfileTabs index={index}/>
+                    </TabPane>
+                    <TabPane tab="Coding Challenge" key="2">
+                        <ProgrammingChallenge/>
+                    </TabPane>
+                </Tabs>
            </div>
            <div className="col-6">
             <div className="select-dropdown">
@@ -147,7 +161,7 @@ const CodeEditor = () => {
                 />
                 <button className="btn btn-primary" onClick={makeSubmission}> Run</button>
            </div>
-           <div className="col-3">
+           <div className="col-2">
                 <h4>Output</h4>
                 <Spinner on={spinnerOn} Spin={Spin}/>
                 <p className="line1"> { resp } </p>
