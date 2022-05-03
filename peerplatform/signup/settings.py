@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     'voice_chat',
     'corsheaders',
     'rest_framework',
+    'rest_framework_api_key',
     'rest_framework.authtoken',
     'rest_auth',
     #added simplejwt
@@ -205,11 +208,11 @@ REST_FRAMEWORK = {
 # )
 
 #Twilio Account details
-TWILIO_ACCOUNT_SID = 'AC52c6ab6e53976b2e9615c7ed9c53bacd'
-TWILIO_AUTH_TOKEN = '0379f02d607cbd07530d4d8c5887401c'
-TWIML_APPLICATION_SID = 'AP736d8cba5dedbd3c4b642511b1c5a78b'
-TWILIO_API_KEY = 'SK81bc0c332e85431b3cc73407463ef0d1'
-TWILIO_API_SECRET = '83vcB8I8dszBM0Eu1fuw78ZbKy5CR6IR'
+TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
+TWIML_APPLICATION_SID = config('TWIML_APPLICATION_SID')
+TWILIO_API_KEY = config('TWILIO_API_KEY')
+TWILIO_API_SECRET = config('TWILIO_API_SECRET')
 
 ALLOWED_HOSTS = [
     ".ngrok.io",
