@@ -16,30 +16,29 @@ const SignupForm = () => {
     const setupTwilio = (nickname) => {
         console.log('inside setupTwilio function', nickname)
         fetch(`http://127.0.0.1:8000/voice_chat/token/${nickname}`)
-        .then(response => {
-            console.log('resp', response)
-            })
-//        .then(data => {
-//            // setup device
-//            console.log(`data inside setupTwilio`, data)
-//            const twilioToken = data.token;
-//            const device = new Device(twilioToken);
-//            device.updateOptions(twilioToken, {
-//                codecPreferences: ['opus', 'pcmu'],
-//                fakeLocalDTMF: true,
-//                maxAverageBitrate: 16000
-//            });
-//            device.on('error', (device) => {
-//                console.log("error: ", device)
-//            });
-//            setState((state) => {
-//                return {...state, device, twilioToken}
-//            });
-//            console.log(`device: ${device}, twilioToken: ${twilioToken}, state: ${state}`)
-//        })
-//        .catch((error) => {
-//            console.log(error)
-//        })
+        .then(response => response.json())
+        .then(data => {
+            // setup device
+            console.log(`data inside setupTwilio`, data)
+            const twilioToken = data.token;
+            console.log('debugging',twilioToken, typeof twilioToken)
+            const device = new Device(twilioToken);
+            device.updateOptions(twilioToken, {
+                codecPreferences: ['opus', 'pcmu'],
+                fakeLocalDTMF: true,
+                maxAverageBitrate: 16000
+            });
+            device.on('error', (device) => {
+                console.log("error: ", device)
+            });
+            setState((state) => {
+                return {...state, device, twilioToken}
+            });
+            console.log(`device: ${device}, twilioToken: ${twilioToken}, state: ${state}`)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
     };
 
     const updateNickname = (nickname) => {

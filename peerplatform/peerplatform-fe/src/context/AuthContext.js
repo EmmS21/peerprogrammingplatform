@@ -45,17 +45,20 @@ export const AuthProvider = ({children}) => {
             alert(err.response.data.detail);
         }
     }
+
     //update profile information
     const updateProfile = (userData) => {
         console.log('userData', userData)
         //we pass profile information through token payload, so let's get a new token
-        const refreshToken = {
-            'refresh': authTokens.refresh
-        }
-        console.log(refreshToken)
+//        const refreshToken = {
+//            'refresh': authTokens.refresh
+//        }
+//        console.log(refreshToken)
         axios.put(`http://127.0.0.1:8000/update_profile/${userData.user_id}/`, userData)
             .then(res => {
-                console.log(res.data)
+                console.log('inside auth context', res.data)
+                //update token to get new user details
+                updateToken()
 //                axios.post('http://127.0.0.1:8000/api/token/refresh/',refreshToken)
 //                    .then(res => {
 //                        console.log('inside refresh token')
@@ -69,9 +72,11 @@ export const AuthProvider = ({children}) => {
 //                    })
             })
     }
+    //retrieve profile information
+    const retrieveProfileInformation = () => {
+        axios.get('http://127.0.0.1:8000/api/')
+    }
     //retrieve programming challenge
-//    return items[Math.floor(Math.random()*items.length)];
-
     //select random element
     Array.prototype.random = function() {
         return this[Math.floor(Math.random()*this.length)]
@@ -107,7 +112,7 @@ export const AuthProvider = ({children}) => {
         const refreshToken = {
             'refresh': authTokens.refresh
         }
-        console.log('Update token running')
+        console.log('Update token function has been triggered')
         try {
             let response = await axios.post('http://127.0.0.1:8000/api/token/refresh/',refreshToken)
             //update state with token
@@ -118,6 +123,7 @@ export const AuthProvider = ({children}) => {
             setUser(user => ({
                 ...decoded
             }))
+            console.log('user token', refreshToken.refresh)
             //store tokens in localStorage
             //we stringify because we can only store strings in localStorage
             localStorage.setItem('authTokens',JSON.stringify(authTokens))

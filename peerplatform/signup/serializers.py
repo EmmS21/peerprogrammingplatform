@@ -31,7 +31,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             user.set_password(validated_data['password'])
             user.save()
             #added fields from profile
-            # user.profile.city = validated_data['city']
+            user.profile.city = validated_data['city']
             user.profile.country = validated_data['country']
             user.profile.bio = validated_data['bio']
             return user

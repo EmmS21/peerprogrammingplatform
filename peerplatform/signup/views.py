@@ -11,6 +11,7 @@ from rest_framework.decorators import api_view
 from rest_framework import generics
 from rest_framework.decorators import action
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from accounts.models import models
 
 from accounts.models import ProgrammingChallenge
 #
@@ -34,6 +35,8 @@ class UserViewSet(viewsets.ModelViewSet):
     #changed name from UserSerializer to RegisterSerializer
     serializer_class = RegisterSerializer
     # permission_classes = [permissions.IsAuthenticated]
+    # print(queryset)
+
 
     @action(detail=True, methods=['POST'])
     def set_password(self, request, pk=None):
