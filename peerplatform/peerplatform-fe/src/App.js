@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useLocation, Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 import AppRoute from './utils/AppRoute';
 import ScrollReveal from './utils/ScrollReveal';
@@ -16,7 +16,10 @@ import PrivateRoute from './utils/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
 //we can probably deconstruct these to a one-liner
 import Pages from './components/code/Pages';
-import { RoomContextProvider } from './context/RoomContextProvider';
+import { RoomContextProvider, useGlobalState } from './context/RoomContextProvider';
+import RoomList from './components/code/RoomList';
+import SignupForm from './components/code/SignupForm';
+import Room from './components/code/Room';
 
 // Initialize Google Analytics
 ReactGA.initialize(process.env.REACT_APP_GA_CODE);
@@ -31,6 +34,11 @@ const App = () => {
 
   const childRef = useRef();
   let location = useLocation();
+//  const [ state ] = useGlobalState();
+//  const room = state.selectedRoom;
+//  console.log('inside pages', room)
+
+//  const room = state.selectedRoom;
 
   useEffect(() => {
     const page = location.pathname;
@@ -51,12 +59,11 @@ const App = () => {
                 <AppRoute exact path="/signup" component={Signup} />
                 <AppRoute exact path="/code_editor" component={CodeEditor} />
                 <AppRoute exact path="/timer" component={Timer} />
-                <RoomContextProvider>
-                    <div>
-                        <Pages />
-                    </div>
+                <RoomContextProvider useGlobalState={ useGlobalState }>
+                    <AppRoute exact path="/rooms" component={RoomList} />
+                    <PrivateRoute exact path="/profile" component={Profile} render={(props) => <AdminLayout {...props} />} />
+                    <AppRoute exact path="/rooms/:roomId" component={Room} />
                 </RoomContextProvider>
-                <PrivateRoute exact path="/profile" component={Profile} render={(props) => <AdminLayout {...props} />} />
             </AuthProvider>
         </Switch>
       )} />
@@ -64,3 +71,12 @@ const App = () => {
 }
 
 export default App;
+//
+//        <Route path='/rooms'>
+//          {state.twilioToken? <RoomList /> : <SignupForm />}
+//        </Route>
+//                <RoomContextProvider>
+//                    <div>
+//                        <Pages />
+//                    </div>
+//                </RoomContextProvider>

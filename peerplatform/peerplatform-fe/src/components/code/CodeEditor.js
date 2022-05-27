@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { render } from 'react-dom';
 import brace from 'brace';
 import Split from 'react-split';

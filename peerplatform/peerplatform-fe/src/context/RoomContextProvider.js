@@ -6,7 +6,8 @@ const initialState = {
     rooms: [],
     createdRoomTopic: '',
     twilioToken: '',
-    device: null
+    device: null,
+    roomId: '',
 };
 
 const RoomContext = createContext(null);

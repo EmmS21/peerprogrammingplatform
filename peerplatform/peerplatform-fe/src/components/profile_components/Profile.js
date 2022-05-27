@@ -15,6 +15,9 @@ import useModal from './useModalCustomHook'
 import CodeEditor from '../code/CodeEditor'
 import { Link } from 'react-router-dom';
 //import App from '../../../editor-ui/src/App.vue'
+import SignupForm from '../code/SignupForm';
+//import { useGlobalState } from '../../context/RoomContextProvider';
+import Ratings from '../profile_tabs/Ratings'
 
 import {
   Button,
@@ -32,13 +35,15 @@ import {
 
 
     const Profile = () => {
-        let { user,logOutUser, updateProfile } = useContext(AuthContext)
+        let { user,logOutUser, updateProfile, retrieveChallenge, navToRooms } = useContext(AuthContext)
         //store users in state
         const[profileUser, setProfileUser] = useState({user})
         //modal state
         const { isShowing, toggle } = useModal();
         //open file browser
         const fileSelector = document.createElement('input');
+        //get room global state
+//        const { useGlobalState } = useContext(useGlobalState)
         fileSelector.setAttribute('type', 'file');
 
         //handle form submission
@@ -70,8 +75,8 @@ import {
         const pictureSelector = (e) => {
             console.log(e.target.files[0].name)
         }
-        //retrieveChallenge
-        const { retrieveChallenge } = useContext(AuthContext)
+
+
 
         return (
               <>
@@ -80,13 +85,7 @@ import {
                     <button className="button button-primary button-wide-mobile button-sm" color="primary" onClick={logOutUser}>
                         Logout
                     </button>
-                    <Link
-                        to={"/code_editor"}
-                        className="button button-primary button-wide-mobile button-sm"
-                        onClick= {retrieveChallenge}
-                        >
-                        Start Coding
-                    </Link>
+                    <SignupForm/>
                 </div>
         <Row>
           <Col md="4">

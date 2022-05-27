@@ -1,10 +1,14 @@
-import React, { createContext,useState,useEffect } from 'react';
+import React, { createContext,useState, useEffect } from 'react';
 import axios from 'axios';
 //decoding token with this function
 import jwt_decode from 'jwt-decode';
 //we are importing history to have the ability to redirect user to home page
 import { useHistory } from 'react-router-dom';
 import axiosWithAuth from "../axios"
+import { Device } from '@twilio/voice-sdk';
+import { useGlobalState } from '../context/RoomContextProvider';
+
+
 
 const AuthContext = createContext()
 
@@ -19,6 +23,8 @@ export const AuthProvider = ({children}) => {
     let [user,setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
     let [loading, setLoading] = useState(true)
     let [challengeInState, setChallengeInState] = useState([])
+    //creating new drop in audio chat
+    const [state, setState] = useState(useGlobalState());
 
     const history = useHistory();
 
@@ -81,8 +87,18 @@ export const AuthProvider = ({children}) => {
     Array.prototype.random = function() {
         return this[Math.floor(Math.random()*this.length)]
     }
+    //from profile page to rooms
+    const navToRooms = () => {
+        const roomName = user.username
+        console.log('roomname', roomName)
+        setupTwilio(roomName);
+        console.log('twilio token is', state.twilioToken)
+        history.push('/rooms');
+    }
     //retrieve random programming challenge
     const retrieveChallenge = () => {
+        const roomName = user.username
+        setupTwilio(roomName);
         axios.get('http://127.0.0.1:8000/api/programming_challenges/')
             .then(res => {
                 setChallengeInState(res.data.random())
@@ -99,6 +115,35 @@ export const AuthProvider = ({children}) => {
 //                },
 //                body: userData
 //                })
+    //handle submission
+//    const handleSubmit = () => {
+//        setupTwilio(nickname);
+//        history.push('/rooms');
+//    }
+    const setupTwilio = (roomName) => {
+        fetch(`http://127.0.0.1:8000/voice_chat/token/${roomName}`)
+        .then(response => response.json())
+        .then(data => {
+            const twilioToken = data.token;
+            const device = new Device(twilioToken);
+            device.updateOptions(twilioToken, {
+                codecPreferences: ['opus', 'pcmu'],
+                fakeLocalDTMF: true,
+                maxAverageBitrate: 16000
+            });
+            device.on('error', (device) => {
+                console.log("error: ", device)
+            });
+            setState((state) => {
+                return {...state, device, twilioToken}
+            });
+            console.log('we are inside setup Twilio')
+            console.log('responses: device', device)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+    };
 
     let logOutUser = () => {
         setAuthTokens(null)
@@ -142,7 +187,8 @@ export const AuthProvider = ({children}) => {
         updateToken: updateToken,
         updateProfile: updateProfile,
         retrieveChallenge: retrieveChallenge,
-        challengeInState: challengeInState
+        challengeInState: challengeInState,
+        navToRooms: navToRooms
     }
 
     //so we refresh our refresh token and update state every 4 minutes
