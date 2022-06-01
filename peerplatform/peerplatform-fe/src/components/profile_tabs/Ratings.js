@@ -1,21 +1,42 @@
-import React, { useRef } from "react";
-import ReactDom from "react-dom";
-export const Modal = ({ setShowModal }) => {
-  // close the modal when clicking outside the modal.
-  const modalRef = useRef();
-  const closeModal = (e) => {
-    if (e.target === modalRef.current) {
-      setShowModal(false);
-    }
+import React, { useState } from 'react';
+import { Modal, Button, Slider } from 'antd';
+import { FrownOutlined, SmileOutlined } from '@ant-design/icons';
+import IconSlider from './IconSlider.js'
+import IconSliderTwo from './IconSliderQuestionTwo.js'
+import IconSliderThree from './IconSliderQuestionThree.js'
+
+
+const Ratings = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
   };
-  //render the modal JSX in the portal div.
-  return ReactDom.createPortal(
-    <div className="container" ref={modalRef} onClick={closeModal}>
-      <div className="modal">
-        <h2>This is a Modal</h2>
-        <button onClick={() => setShowModal(false)}>X</button>
-      </div>
-    </div>,
-    document.getElementById("portal")
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  return (
+    <>
+      <Button type="primary" onClick={showModal}>
+        Rate Peer
+      </Button>
+      <Modal title="Rate your peer" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+        <center>How well did they explain their logic?</center>
+        <IconSlider/>
+        <center>How would you rate their problem solving skills?</center>
+        <IconSliderTwo/>
+        <center>How willing would you be to work with them again?</center>
+        <IconSliderThree/>
+
+      </Modal>
+    </>
   );
 };
+export default Ratings;
+

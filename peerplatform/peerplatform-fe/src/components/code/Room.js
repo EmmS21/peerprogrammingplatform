@@ -29,7 +29,7 @@ const Room = ({room}) => {
             state.selectedRoom.participants.push(nickname);
         }
     }, [device, roomName, nickname, room, call]);
-
+    //call doesn't seem to be dropping
     const handleLeaveRoom = () => {
         call.disconnect();
         history.push('/rooms');

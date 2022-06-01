@@ -27,8 +27,6 @@ import ProgrammingChallenge from './ProgrammingChallenges';
 import AuthContext from '../../context/AuthContext';
 
 //change language based on map
-
-
 const CodeEditor = () => {
     const [currentLanguage, setCurrentLanguage] = useState("");
     const [token, setToken] = useState("");
@@ -125,7 +123,6 @@ const CodeEditor = () => {
         setKey(key+1)
     }
 
-    console.log(`Programming Challenge ${challengeInState.challenge_name}`)
         return (
         <>
         <div className="row">

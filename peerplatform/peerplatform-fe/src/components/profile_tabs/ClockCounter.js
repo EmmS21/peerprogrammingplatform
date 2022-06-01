@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import '../../assets/other_css/clocktimer.css';
 import ProfileTab from './ProfileTab'
+import Ratings from './Ratings';
 
-const renderTime = ({ remainingTime }) => {
-  if (remainingTime === 0) {
-    return <div className="timer">Step Completed...</div>;
-  }
+  const renderTime = ({ remainingTime }) => {
+    if (remainingTime === 0) {
+        return <div className="timer">Step Completed...</div>;
+    }
+
 
   return (
     <div className="timer">
@@ -18,7 +20,6 @@ const renderTime = ({ remainingTime }) => {
 };
 
 const ClockCounter = ({ key, index, timer, handleComplete, Result, Button }) => {
-  console.log('index is', index)
   return (
     <div className="App">
       <div className="timer-wrapper">
@@ -40,9 +41,7 @@ const ClockCounter = ({ key, index, timer, handleComplete, Result, Button }) => 
 //            title="Session Completed!"
 //            subTitle="Great job everyone! time to rate your peers"
             extra={[
-                <Button type="primary" key="console">
-                    Rate my peer
-                </Button>,
+                <Ratings/>
             ]}
         />
         }
