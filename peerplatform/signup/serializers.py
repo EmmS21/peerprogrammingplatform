@@ -11,14 +11,21 @@ from rest_framework_simplejwt.views import TokenObtainPairView;
 import json
 # from rest_auth.serializers import UserDetailsSerializer
 from accounts.models import ProgrammingChallenge
+from accounts.models import Profile
+
 
 # User = get_user_model()
+
+
 #changed from serializers.HyperLinked to ModelSerializer and then to RegisterSerializer to accurately reflect what this does
 class RegisterSerializer(serializers.ModelSerializer):
+    city = serializers.CharField(source='profile.city')
+    country = serializers.CharField(source='profile.country')
+    profile_pic = serializers.ImageField(source='profile.profile_pic')
     class Meta:
         model = User
         #removed url from fields
-        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'bio']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name','city','country','profile_pic']
         extra_kwargs = {
             'password': {'write_only': True},
         }
@@ -74,7 +81,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=False)
     city = serializers.CharField(source='profile.city', allow_blank=True, required=False)
     country = serializers.CharField(source='profile.country', allow_blank=True, required=False)
-    profile_pic = Base64ImageField(max_length=None, use_url=True, required=False)
+    profile_pic = Base64ImageField(source='profile.profile_pic', max_length=None, use_url=True, required=False)
         # serializers.ImageField(source='profile.profile_pic', use_url=True, required=False)
 
     class Meta:

@@ -52,30 +52,29 @@ export const AuthProvider = ({children}) => {
         }
     }
 
+    //get profile information
+    const getProfileInfo = (userId) => {
+        axios.get(`http://127.0.0.1:8000/users/${userId}`)
+                .then(res => {
+                    setUser({ ...user,
+                            first_name: res.data.first_name,
+                            last_name: res.data.last_name,
+                            username: res.data.username,
+                            city: res.data.city,
+                            country: res.data.country })
+                })
+                console.log(`what is inside user ${user.first_name}`)
+    }
+
     //update profile information
     const updateProfile = (userData) => {
-        console.log('userData', userData)
-        //we pass profile information through token payload, so let's get a new token
-//        const refreshToken = {
-//            'refresh': authTokens.refresh
-//        }
-//        console.log(refreshToken)
         axios.put(`http://127.0.0.1:8000/update_profile/${userData.user_id}/`, userData)
             .then(res => {
-                console.log('inside auth context', res.data)
-                //update token to get new user details
-                updateToken()
-//                axios.post('http://127.0.0.1:8000/api/token/refresh/',refreshToken)
-//                    .then(res => {
-//                        console.log('inside refresh token')
-//                        setAuthTokens({'access': res.data.access,
-//                                       'refresh': res.data.refresh})
-//                        const decoded = jwt_decode(res.data.access)
-//                        setUser(user => ({
-//                                           ...decoded
-//                                    }))
-//                        localStorage.setItem('authTokens', JSON.stringify(authTokens))
-//                    })
+                setUser({ ...user, first_name:res.data.first_name,
+                        last_name: res.data_last_name,
+                        username: res.data.username,
+                        city: res.data.city,
+                        country: res.data.country })
             })
     }
     //retrieve profile information
@@ -186,6 +185,7 @@ export const AuthProvider = ({children}) => {
         logOutUser:logOutUser,
         updateToken: updateToken,
         updateProfile: updateProfile,
+        getProfileInfo: getProfileInfo,
         retrieveChallenge: retrieveChallenge,
         challengeInState: challengeInState,
         navToRooms: navToRooms

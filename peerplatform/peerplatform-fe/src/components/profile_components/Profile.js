@@ -1,4 +1,4 @@
-import React, { Component,useContext, useState, useRef } from "react";
+import React, { Component,useContext, useState, useRef, useEffect } from "react";
 import "../../assets/scss/core/signup_components/_signup.scss"
 import "../../assets/scss/modal.scss"
 import "../../assets/demo/demo.css";
@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import SignupForm from '../code/SignupForm';
 //import { useGlobalState } from '../../context/RoomContextProvider';
 import Ratings from '../profile_tabs/Ratings'
+import axios from 'axios';
 
 import {
   Button,
@@ -35,7 +36,7 @@ import {
 
 
     const Profile = () => {
-        let { user,logOutUser, updateProfile, retrieveChallenge, navToRooms } = useContext(AuthContext)
+        let { user,logOutUser, updateProfile, retrieveChallenge, navToRooms, getProfileInfo } = useContext(AuthContext)
         //store users in state
         const[profileUser, setProfileUser] = useState({user})
         //modal state
@@ -51,8 +52,6 @@ import {
             e.preventDefault();
             console.log('handle submit',profileUser)
             const updatedProfileInfo = {
-                username: profileUser.username,
-                email: profileUser.email,
                 first_name: profileUser.first_name,
                 last_name: profileUser.last_name,
                 user_id: profileUser.user.user_id,
@@ -60,22 +59,25 @@ import {
                 country: profileUser.country,
                 profile_pic: profileUser.profile_pic,
             }
-            console.log('sending info:',updatedProfileInfo)
             updateProfile(updatedProfileInfo);
         }
         //open file browser on click
 //        const openFile = (e) => {
-//            fileSelector.onChange = fileSelectedHandler
+////            fileSelector.onChange = fileSelectedHandler
 //            fileSelector.click();
 //            console.log(e.target.files[0])
-//            const { current } = inputRef
-//            console.log(e.target.files[0])
+////            const { current } = inputRef
+////            console.log(e.target.files[0])
 //        }
-        //on change handler
-        const pictureSelector = (e) => {
-            console.log(e.target.files[0].name)
-        }
+//        //on change handler
+//        const pictureSelector = (e) => {
+//            console.log(e.target.files[0].name)
+//        }
 
+        //get profile information
+        useEffect(() => {
+            getProfileInfo(user.user_id)
+        },[]);
 
 
         return (
@@ -110,6 +112,7 @@ import {
                         </div>
                     </label>
                     <h5 className="title">Hi, { user.username[0].toUpperCase()+user.username.slice(1) }</h5>
+                    <h6> { user.city }, { user.country } </h6>
                   </a>
                 </div>
                 <p className="description text-center">
@@ -142,34 +145,6 @@ import {
               </CardHeader>
               <CardBody>
                 <Form>
-                  <Row>
-                    <Col className="pr-1" md="6">
-                      <FormGroup>
-                        <label>Username</label>
-                        <Input
-//                          value={ user.username }
-                          placeholder="Username"
-                          type="text"
-                          name="username"
-                          onChange={ e => setProfileUser({...profileUser, 'username': e.target.value}) }
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pr-1" md="6">
-                      <FormGroup>
-                        <label htmlFor="exampleInputEmail1">
-                          Email address
-                        </label>
-                        <Input
-                            placeholder="Email"
-                            type="email"
-                            name="email"
-                            value={profileUser.email}
-                            onChange={ e => setProfileUser({...profileUser, 'email': e.target.value}) }
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
                   <Row>
                     <Col className="pr-1" md="6">
                       <FormGroup>
