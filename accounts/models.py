@@ -18,3 +18,10 @@ def update_profile_signal(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
     instance.profile.save()
+
+# #creating programming challenges
+# class ProgrammingChallenges(models.Model):
+#     challenge_id = models.AutoField(primary_key=True)
+#     challenge_name = models.CharField(max_length=200)
+#     challenge_description = models.TextField()
+#     challenge_expectations = models.TextField()

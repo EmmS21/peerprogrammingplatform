@@ -139,6 +139,8 @@ Django Dependencies: `requirements.txt` (Let me know if there are packages not i
 
 # How to run
 clone and run the following commands. You will need to install ngrok to interact with Twilio Programming Voice API
+With ngrok specifically, you will need to expose the server to ngrok by running ngrok http <portName>. 
+
 - project is contained inside folder peerplatform (remember to cd into peerplatform - will rectify this issue)
 - https://ngrok.com/
 - What is ngrok? -> 'Ngrok is a cross-platform application that exposes local server ports to the Internet.'
@@ -149,6 +151,11 @@ python manaage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
+
+
+# For Collaborators
+Project roadmap is contained in peerplatform/ProjectRoadMap.md
+
 
 # Built by: Emmanuel Sibanda
 
