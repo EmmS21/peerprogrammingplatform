@@ -220,3 +220,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost"
 ]
+
+SIMPLE_JWT = {
+    'UPDATE_LAST_LOGIN': True,
+}

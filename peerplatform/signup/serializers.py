@@ -1,13 +1,16 @@
 from django.contrib.auth.models import User
 # from django.contrib.auth import get_user_model
-from rest_framework import serializers
+from rest_framework import serializers, exceptions
+
 #added more imports based on simpleJWT tutorial
 from rest_framework.permissions import IsAuthenticated
 from django.db import models
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, user_logged_in
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer;
+from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.views import TokenObtainPairView;
+from rest_framework_simplejwt.tokens import RefreshToken
 import json
 # from rest_auth.serializers import UserDetailsSerializer
 from accounts.models import ProgrammingChallenge
@@ -22,10 +25,11 @@ class RegisterSerializer(serializers.ModelSerializer):
     city = serializers.CharField(source='profile.city')
     country = serializers.CharField(source='profile.country')
     profile_pic = serializers.ImageField(source='profile.profile_pic')
+    is_online = serializers.BooleanField(source='profile.is_online')
     class Meta:
         model = User
         #removed url from fields
-        fields = ['username', 'email', 'password', 'first_name', 'last_name','city','country','profile_pic']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic', 'is_online']
         extra_kwargs = {
             'password': {'write_only': True},
         }
@@ -154,17 +158,36 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 
 #customizing the payload we get from our access tokens
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        token['username'] = user.username
-        token['first_name'] = user.first_name
-        token['last_name'] = user.last_name
-        token['country'] = user.profile.country
-        token['city'] = user.profile.city
-        token['bio'] = user.profile.bio
-        token['photo'] = json.dumps(str(user.profile.profile_pic))
-        return token
+
+    def validate(self, attrs):
+        authenticate_kwargs = {
+            self.username_field: attrs[self.username_field],
+            "password": attrs["password"],
+        }
+        try:
+            authenticate_kwargs["request"] = self.context["request"]
+        except KeyError:
+            pass
+        user = authenticate(**authenticate_kwargs)
+        if not user:
+            return {
+                'user': 'Not Found',
+            }
+        tokens = RefreshToken.for_user(user)
+        #customizing token payload
+        tokens['username'] = user.username
+        user_logged_in.send(sender=user.__class__, request=self.context['request'], user=user)
+
+        if not api_settings.USER_AUTHENTICATION_RULE(user):
+            raise exceptions.AuthenticationFailed(
+                self.error_messages["no_active_account"],
+                "no_active_account",
+            )
+
+        return {
+            'refresh': str(tokens),
+            'access': str(tokens.access_token),
+        }
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
