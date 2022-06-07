@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'allauth.account',
+    'online_users',
+    # 'active_users',
 ]
 
 MIDDLEWARE = [
@@ -62,7 +64,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'online_users.middleware.OnlineNowMiddleware',
+    # 'active_users.middleware.ActiveUsersSessionMiddleware',
+    # 'accounts.middleware.ActiveUserMiddleware',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -194,10 +198,23 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
 }
+
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#         'LOCATION': '127.0.0.1:11211',
+#     }
+# }
+# # num of seconds of inactivity before a user is marked offline
+# USER_ONLINE_TIMEOUT = 300
+#
+# # Number of seconds that we will keep track of inactive users for before
+# # their last seen is removed from the cache
+# USER_LASTSEEN_TIMEOUT = 60 * 60 * 24 * 7
 
 # AUTH_USER_MODEL = 'accounts.CustomerUser'
 # SIMPLE_JWT = {

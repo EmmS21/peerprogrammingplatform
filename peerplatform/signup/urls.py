@@ -3,8 +3,9 @@ from django.urls import path, include
 from rest_framework import routers
 from . import views
 from rest_framework_simplejwt.views import (TokenRefreshView, TokenVerifyView)
+
 from .serializers import CustomTokenObtainPairView
-from .views import ProgrammingChallengeView
+from .views import ProgrammingChallengeView, GetAllUsers, OnlineUsers
 from django.conf import settings
 from django.conf.urls.static import static
 from .api import RegisterApi
@@ -19,6 +20,7 @@ def get_img_upload_path(instance,filename):
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('online_users',OnlineUsers.as_view({'get': 'list'}), name='online_users'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

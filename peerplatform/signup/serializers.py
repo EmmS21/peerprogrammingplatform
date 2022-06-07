@@ -4,10 +4,13 @@ from rest_framework import serializers
 #added more imports based on simpleJWT tutorial
 from rest_framework.permissions import IsAuthenticated
 from django.db import models
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, user_logged_in
 from django.contrib.auth.hashers import make_password
+from rest_framework import exceptions
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer;
+from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.views import TokenObtainPairView;
+from rest_framework_simplejwt.tokens import RefreshToken
 import json
 # from rest_auth.serializers import UserDetailsSerializer
 from accounts.models import ProgrammingChallenge
@@ -15,21 +18,23 @@ from accounts.models import Profile
 
 
 # User = get_user_model()
+# from accounts.models import LoggedUser
 
-
-#changed from serializers.HyperLinked to ModelSerializer and then to RegisterSerializer to accurately reflect what this does
 class RegisterSerializer(serializers.ModelSerializer):
     city = serializers.CharField(source='profile.city')
     country = serializers.CharField(source='profile.country')
     profile_pic = serializers.ImageField(source='profile.profile_pic')
+    is_online = serializers.BooleanField(source='profile.is_online')
+
     class Meta:
         model = User
         #removed url from fields
-        fields = ['username', 'email', 'password', 'first_name', 'last_name','city','country','profile_pic']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic', 'is_online']
         extra_kwargs = {
             'password': {'write_only': True},
         }
-        def create(self,validated_data):
+
+        def create(self, validated_data):
             user = User.objects.create_user(
                                             username=validated_data['username'],
                                             first_name=validated_data['first_name'],
@@ -82,6 +87,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     city = serializers.CharField(source='profile.city', allow_blank=True, required=False)
     country = serializers.CharField(source='profile.country', allow_blank=True, required=False)
     profile_pic = Base64ImageField(source='profile.profile_pic', max_length=None, use_url=True, required=False)
+
         # serializers.ImageField(source='profile.profile_pic', use_url=True, required=False)
 
     class Meta:
@@ -152,19 +158,78 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         #
         #     return instance
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['user']
+
 #customizing the payload we get from our access tokens
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        token['username'] = user.username
-        token['first_name'] = user.first_name
-        token['last_name'] = user.last_name
-        token['country'] = user.profile.country
-        token['city'] = user.profile.city
-        token['bio'] = user.profile.bio
-        token['photo'] = json.dumps(str(user.profile.profile_pic))
-        return token
+    # @classmethod
+    # def get_token(cls, user):
+    #     token = super().get_token(user)
+    #     token['username'] = user.username
+    #     token['first_name'] = user.first_name
+    #     token['last_name'] = user.last_name
+    #     token['country'] = user.profile.country
+    #     token['city'] = user.profile.city
+    #     token['bio'] = user.profile.bio
+    #     token['photo'] = json.dumps(str(user.profile.profile_pic))
+    #     # user_id = User.objects.get(username=user.username)
+    #     # LoggedUser.login_user(user=user.username).save()
+    #     return token
+
+    def validate(self, attrs):
+        authenticate_kwargs = {
+            self.username_field: attrs[self.username_field],
+            "password": attrs["password"],
+        }
+        try:
+            authenticate_kwargs["request"] = self.context["request"]
+        except KeyError:
+            pass
+
+        user = authenticate(**authenticate_kwargs)
+        user_logged_in.send(sender=user.__class__, request=self.context['request'], user=user)
+
+        if not api_settings.USER_AUTHENTICATION_RULE(user):
+            raise exceptions.AuthenticationFailed(
+                self.error_messages["no_active_account"],
+                "no_active_account",
+            )
+        refresh = RefreshToken.for_user(user)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'user': str(user),
+        }
+    # def validate(self, attrs):
+    #     credentials = {
+    #         self.username_field: attrs.get(self.username_field),
+    #         'password': attrs.get('password')
+    #     }
+    #     if all(credentials.values()):
+    #         user = authenticate(request=self.context['request'], **credentials)
+    #         # token = super().get_token(user)
+    #         if user:
+    #             if not user.is_active:
+    #                 msg = 'User account is disabled.'
+    #                 raise serializers.ValidationError(msg)
+    #
+    #             user_logged_in.send(sender=user.__class__, request=self.context['request'], user=user)
+    #
+    #             return {
+    #                     'token': self.get_token(user),
+    #                     "user": user
+    #                 }
+    #         else:
+    #             msg = 'Unable to log in with provided credentials.'
+    #             raise serializers.ValidationError(msg)
+    #     else:
+    #         msg = 'Must include "{username_field}" and "password".'
+    #         msg = msg.format(username_field=self.username_field)
+    #         raise serializers.ValidationError(msg)
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -190,3 +255,13 @@ class ProgrammingChallengeSerializer(serializers.ModelSerializer):
         fields = '__all__'
         # def create(self, validated_data):
         #     return ProgrammingChallenges.create(**validated_data)
+
+class OnlineUsersSerializer(serializers.ModelSerializer):
+    # city = serializers.CharField(source='user.profile.city')
+    # country = serializers.CharField(source='profile.country')
+    username = serializers.CharField(source='user.username')
+    firstname = serializers.CharField(source='user.first_name')
+    lastname = serializers.CharField(source='user.last_name')
+    class Meta:
+        model = Profile
+        fields = ['id', 'user', 'username', 'firstname', 'lastname']
