@@ -26,10 +26,11 @@ class RegisterSerializer(serializers.ModelSerializer):
     country = serializers.CharField(source='profile.country')
     profile_pic = serializers.ImageField(source='profile.profile_pic')
     is_online = serializers.BooleanField(source='profile.is_online')
+    is_active = serializers.BooleanField(source='profile.is_active')
     class Meta:
         model = User
         #removed url from fields
-        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic', 'is_online']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic', 'is_online', 'is_active']
         extra_kwargs = {
             'password': {'write_only': True},
         }
@@ -86,12 +87,14 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     city = serializers.CharField(source='profile.city', allow_blank=True, required=False)
     country = serializers.CharField(source='profile.country', allow_blank=True, required=False)
     profile_pic = Base64ImageField(source='profile.profile_pic', max_length=None, use_url=True, required=False)
+    is_online = serializers.BooleanField(source='profile.is_online', required=False)
+    is_active = serializers.CharField(source='profile.is_active', required=False)
         # serializers.ImageField(source='profile.profile_pic', use_url=True, required=False)
 
     class Meta:
         model = User
         #, 'city', 'country', 'bio'
-        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic', 'is_online', 'is_active']
         # fields = UserDetailsSerializer.Meta.fields + ('city', 'country')
         extra_kwargs = {'username': {'required': False},
                         'email': {'required': False},
@@ -100,13 +103,17 @@ class UpdateUserSerializer(serializers.ModelSerializer):
                         'last_name': {'required': False},
                         'city': {'required': False},
                         'country': {'required': False},
-                        'profile_pic': {'required': False}
+                        'profile_pic': {'required': False},
+                        'is_online': {'required': False},
+                        'is_active': {'required': False},
                         }
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('profile', {})
         city = profile_data.get('city')
         country = profile_data.get('country')
         profile_pic = profile_data.get('profile_pic')
+        is_online = profile_data.get('is_online')
+        is_active = profile_data.get('is_active')
 
         instance = super(UpdateUserSerializer, self).update(instance, validated_data)
 
@@ -118,43 +125,12 @@ class UpdateUserSerializer(serializers.ModelSerializer):
                 profile.country = country
             if profile_pic:
                 profile.profile_pic = profile_pic
+            if is_online:
+                profile.is_online = is_online
+            if is_active:
+                profile.is_active = is_active
             profile.save()
         return instance
-
-        # def validate_email(self, value):
-        #     user = self.context['request'].user
-        #     if User.objects.exclude(pk=user.pk).filter(email=value).exists():
-        #         raise serializers.ValidationError({"email": "This email is already in use."})
-        #     return value
-        #
-        # def validate_username(self, value):
-        #     user = self.context['request'].user
-        #     if User.objects.exclude(pk=user.pk).filter(username=value).exists():
-        #         raise serializers.ValidationError({"username": "This username is already in use."})
-        #     return value
-        #
-        # def update(self, instance, validated_data):
-        #     #re-writing updated profile info from request
-        #     user = self.context['request'].user
-        #     profile = instance.profile
-        #
-        #     if user.pk != instance.pk:
-        #         raise serializers.ValidationError({"authorize": "You don't have permission for this user."})
-        #
-        #     instance.first_name = validated_data['first_name']
-        #     instance.last_name = validated_data['last_name']
-        #     instance.email = validated_data['email']
-        #     instance.username = validated_data['username']
-        #     instance.save()
-        # # #saving information related to profile
-        # #     profile.city = validated_data.profile['city']
-        # #     profile.country = validated_data.profile['country']
-        # #     profile.save()
-        # # # instance.profile.bio = validated_data.profile['bio']
-        #
-        #     instance.save()
-        #
-        #     return instance
 
 #customizing the payload we get from our access tokens
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -173,9 +149,16 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             return {
                 'user': 'Not Found',
             }
-        tokens = RefreshToken.for_user(user)
+        token = RefreshToken.for_user(user)
         #customizing token payload
-        tokens['username'] = user.username
+        token['username'] = user.username
+        token['first_name'] = user.first_name
+        token['last_name'] = user.last_name
+        token['country'] = user.profile.country
+        token['city'] = user.profile.city
+        token['bio'] = user.profile.bio
+        token['photo'] = json.dumps(str(user.profile.profile_pic))
+
         user_logged_in.send(sender=user.__class__, request=self.context['request'], user=user)
 
         if not api_settings.USER_AUTHENTICATION_RULE(user):
@@ -185,9 +168,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             )
 
         return {
-            'refresh': str(tokens),
-            'access': str(tokens.access_token),
+            'refresh': str(token),
+            'access': str(token.access_token),
         }
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer

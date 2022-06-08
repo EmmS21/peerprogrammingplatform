@@ -15,6 +15,7 @@ class Profile(models.Model):
     profile_pic = models.ImageField(upload_to='profile/%Y/%m/%d', default='media/placeholder.png', blank=False,
                                     null=False)
     is_online = models.BooleanField(default=False)
+    is_active = models.CharField(max_length=50, blank=True)
 
     # def __str__(self):
     #     return self.user.username

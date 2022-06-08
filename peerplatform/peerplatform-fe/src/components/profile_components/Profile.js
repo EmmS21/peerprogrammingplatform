@@ -19,6 +19,7 @@ import SignupForm from '../code/SignupForm';
 //import { useGlobalState } from '../../context/RoomContextProvider';
 import Ratings from '../profile_tabs/Ratings'
 import axios from 'axios';
+import { useIdleTimer } from 'react-idle-timer'
 
 import {
   Button,
@@ -46,6 +47,34 @@ import {
         //get room global state
 //        const { useGlobalState } = useContext(useGlobalState)
         fileSelector.setAttribute('type', 'file');
+
+        //on idle update Profile model activity field
+        const handleOnIdle = (event: any) => {
+            axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
+                is_active: 'True'
+            })
+            .then(res => {
+                console.log(res.data)
+            })
+        }
+
+        //on active update profile model activity field
+        const handleOnActive = (event: any) => {
+            axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
+                is_active: 'False'
+            })
+            .then(res => {
+                console.log(res.data)
+            })
+        }
+
+        const { getLastActiveTime } = useIdleTimer ({
+            timeout: 1000 * 60 * 1,
+            onIdle: handleOnIdle,
+            onActive: handleOnActive,
+            debounce: 500
+        })
+
 
         //handle form submission
         const handleSubmit = e => {

@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/register', RegisterApi.as_view()),
     path('update_profile/<int:pk>/', views.UpdateProfileView.as_view(), name='update_profile'),
+    path('update_active/<int:pk>/', views.UpdateProfileActive.as_view(), name='update_activity'),
     path('voice_chat/', include('voice_chat.urls')),
     path('api/programming_challenges/', ProgrammingChallengeView.as_view({'get':'list'}), name='programming_challenges'),
     # path('api/register', registration_view, name='register'),

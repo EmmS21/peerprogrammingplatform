@@ -1,9 +1,12 @@
 from django.contrib.auth.models import User, Group
+from django.shortcuts import get_object_or_404
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework import permissions
+from rest_framework.views import APIView
+
 from .serializers import RegisterSerializer, PasswordSerializer, UpdateUserSerializer, CustomTokenObtainPairSerializer, ProgrammingChallengeSerializer
 from rest_framework.permissions import AllowAny
 #restrict type of request that can be made to post request
@@ -13,7 +16,7 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from accounts.models import models
 
-from accounts.models import ProgrammingChallenge
+from accounts.models import ProgrammingChallenge, Profile
 #
 # @api_view(['POST',])
 # def registration_view(request):
@@ -36,7 +39,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = RegisterSerializer
     # permission_classes = [permissions.IsAuthenticated]
     # print(queryset)
-
 
     @action(detail=True, methods=['POST'])
     def set_password(self, request, pk=None):
@@ -62,6 +64,7 @@ class UserViewSet(viewsets.ModelViewSet):
 #     def perform_update(self, serializer, pk=None):
 #         serializer.save(user=self.request.user.id)
 
+
 class UpdateProfileView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UpdateUserSerializer
@@ -75,6 +78,12 @@ class UpdateProfileView(generics.UpdateAPIView):
                     return Response(serializer_user)
             except User.DoesNotExist:
                 return Response(data='no such user!', status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateProfileActive(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UpdateUserSerializer
+
 
 class ProgrammingChallengeView(ReadOnlyModelViewSet):
     serializer_class = ProgrammingChallengeSerializer
