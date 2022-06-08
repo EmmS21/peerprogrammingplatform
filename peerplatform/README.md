@@ -137,6 +137,13 @@ Built using: Django and React
 
 Django Dependencies: `requirements.txt` (Let me know if there are packages not included in requirements.txt)
 
+#Some Features
+
+##Matching users
+- The Profile model has a field `is_online` that holds Boolean values depending on whether or not a user is logged in. Authentication triggers a signal `user_logged_in` which sets the `is_online` field to True
+- The Profile model also has a field `is_active`, the React app has a library `react-idle-timer`, to check for user activity. If the user is inactive based on mouse activity, the function `handleOnIdle` inside the `Profile` component carries out an axios call updating `is_active` to `False`, when a user is active, the function`handleOnActive` carries out an axios call updating `is_active` to `True`
+- We will use this information to randomly match users who are both online based on the `is_online` field and checks if the user is active based on the `is_active` field      
+
 #How to run
 clone the project and run the following commands. You will need to install ngrok to interact with Twilio Programming Voice API
 - https://ngrok.com/

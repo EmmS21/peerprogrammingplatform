@@ -69,7 +69,7 @@ import {
         }
 
         const { getLastActiveTime } = useIdleTimer ({
-            timeout: 1000 * 60 * 1,
+            timeout: 1000 * 60 * 15,
             onIdle: handleOnIdle,
             onActive: handleOnActive,
             debounce: 500
