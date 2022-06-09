@@ -15,24 +15,13 @@ class Profile(models.Model):
     profile_pic = models.ImageField(upload_to='profile/%Y/%m/%d', default='media/placeholder.png', blank=False,
                                     null=False)
     is_online = models.BooleanField(default=False)
-    is_active = models.CharField(max_length=50, blank=True)
+    is_active = models.BooleanField(default=False)
 
-    # def __str__(self):
-    #     return self.user.username
-    # we are hooking create_user_profile and save_user profile methods to the User model whenever a save event occurs. This kind of signal is called post_save
-    # @receiver(post_save, sender=User)
-    # def create_user_profile(sender, instance, created, **kwargs):
-    #     if created:
-    #         Profile.objects.create(user=instance)
-    #
-    # @receiver(post_save, sender=User)
-    # def save_user_profile(sender, instance, **kwargs):
-    #     instance.profile.save()
     @receiver(user_logged_in)
     def got_online(sender, user, request, **kwargs):
         user.profile.is_online = True
         user.profile.save()
-
+    #not using this
     @receiver(user_logged_out)
     def got_offline(sender, user, request, **kwargs):
         user.profile.is_online = False

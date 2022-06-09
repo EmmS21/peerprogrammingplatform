@@ -106,6 +106,14 @@ export const AuthProvider = ({children}) => {
                 console.log(err)
             })
     }
+    //get all online users
+    const getUsers = () => {
+        axios.get('http://127.0.0.1:8000/users')
+            .then(res => {
+                console.log(res.data)
+            })
+    }
+
 //            {
 //                headers: {
 //                    'Authorization': "jwt" + JSON.parse(window.localStorage.getItem('authTokens')).access,
@@ -145,10 +153,21 @@ export const AuthProvider = ({children}) => {
     };
 
     let logOutUser = () => {
+        handleServerLogout()
         setAuthTokens(null)
         setUser(null)
         localStorage.removeItem('authTokens')
         history.push('/')
+    }
+
+    //turn is_online off
+    let handleServerLogout = () => {
+        axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
+            is_online: 'False'
+        })
+        .then(res => {
+                console.log('user logged out')
+            })
     }
 
     //method to update token - token is refreshed every 5 minutes
@@ -188,7 +207,8 @@ export const AuthProvider = ({children}) => {
         getProfileInfo: getProfileInfo,
         retrieveChallenge: retrieveChallenge,
         challengeInState: challengeInState,
-        navToRooms: navToRooms
+        navToRooms: navToRooms,
+        getUsers: getUsers,
     }
 
     //so we refresh our refresh token and update state every 4 minutes

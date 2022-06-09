@@ -5,26 +5,20 @@ import { useGlobalState } from '../../context/RoomContextProvider';
 import { useFetchRooms } from '../../hooks/useFetchRooms';
 import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
-
+import OnlineUsersCarousel from './OnlineUsersCarousel';
+import "../../assets/waitingRoom/app.css";
 
 const RoomList = () =>  {
     const [state, setState] = useGlobalState();
     const history = useHistory();
     const { user,logOutUser, updateProfile } = useContext(AuthContext)
-
-//    console.log(`Inside RoomList state is ${state.twilioToken} nickname is: ${state.nickname} createdRoomTopic ${state.createdRoomTopic}`)
-
-//    console.log(`token is currently : ${state.twilioToken}, username is: ${state.nickname}`)
-//    const fetchRooms = useFetchRooms('/rooms');
-//    //we update the application state with the list of rooms we receive
-//    useEffect(() => {
-//        fetchRooms().then(rooms => {
-//            setState((state) => {
-//                return {...state, rooms};
-//            });
-//        })
-//    }, [fetchRooms, setState]);
-//    console.log('we are inside RoomList')
+    const contentStyle = {
+        height: '80px',
+        color: '#fff',
+        lineHeight: '80px',
+        textAlign: 'center',
+        background: '#364d79',
+    };
 
     const createRoomHandler = () => {
         const userData = {'roomName': state.nickname, 'participantLabel': state.createdRoomTopic}
@@ -42,9 +36,6 @@ const RoomList = () =>  {
 
     const handleRoomCreate = () => {
         const createdRoomTopic = generateRandomTopicNum()
-//        setState((state) => {
-//            return {...state, createdRoomTopic}
-//        });
         setState({ ...state, createdRoomTopic })
         console.log(`What do we have in state createdRoomTopic: ${state.createdRoomTopic}`)
         const selectedRoom = {
@@ -62,10 +53,9 @@ const RoomList = () =>  {
 
     return (
     <>
-        <div>
-            <center><h6>How it works</h6></center>
-            <div className="md-content">
-                <p>The session will be split into 5 phases:</p>
+        <center><h6>How it works</h6></center>
+            <OnlineUsersCarousel/>
+                <p className='text'>The session will be split into 5 phases:</p>
                 <ul>
                     <li><strong>Introductions:</strong> You will be given 5 minutes for introductions. Get to know who you are coding with.</li>
                     <li><strong>Pseudo-Code</strong> You will receive your problem statement and be given 10 minutes to pseudo code potential solutions. If your solution is a recipe, what steps will you need to make your meal. Use basic english, do not worry about coding concepts yet.</li>
@@ -73,13 +63,11 @@ const RoomList = () =>  {
                     <li><strong>Solution</strong> Could not solve the problem? Don't fret, you will be given a solution and 20 minutes to break down the solution and try and rebuild it yourselves.</li>
                     <li><strong>Rating</strong> To close things off you will rate each other on; i.) ability to effectively communicate logic, ii.) ability to collaborate/how well did you work together and iii.) general coding skills. Leave your peer some notes on what to work on.</li>
                 </ul>
-            </div>
             <div>
                 <center>
                     <button onClick={handleRoomCreate}>Start Session</button>
                 </center>
             </div>
-        </div>
     </>
     );
 };

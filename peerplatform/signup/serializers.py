@@ -88,7 +88,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     country = serializers.CharField(source='profile.country', allow_blank=True, required=False)
     profile_pic = Base64ImageField(source='profile.profile_pic', max_length=None, use_url=True, required=False)
     is_online = serializers.BooleanField(source='profile.is_online', required=False)
-    is_active = serializers.CharField(source='profile.is_active', required=False)
+    is_active = serializers.BooleanField(source='profile.is_active', required=False)
         # serializers.ImageField(source='profile.profile_pic', use_url=True, required=False)
 
     class Meta:
@@ -125,9 +125,9 @@ class UpdateUserSerializer(serializers.ModelSerializer):
                 profile.country = country
             if profile_pic:
                 profile.profile_pic = profile_pic
-            if is_online:
+            if is_online is not None:
                 profile.is_online = is_online
-            if is_active:
+            if is_active is not None:
                 profile.is_active = is_active
             profile.save()
         return instance

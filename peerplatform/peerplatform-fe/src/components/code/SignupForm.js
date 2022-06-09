@@ -8,7 +8,7 @@ import AuthContext from '../../context/AuthContext';
 const SignupForm = () => {
     const history = useHistory();
     const [ state, setState ] = useGlobalState();
-    const { user,logOutUser, updateProfile } = useContext(AuthContext)
+    const { user,logOutUser, updateProfile, getUsers } = useContext(AuthContext)
 
     //generate room topic name
     const generateRandomTopicNum = () => {
