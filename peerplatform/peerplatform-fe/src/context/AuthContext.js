@@ -25,6 +25,7 @@ export const AuthProvider = ({children}) => {
     let [challengeInState, setChallengeInState] = useState([])
     //creating new drop in audio chat
     const [state, setState] = useState(useGlobalState());
+    const [onlineUsers, setOnlineUsers] = useState([]);
 
     const history = useHistory();
 
@@ -104,13 +105,6 @@ export const AuthProvider = ({children}) => {
             })
             .catch(err => {
                 console.log(err)
-            })
-    }
-    //get all online users
-    const getUsers = () => {
-        axios.get('http://127.0.0.1:8000/users')
-            .then(res => {
-                console.log(res.data)
             })
     }
 
@@ -196,6 +190,16 @@ export const AuthProvider = ({children}) => {
             logOutUser()
         }
     }
+    //get all users
+    let getAllUsers = () => {
+        console.log('inside getAllUsers function')
+        axios.get('http://127.0.0.1:8000/users/')
+                .then(res =>{
+                    setOnlineUsers([ ...res.data])
+                })
+    }
+    //pick random online,active user
+//    let pickRandomPartner
 
     //going to be passed down to AuthContext
     let contextData = {
@@ -208,9 +212,9 @@ export const AuthProvider = ({children}) => {
         retrieveChallenge: retrieveChallenge,
         challengeInState: challengeInState,
         navToRooms: navToRooms,
-        getUsers: getUsers,
+        getAllUsers: getAllUsers,
+        onlineUsers: onlineUsers,
     }
-
     //so we refresh our refresh token and update state every 4 minutes
     useEffect(()=> {
         let fourMinutes = 1000 * 60 * 4

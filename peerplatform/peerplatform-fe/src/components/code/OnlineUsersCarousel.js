@@ -6,14 +6,14 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { Rings } from 'react-loader-spinner';
 
 const OnlineUsersCarousel = () =>  {
-        const { user } = useContext(AuthContext)
-        const [onlineUsers, setOnlineUsers] = useState([])
+        const { user, onlineUsers, getAllUsers } = useContext(AuthContext);
+//        const [onlineUsers, setOnlineUsers] = useState([]);
 
         const contentStyle = {
               height: '160px',
-              width: '25%',
+              width: '20%',
               color: '#fff',
-              lineHeight: '60%',
+              lineHeight: '50%',
               textAlign: 'center',
               background: '#364d79',
               display: 'flex',
@@ -29,21 +29,17 @@ const OnlineUsersCarousel = () =>  {
         }
 
         const containerStyle = {
-            transform: 'translate(37%, 0%)',
+            transform: 'translate(39%, 0%)',
         }
 
         useEffect((() => {
             console.log('use Effect is running')
-            axios.get('http://127.0.0.1:8000/users/')
-                .then(res =>{
-                    setOnlineUsers([ ...res.data])
-                })
+            getAllUsers()
         }),[])
-        console.log(`inside state ${onlineUsers}`)
 
         return(
         <>
-        <center><h6>Who's Online</h6></center>
+            <center><h8>Who's Online</h8></center>
             <Carousel autoplay style={containerStyle} dotPosition={'left'} effect={'fade'} autoplaySpeed={10}>
                     {
                         [onlineUsers].length === 0 ?
@@ -51,12 +47,14 @@ const OnlineUsersCarousel = () =>  {
                             : onlineUsers.map(user => {
                                 return (
                                 <div className="img-container">
-                                    <h3 style={contentStyle}><img style={imageStyle} src={user.profile_pic} /></h3>
+                                    <h3 style={contentStyle}>
+                                        <img style={imageStyle} src={user.profile_pic} />
+                                    </h3>
                                 </div>
                                 )
                             })
                     }
-          </Carousel>
+            </Carousel>
         </>
         )
 };
