@@ -8,10 +8,11 @@ import AuthContext from '../../context/AuthContext';
 import OnlineUsersCarousel from './OnlineUsersCarousel';
 import "../../assets/waitingRoom/app.css";
 
-const RoomList = () =>  {
+const WaitingRoom = () =>  {
     const [state, setState] = useGlobalState();
     const history = useHistory();
     const { user,logOutUser, updateProfile } = useContext(AuthContext)
+    console.log(`what do we have in state twilioToken: ${state.twilioToken}`)
 
     const contentStyle = {
         height: '80px',
@@ -20,6 +21,12 @@ const RoomList = () =>  {
         textAlign: 'center',
         background: '#364d79',
     };
+
+
+//    useEffect((() => {
+//        console.log('use effect is running inside RoomList')
+//        pickRandomPartner()
+//    }), [])
 
     const createRoomHandler = () => {
         const userData = {'roomName': state.nickname, 'participantLabel': state.createdRoomTopic}
@@ -54,8 +61,8 @@ const RoomList = () =>  {
 
     return (
     <>
+        <OnlineUsersCarousel/>
         <center><h6>How it works</h6></center>
-            <OnlineUsersCarousel/>
                 <p className='text'>The session will be split into 5 phases:</p>
                 <ul>
                     <li><strong>Introductions:</strong> You will be given 5 minutes for introductions. Get to know who you are coding with.</li>
@@ -73,5 +80,5 @@ const RoomList = () =>  {
     );
 };
 
-export default React.memo(RoomList);
+export default React.memo(WaitingRoom);
 

@@ -19,12 +19,13 @@ const Room = ({room}) => {
         const params = {
             roomName: roomName, participantLabel: nickname
         };
-        if (!call) {
-            const callPromise = device.connect({ params });
-            callPromise.then((call) => {
-                setCall(call);
-            });
-        }
+        console.log(`UseEffect inside rooms, params: ${params}`)
+//        if (!call) {
+//            const callPromise = device.connect({ params });
+//            callPromise.then((call) => {
+//                setCall(call);
+//            });
+//        }
         if (!state.selectedRoom.participants.includes(nickname)) {
             state.selectedRoom.participants.push(nickname);
         }

@@ -33,13 +33,12 @@ const OnlineUsersCarousel = () =>  {
         }
 
         useEffect((() => {
-            console.log('use Effect is running')
             getAllUsers()
         }),[])
 
         return(
         <>
-            <center><h8>Who's Online</h8></center>
+            <center><h6>Who's Online</h6></center>
             <Carousel autoplay style={containerStyle} dotPosition={'left'} effect={'fade'} autoplaySpeed={10}>
                     {
                         [onlineUsers].length === 0 ?

@@ -5,7 +5,7 @@ import { useGlobalState } from '../../context/RoomContextProvider';
 import AuthContext from '../../context/AuthContext';
 
 
-const SignupForm = () => {
+const StartCodingComponent = () => {
     const history = useHistory();
     const [ state, setState ] = useGlobalState();
     const { user,logOutUser, updateProfile, getUsers } = useContext(AuthContext)
@@ -22,6 +22,7 @@ const SignupForm = () => {
         const nickname = user.username;
         const createdRoomTopic = generateRandomTopicNum()
         setupTwilio(nickname, createdRoomTopic);
+        console.log(`token after setUpTwilio is: ${state.twilioToken} nickname: ${state.nickname}`)
         const selectedRoom = { room_name: state.createdRoomTopic, participants: [] };
         const rooms = state.rooms;
         const roomId = rooms.push(selectedRoom);
@@ -36,7 +37,7 @@ const SignupForm = () => {
         .then(response => response.json())
         .then(data => {
             // setup device
-            const twilioToken = data.token;
+            const twilioToken = String(data.token);
             const device = new Device(twilioToken);
             device.updateOptions(twilioToken, {
                 codecPreferences: ['opus', 'pcmu'],
@@ -62,6 +63,6 @@ const SignupForm = () => {
     );
 };
 
-export default SignupForm;
+export default StartCodingComponent;
 
 

@@ -15,7 +15,7 @@ import useModal from './useModalCustomHook'
 import CodeEditor from '../code/CodeEditor'
 import { Link } from 'react-router-dom';
 //import App from '../../../editor-ui/src/App.vue'
-import SignupForm from '../code/SignupForm';
+import StartCodingComponent from '../code/StartCodingComponent';
 //import { useGlobalState } from '../../context/RoomContextProvider';
 import Ratings from '../profile_tabs/Ratings'
 import axios from 'axios';
@@ -116,7 +116,7 @@ import {
                     <button className="button button-primary button-wide-mobile button-sm" color="primary" onClick={logOutUser}>
                         Logout
                     </button>
-                    <SignupForm/>
+                    <StartCodingComponent/>
                 </div>
         <Row>
           <Col md="4">

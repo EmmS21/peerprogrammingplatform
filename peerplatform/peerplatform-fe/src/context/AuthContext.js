@@ -26,8 +26,20 @@ export const AuthProvider = ({children}) => {
     //creating new drop in audio chat
     const [state, setState] = useState(useGlobalState());
     const [onlineUsers, setOnlineUsers] = useState([]);
+    const [availableUsers, setAvailableUsers] = useState([]);
+    const [spinnerOn, setSpinnerOn] = useState(false)
+    const [resp, setResp] = useState("")
+    const baseURL = "https://judge0-ce.p.rapidapi.com/submissions"
 
     const history = useHistory();
+
+    const codeWarsIds = ['523a86aa4230ebb5420001e1','541c8630095125aba6000c00','5266876b8f4bf2da9b000362',
+    '526dbd6c8c0eb53254000110','514a024011ea4fb54200004b','5270d0d18625160ada0000e4','520b9d2ad5c005041100000f',
+    '52742f58faf5485cae000b9a','546f922b54af40e1e90001da','546f922b54af40e1e90001da',
+    '523f5d21c841566fde000009','52597aa56021e91c93000cb0','57cebe1dc6fdc20c57000ac9',
+    '55f8a9c06c018a0d6e000132','545cedaa9943f7fe7b000048','55908aad6620c066bc00002a',
+    '546e2562b03326a88e000020','5390bac347d09b7da40006f6','5264d2b162488dc400000001',
+    '50654ddff44f800200000004']
 
     //we are going to pass this information down to login page
     //async function because we must wait for something to happen first
@@ -97,15 +109,27 @@ export const AuthProvider = ({children}) => {
     }
     //retrieve random programming challenge
     const retrieveChallenge = () => {
+        const challenge = codeWarsIds[(Math.random() * codeWarsIds.length) | 0]
         const roomName = user.username
         setupTwilio(roomName);
-        axios.get('http://127.0.0.1:8000/api/programming_challenges/')
-            .then(res => {
-                setChallengeInState(res.data.random())
+        axios.get(`https://www.codewars.com/api/v1/code-challenges/${challenge}`)
+            .then(res=>{
+                setChallengeInState(res.data)
             })
-            .catch(err => {
+            .catch(err=> {
                 console.log(err)
             })
+
+
+//
+//        axios.get('http://127.0.0.1:8000/api/programming_challenges/')
+//            .then(res => {
+//                console.log(`retrieveChallenge has been hit ${res.data.random()}`)
+//                setChallengeInState(res.data.random())
+//            })
+//            .catch(err => {
+//                console.log(err)
+//            })
     }
 
 //            {
@@ -198,8 +222,45 @@ export const AuthProvider = ({children}) => {
                     setOnlineUsers([ ...res.data])
                 })
     }
+    //code editor functionality - wait three seconds before getting input
+    const threeSecondWait = () => {
+            return new Promise(resolve => setTimeout(() => resolve("result"),3000));
+    };
+
+    //headers to send to Judge0API
+    const headers = {
+            'X-RapidAPI-Key': 'bcc33499f9msh5f6c898ed17eea7p121b52jsn76ceee08eab4'
+    }
+    //send code and required data to Judge0API
+    const sendCodeJudge0 = (requestBody) => {
+        axios.post(`${baseURL}`, requestBody, {
+            headers
+            })
+            .then((res)=> {
+                threeSecondWait().then(()=>{
+                    axios.get(`${baseURL}/${res.data.token}`, {
+                        headers
+                    })
+                    .then((res)=> {
+                        setSpinnerOn(false)
+                        !res.data.stdout ? setResp(res.data.stderr)
+                            : setResp(res.data.stdout)
+                    })
+                    .catch((err)=> {
+                        console.log('err',err)
+                    })
+                })
+            })
+    }
+
+
     //pick random online,active user
-//    let pickRandomPartner
+//    let pickRandomPartner = () => {
+//        const results = onlineUsers.filter(obj => {
+//            return obj.is_online === True && obj.is_active === True
+//        }
+//        console.log('pickRandomPartner triggered', results)
+//    }
 
     //going to be passed down to AuthContext
     let contextData = {
@@ -214,7 +275,15 @@ export const AuthProvider = ({children}) => {
         navToRooms: navToRooms,
         getAllUsers: getAllUsers,
         onlineUsers: onlineUsers,
+        availableUsers: availableUsers,
+        sendCodeJudge0: sendCodeJudge0,
+        spinnerOn: spinnerOn,
+        setSpinnerOn: setSpinnerOn,
+        resp: resp,
+        setResp: setResp,
+//        pickRandomPartner: pickRandomPartner,
     }
+
     //so we refresh our refresh token and update state every 4 minutes
     useEffect(()=> {
         let fourMinutes = 1000 * 60 * 4

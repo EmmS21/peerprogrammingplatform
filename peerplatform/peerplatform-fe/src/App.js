@@ -17,8 +17,7 @@ import { AuthProvider } from './context/AuthContext';
 //we can probably deconstruct these to a one-liner
 import Pages from './components/code/Pages';
 import { RoomContextProvider, useGlobalState } from './context/RoomContextProvider';
-import RoomList from './components/code/RoomList';
-import SignupForm from './components/code/SignupForm';
+import WaitingRoom from './components/code/WaitingRoom';
 import Room from './components/code/Room';
 
 // Initialize Google Analytics
@@ -60,7 +59,7 @@ const App = () => {
                 <AppRoute exact path="/code_editor" component={CodeEditor} />
                 <AppRoute exact path="/timer" component={Timer} />
                 <RoomContextProvider useGlobalState={ useGlobalState }>
-                    <AppRoute exact path="/rooms" component={RoomList} />
+                    <AppRoute exact path="/rooms" component={WaitingRoom} />
                     <PrivateRoute exact path="/profile" component={Profile} render={(props) => <AdminLayout {...props} />} />
                     <AppRoute exact path="/rooms/:roomId" component={Room} />
                 </RoomContextProvider>
@@ -71,12 +70,3 @@ const App = () => {
 }
 
 export default App;
-//
-//        <Route path='/rooms'>
-//          {state.twilioToken? <RoomList /> : <SignupForm />}
-//        </Route>
-//                <RoomContextProvider>
-//                    <div>
-//                        <Pages />
-//                    </div>
-//                </RoomContextProvider>

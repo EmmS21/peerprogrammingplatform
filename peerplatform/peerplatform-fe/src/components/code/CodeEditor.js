@@ -30,14 +30,12 @@ import AuthContext from '../../context/AuthContext';
 const CodeEditor = () => {
     const [currentLanguage, setCurrentLanguage] = useState("");
     const [token, setToken] = useState("");
-    const [resp, setResp] = useState("");
+//    const [resp, setResp] = useState("");
     const [error, setError] = useState("");
-    const baseURL = "https://ce.judge0.com";
     const output = null;
-    const [spinnerOn, setSpinnerOn] = useState(false)
     const { Step } = Steps;
     const { TabPane } = Tabs;
-    const { retrieveChallenge,challengeInState } = useContext(AuthContext)
+    const { retrieveChallenge,challengeInState,sendCodeJudge0, spinnerOn, setSpinnerOn, resp, setResp } = useContext(AuthContext)
 
     //change language in select options
     const changeLanguageHandler = (e) => {
@@ -48,8 +46,7 @@ const CodeEditor = () => {
     //map language id to language
     const languageMap = {
         70: "python",
-        63: "javascript",
-        82: "sql"
+        63: "javascript"
     }
 
     const requestBody = {
@@ -74,40 +71,14 @@ const CodeEditor = () => {
         console.log(newVal)
     }
 
-    //wait three seconds before getting output
-    const threeSecondWait = () => {
-            return new Promise(resolve => setTimeout(() => resolve("result"),3000));
-    };
     //handle submission
     const makeSubmission = (e) => {
         e.preventDefault();
-        console.log('sending:', document.getElementsByClassName('ace_content')[0].innerText)
         requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
-        console.log('testing',requestBody)
+        console.log('source_code',requestBody.source_code)
         setSpinnerOn(true)
         setResp('')
-        axios.post(`${baseURL}/submissions`, requestBody)
-                .then((res)=> {
-                    console.log('we sent this:');
-                    console.log(requestBody)
-                    setToken(res.data.token)
-                    console.log('token', token);
-                    threeSecondWait().then(()=>{
-                        axios.get(`${baseURL}/submissions/${token}`)
-                            .then((res) => {
-                            setSpinnerOn(false)
-                            console.log(res.data)
-                                !res.data.stdout ? setResp(res.data.stderr)
-                                :setResp(res.data.stdout)
-                            })
-                            .catch((err) => {
-                            console.log('err', err)
-                            })
-                    })
-                })
-                .catch((err)=>{
-                    setError(err.response.data.source_code.toString())
-                })
+        sendCodeJudge0(requestBody)
     }
 
     //handles changing clock timer
