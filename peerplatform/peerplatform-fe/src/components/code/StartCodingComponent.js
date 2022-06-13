@@ -15,7 +15,6 @@ const StartCodingComponent = () => {
         return Math.random().toString(36).slice(2, 7)
     }
 
-
     //handle submission
     const handleSubmit = e => {
         e.preventDefault();

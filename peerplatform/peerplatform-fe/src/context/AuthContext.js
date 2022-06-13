@@ -29,6 +29,9 @@ export const AuthProvider = ({children}) => {
     const [availableUsers, setAvailableUsers] = useState([]);
     const [spinnerOn, setSpinnerOn] = useState(false)
     const [resp, setResp] = useState("")
+    const [valueOne, setValueOne] = useState(0)
+    const [valueTwo, setValueTwo] = useState(0)
+    const [valueThree, setValueThree] = useState(0)
     const baseURL = "https://judge0-ce.p.rapidapi.com/submissions"
 
     const history = useHistory();
@@ -99,19 +102,11 @@ export const AuthProvider = ({children}) => {
     Array.prototype.random = function() {
         return this[Math.floor(Math.random()*this.length)]
     }
-    //from profile page to rooms
-    const navToRooms = () => {
-        const roomName = user.username
-        console.log('roomname', roomName)
-        setupTwilio(roomName);
-        console.log('twilio token is', state.twilioToken)
-        history.push('/rooms');
-    }
+
     //retrieve random programming challenge
     const retrieveChallenge = () => {
         const challenge = codeWarsIds[(Math.random() * codeWarsIds.length) | 0]
         const roomName = user.username
-        setupTwilio(roomName);
         axios.get(`https://www.codewars.com/api/v1/code-challenges/${challenge}`)
             .then(res=>{
                 setChallengeInState(res.data)
@@ -119,56 +114,7 @@ export const AuthProvider = ({children}) => {
             .catch(err=> {
                 console.log(err)
             })
-
-
-//
-//        axios.get('http://127.0.0.1:8000/api/programming_challenges/')
-//            .then(res => {
-//                console.log(`retrieveChallenge has been hit ${res.data.random()}`)
-//                setChallengeInState(res.data.random())
-//            })
-//            .catch(err => {
-//                console.log(err)
-//            })
     }
-
-//            {
-//                headers: {
-//                    'Authorization': "jwt" + JSON.parse(window.localStorage.getItem('authTokens')).access,
-//                    'Accept' : 'application/json',
-//                    'Content-Type': 'application/json'
-//                },
-//                body: userData
-//                })
-    //handle submission
-//    const handleSubmit = () => {
-//        setupTwilio(nickname);
-//        history.push('/rooms');
-//    }
-    const setupTwilio = (roomName) => {
-        fetch(`http://127.0.0.1:8000/voice_chat/token/${roomName}`)
-        .then(response => response.json())
-        .then(data => {
-            const twilioToken = data.token;
-            const device = new Device(twilioToken);
-            device.updateOptions(twilioToken, {
-                codecPreferences: ['opus', 'pcmu'],
-                fakeLocalDTMF: true,
-                maxAverageBitrate: 16000
-            });
-            device.on('error', (device) => {
-                console.log("error: ", device)
-            });
-            setState((state) => {
-                return {...state, device, twilioToken}
-            });
-            console.log('we are inside setup Twilio')
-            console.log('responses: device', device)
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-    };
 
     let logOutUser = () => {
         handleServerLogout()
@@ -272,7 +218,6 @@ export const AuthProvider = ({children}) => {
         getProfileInfo: getProfileInfo,
         retrieveChallenge: retrieveChallenge,
         challengeInState: challengeInState,
-        navToRooms: navToRooms,
         getAllUsers: getAllUsers,
         onlineUsers: onlineUsers,
         availableUsers: availableUsers,
@@ -281,6 +226,12 @@ export const AuthProvider = ({children}) => {
         setSpinnerOn: setSpinnerOn,
         resp: resp,
         setResp: setResp,
+        valueOne: valueOne,
+        setValueOne: setValueOne,
+        valueTwo: valueTwo,
+        setValueTwo: setValueTwo,
+        valueThree: valueThree,
+        setValueThree: setValueThree
 //        pickRandomPartner: pickRandomPartner,
     }
 

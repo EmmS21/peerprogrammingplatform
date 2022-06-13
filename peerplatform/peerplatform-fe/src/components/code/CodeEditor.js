@@ -30,7 +30,6 @@ import AuthContext from '../../context/AuthContext';
 const CodeEditor = () => {
     const [currentLanguage, setCurrentLanguage] = useState("");
     const [token, setToken] = useState("");
-//    const [resp, setResp] = useState("");
     const [error, setError] = useState("");
     const output = null;
     const { Step } = Steps;

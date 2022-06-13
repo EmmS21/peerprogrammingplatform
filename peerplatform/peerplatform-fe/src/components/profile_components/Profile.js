@@ -37,7 +37,7 @@ import {
 
 
     const Profile = () => {
-        let { user,logOutUser, updateProfile, retrieveChallenge, navToRooms, getProfileInfo } = useContext(AuthContext)
+        let { user,logOutUser, updateProfile, retrieveChallenge, getProfileInfo } = useContext(AuthContext)
         //store users in state
         const[profileUser, setProfileUser] = useState({user})
         //modal state
