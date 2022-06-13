@@ -22,7 +22,6 @@ const StartCodingComponent = () => {
         const nickname = user.username;
         const createdRoomTopic = generateRandomTopicNum()
         setupTwilio(nickname, createdRoomTopic);
-        console.log(`token after setUpTwilio is: ${state.twilioToken} nickname: ${state.nickname}`)
         const selectedRoom = { room_name: state.createdRoomTopic, participants: [] };
         const rooms = state.rooms;
         const roomId = rooms.push(selectedRoom);
@@ -37,7 +36,7 @@ const StartCodingComponent = () => {
         .then(response => response.json())
         .then(data => {
             // setup device
-            const twilioToken = String(data.token);
+            const twilioToken = JSON.parse(data).token;
             const device = new Device(twilioToken);
             device.updateOptions(twilioToken, {
                 codecPreferences: ['opus', 'pcmu'],
@@ -47,9 +46,10 @@ const StartCodingComponent = () => {
             device.on('error', (device) => {
                 console.log("error: ", device)
             });
-            setState((state) => {
-                return {...state, device, twilioToken, nickname, createdRoomTopic}
-            });
+            setState({... state, device, twilioToken, nickname, createdRoomTopic})
+//            setState((state) => {
+//                return {...state, device, twilioToken, nickname, createdRoomTopic}
+//            });
         })
         .catch((error) => {
             console.log(error)
