@@ -27,6 +27,12 @@ class Profile(models.Model):
         user.profile.is_online = False
         user.profile.save()
 
+    @receiver(post_save, sender=user)
+    def update_profile_signal(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
+        instance.profile.save()
+
 
 # creating programming challenges
 class ProgrammingChallenge(models.Model):

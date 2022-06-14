@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 # from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers, exceptions
 
-#added more imports based on simpleJWT tutorial
+# added more imports based on simpleJWT tutorial
 from rest_framework.permissions import IsAuthenticated
 from django.db import models
-from django.contrib.auth import authenticate, user_logged_in
+from django.contrib.auth import authenticate, user_logged_in, get_user_model
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer;
 from rest_framework_simplejwt.settings import api_settings
@@ -18,38 +19,47 @@ from accounts.models import Profile
 
 
 # User = get_user_model()
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['city', 'country']
 
 
-#changed from serializers.HyperLinked to ModelSerializer and then to RegisterSerializer to accurately reflect what this does
+# changed from serializers.HyperLinked to ModelSerializer and then to RegisterSerializer to accurately reflect what this does
 class RegisterSerializer(serializers.ModelSerializer):
-    city = serializers.CharField(source='profile.city')
-    country = serializers.CharField(source='profile.country')
-    profile_pic = serializers.ImageField(source='profile.profile_pic')
-    is_online = serializers.BooleanField(source='profile.is_online')
-    is_active = serializers.BooleanField(source='profile.is_active')
+    profile = ProfileSerializer()
     class Meta:
         model = User
-        #removed url from fields
-        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic', 'is_online', 'is_active']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'profile']
         extra_kwargs = {
             'password': {'write_only': True},
         }
-        def create(self,validated_data):
-            user = User.objects.create_user(
-                                            username=validated_data['username'],
-                                            first_name=validated_data['first_name'],
-                                            last_name=validated_data['last_name'],
-                                            email=validated_data['email'])
-            user.set_password(validated_data['password'])
-            user.save()
-            #added fields from profile
-            user.profile.city = validated_data['city']
-            user.profile.country = validated_data['country']
-            user.profile.bio = validated_data['bio']
-            return user
+    #password validation
+    def validate_password(self, value):
+        validate_password(value)
+        return value
+    
+    def create(self,validated_data):
+        profile_data = validated_data.pop('profile')
+        user = User.objects.create(**validated_data)
+        Profile.objects.create(**profile_data, user=user)
+        return user
+        # user = User.objects.create_user(
+        #                                 username=validated_data['username'],
+        #                                 first_name=validated_data['first_name'],
+        #                                 last_name=validated_data['last_name'],
+        #                                 # password=validated_data['password'],
+        #                                 email=validated_data['email'])
+        # user.set_password(validated_data['password'])
+        #
+        # #added fields from profile
+        # # user.profile.city = validated_data['city']
+        # # user.profile.country = validated_data['country']
+        # # user.profile.bio = validated_data['bio']
+        # user.save()
+        # return user
 
-
-#upload profile picture using base64 encoding string instead of raw file (not supported by default)
+# upload profile picture using base64 encoding string instead of raw file (not supported by default)
 class Base64ImageField(serializers.ImageField):
     def to_internal_value(self, data):
         from django.core.files.base import ContentFile
@@ -57,21 +67,21 @@ class Base64ImageField(serializers.ImageField):
         import six
         import uuid
 
-        #check if this is base64 string
+        # check if this is base64 string
         if isinstance(data, six.string_types):
-            #check if the base64 is in the data format
+            # check if the base64 is in the data format
             if 'data:' in data and ';base64' in data:
-                header,data = data.split(';base64,')
+                header, data = data.split(';base64,')
             try:
                 decoded_file = base64.b64decode(data)
             except TypeError:
                 self.fail('invalid_image')
 
-            #Generate file name:
+            # Generate file name:
             file_name = str(uuid.uuid4())[:12]
-            #Get the file name extension
+            # Get the file name extension
             file_extension = self.get_file_extension(file_name, decoded_file)
-            complete_file_name = "%s.%s" % (file_name, file_extension, )
+            complete_file_name = "%s.%s" % (file_name, file_extension,)
             data = ContentFile(decoded_file, name=complete_file_name)
         return super(Base64ImageField, self).to_internal_value(data)
 
@@ -81,7 +91,8 @@ class Base64ImageField(serializers.ImageField):
         extension = "jpg" if extension == "jpeg" else extension
         return extension
 
-#updating user profile
+
+# updating user profile
 class UpdateUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=False)
     city = serializers.CharField(source='profile.city', allow_blank=True, required=False)
@@ -89,12 +100,14 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     profile_pic = Base64ImageField(source='profile.profile_pic', max_length=None, use_url=True, required=False)
     is_online = serializers.BooleanField(source='profile.is_online', required=False)
     is_active = serializers.BooleanField(source='profile.is_active', required=False)
-        # serializers.ImageField(source='profile.profile_pic', use_url=True, required=False)
+
+    # serializers.ImageField(source='profile.profile_pic', use_url=True, required=False)
 
     class Meta:
         model = User
-        #, 'city', 'country', 'bio'
-        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic', 'is_online', 'is_active']
+        # , 'city', 'country', 'bio'
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic',
+                  'is_online', 'is_active']
         # fields = UserDetailsSerializer.Meta.fields + ('city', 'country')
         extra_kwargs = {'username': {'required': False},
                         'email': {'required': False},
@@ -107,6 +120,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
                         'is_online': {'required': False},
                         'is_active': {'required': False},
                         }
+
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('profile', {})
         city = profile_data.get('city')
@@ -132,7 +146,8 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             profile.save()
         return instance
 
-#customizing the payload we get from our access tokens
+
+# customizing the payload we get from our access tokens
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
@@ -150,7 +165,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 'user': 'Not Found',
             }
         token = RefreshToken.for_user(user)
-        #customizing token payload
+        # customizing token payload
         token['username'] = user.username
         token['first_name'] = user.first_name
         token['last_name'] = user.last_name
@@ -182,6 +197,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
+
 class UserSerializerWithToken(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True)
@@ -190,6 +206,7 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 class PasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
 
 class ProgrammingChallengeSerializer(serializers.ModelSerializer):
     class Meta:

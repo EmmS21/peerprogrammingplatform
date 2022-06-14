@@ -28,7 +28,7 @@ const Signup = () => {
             email: email,
             password: password,
         };
-        console.log(user);
+        console.log(`username: ${user.username}, email is: ${user.email} and password is: ${user.password}`);
         fetch('http://127.0.0.1:8000/api/register', {
             method: 'POST',
             headers: {
@@ -36,20 +36,20 @@ const Signup = () => {
             },
             body: JSON.stringify(user)
         })
-            .then(res => res.json())
-            .then(data => {
-                if (data.key) {
-                    localStorage.clear();
-                    localStorage.setItem('token',data.key);
-                    window.location.href('http://localhost:3000/profile/');
-                } else {
-                    setEmail('');
-                    setUserName('');
-                    setPassword('');
-                    localStorage.clear();
-                    setErrors(true);
-                }
-            });
+            .then(res => console.log(res.json()))
+//            .then(data => {
+//                if (data.key) {
+//                    localStorage.clear();
+//                    localStorage.setItem('token',data.key);
+//                    window.location.href('http://localhost:3000/profile/');
+//                } else {
+//                    setEmail('');
+//                    setUserName('');
+//                    setPassword('');
+//                    localStorage.clear();
+//                    setErrors(true);
+//                }
+//            });
     };
     return (
             <div className="base-container">
@@ -70,7 +70,7 @@ const Signup = () => {
                                 type="text"
                                 name="name"
                                 placeholder="name"
-                                value= {username}
+                                value= { username }
                                 onChange= {e => setUserName(e.target.value)}
                                 required
                             />{' '}
