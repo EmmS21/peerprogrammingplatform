@@ -1,4 +1,4 @@
-import React, { Component,useState,useEffect } from 'react';
+import React, { Component,useState,useEffect,useContext } from 'react';
 import secure_signup from '../../assets/images/secure_signup.svg';
 import CountrySelector from './CountryList'
 import ProcessImage from 'react-imgpro';
@@ -7,7 +7,9 @@ import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useHistory } from 'react-router-dom';
-import { Alert } from 'antd';
+import { Alert, Button, Space } from 'antd';
+import AuthContext from '../../context/AuthContext'
+
 
 const Signup = () => {
 
@@ -19,16 +21,13 @@ const Signup = () => {
     const [loading, setLoading] =  useState(true);
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const history = useHistory();
-    const [visible, setVisible] = useState(false);
-    const [errorText, setErrorText] = useState('');
-
+    let { onSubmit, errorText, visible, successSignup } = useContext(AuthContext);
 
     useEffect(() => {
         if(localStorage.getItem('token') !== null) {
             window.location.replace('http://localhost:3000/profile');
         } else {
             setLoading(false);
-//            setErrors({ ...errors, usernameError: 'we have something' })
         }
     }, []);
 
@@ -45,7 +44,6 @@ const Signup = () => {
             .max(12, 'Password length cannot exceed 12 characters')
     });
 
-//    const onSubmit = (data) => console.log('submitted with', data);
     const handleEmailValidation = email => {
         const isValid = isValidEmail(email)
         const validityChanged =
@@ -55,49 +53,11 @@ const Signup = () => {
         }
         return isValid;
     }
-    const onSubmit = (data) => {
-//        e.preventDefault();
-        const user = {
-            username: data.username,
-            email: data.email,
-            password: data.password,
-            profile: {
-                        city: data.city,
-                        country: data.country,
-            }
-        };
-        fetch('http://127.0.0.1:8000/api/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify(user)
-            })
-            .then(res => {
-                if(!res.ok){
-                   return res.text().then(text=> {
-//                   console.log(text)
-                    setErrorText(text)
-                    setVisible(true)
-                   })
-                }
-                else {
-                    return res.json()
-                            .then(data=> {
-                            if(data.token) {
-                                const tokensAuth = {
-                                    'authTokens': {
-                                        'refresh': data.token.refresh_token,
-                                        'access': data.token.access_token,
-                                    }
-                                }
-                                localStorage.clear();
-                                localStorage.setItem('token',tokensAuth);
-                                history.push('/profile')
-                            }});
-                    }
-            })
-        };
+
+    const moveTo = () => {
+        history.push('/login')
+    }
+
     return (
             <div className="base-container">
                 <div className="content">
@@ -116,7 +76,23 @@ const Signup = () => {
                             type="warning"
                             showIcon
                             closable
-                    /> ): null }
+                        /> ): null
+                    }
+                    { successSignup ? (
+                        <Alert
+                            message="Info Text"
+                            description="Your profile has been created, you can now login to access your account"
+                            type="info"
+                            action={
+                                <Space direction="vertical">
+                                    <Button size="small" type="primary" onClick={moveTo}>
+                                        Login
+                                    </Button>
+                                </Space>
+                            }
+                            closable
+                        />) : null
+                    }
                     <div className="form">
                         <div className="form-group">
                             <label htmlFor="username">Username</label>

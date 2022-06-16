@@ -9,7 +9,6 @@ import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../context/RoomContextProvider';
 
 
-
 const AuthContext = createContext()
 
 export default AuthContext;
@@ -32,6 +31,9 @@ export const AuthProvider = ({children}) => {
     const [valueOne, setValueOne] = useState(0)
     const [valueTwo, setValueTwo] = useState(0)
     const [valueThree, setValueThree] = useState(0)
+    const [errorText, setErrorText] = useState('');
+    const [visible, setVisible] = useState(false);
+    const [successSignup, setSuccessSignup] = useState(false)
     const baseURL = "https://judge0-ce.p.rapidapi.com/submissions"
 
     const history = useHistory();
@@ -199,6 +201,53 @@ export const AuthProvider = ({children}) => {
             })
     }
 
+    const onSubmit = (data) => {
+        const user = {
+            username: data.username,
+            email: data.email,
+            password: data.password,
+            profile: {
+                        city: data.city,
+                        country: data.country,
+            }
+        };
+        fetch('http://127.0.0.1:8000/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify(user)
+            })
+            .then(res => {
+                if(!res.ok){
+                   return res.text().then(text=> {
+                    const cleanText = text.split(':')[1].replace('[', '').replace(']','').replace('}','')
+                    setErrorText(cleanText)
+                    setVisible(true)
+                   })
+                }
+                else {
+                    return res.json()
+                            .then(data=> {
+                                    setSuccessSignup(true)
+                              //we no longer need to store the token in local storage
+//                            if(data.token) {
+//                                const tokensAuth = {
+//                                    'authTokens': {
+//                                        'refresh': data.token.refresh_token,
+//                                        'access': data.token.access_token,
+//                                    }
+//                                }
+//                                localStorage.clear();
+//
+//                                localStorage.setItem('authTokens',tokensAuth);
+//                                history.push('/profile')
+//                            }
+
+                            });
+                    }
+            })
+        };
 
     //pick random online,active user
 //    let pickRandomPartner = () => {
@@ -231,7 +280,11 @@ export const AuthProvider = ({children}) => {
         valueTwo: valueTwo,
         setValueTwo: setValueTwo,
         valueThree: valueThree,
-        setValueThree: setValueThree
+        setValueThree: setValueThree,
+        onSubmit: onSubmit,
+        errorText: errorText,
+        visible: visible,
+        successSignup: successSignup
 //        pickRandomPartner: pickRandomPartner,
     }
 
