@@ -65,7 +65,6 @@ const Hero = ({
             </h1>
             <div className="container-xs">
               <p className="m-0 mb-32 reveal-from-bottom" data-reveal-delay="400">
-                Get matched with similarly skilled to collaborate on solving timed programming challenges
               </p>
               <div className="reveal-from-bottom" data-reveal-delay="600">
                   <Button tag="a" color="primary" wideMobile href="https://thegradientboost.com">
