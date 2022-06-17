@@ -39,7 +39,7 @@ const OnlineUsersCarousel = () =>  {
         return(
         <>
             <center><h6>Who's Online</h6></center>
-            <Carousel autoplay style={containerStyle} dotPosition={'left'} effect={'fade'} autoplaySpeed={10}>
+            <Carousel autoplay style={containerStyle} dots={false} effect={'fade'} autoplaySpeed={10}>
                     {
                         [onlineUsers].length === 0 ?
                             <Rings color="#00BFFF" height={80} width={80} />

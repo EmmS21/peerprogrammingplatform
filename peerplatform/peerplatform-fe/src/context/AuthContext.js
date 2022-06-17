@@ -86,14 +86,15 @@ export const AuthProvider = ({children}) => {
 
     //update profile information
     const updateProfile = (userData) => {
-        axios.put(`http://127.0.0.1:8000/update_profile/${userData.user_id}/`, userData)
-            .then(res => {
-                setUser({ ...user, first_name:res.data.first_name,
-                        last_name: res.data_last_name,
-                        username: res.data.username,
-                        city: res.data.city,
-                        country: res.data.country })
-            })
+        console.log(userData.profile_pic)
+//        axios.put(`http://127.0.0.1:8000/update_profile/${userData.user_id}/`, userData)
+//            .then(res => {
+//                setUser({ ...user, first_name:res.data.first_name,
+//                        last_name: res.data_last_name,
+//                        username: res.data.username,
+//                        city: res.data.city,
+//                        country: res.data.country })
+//            })
     }
     //retrieve profile information
     const retrieveProfileInformation = () => {

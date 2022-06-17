@@ -100,6 +100,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     profile_pic = Base64ImageField(source='profile.profile_pic', max_length=None, use_url=True, required=False)
     is_online = serializers.BooleanField(source='profile.is_online', required=False)
     is_active = serializers.BooleanField(source='profile.is_active', required=False)
+    push_notifications = serializers.BooleanField(source='profile.push_notifications', required=False)
 
     # serializers.ImageField(source='profile.profile_pic', use_url=True, required=False)
 
@@ -107,7 +108,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         model = User
         # , 'city', 'country', 'bio'
         fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic',
-                  'is_online', 'is_active']
+                  'is_online', 'is_active', 'push_notifications']
         # fields = UserDetailsSerializer.Meta.fields + ('city', 'country')
         extra_kwargs = {'username': {'required': False},
                         'email': {'required': False},
@@ -119,6 +120,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
                         'profile_pic': {'required': False},
                         'is_online': {'required': False},
                         'is_active': {'required': False},
+                        'push_notifications': {'required': False},
                         }
 
     def update(self, instance, validated_data):
@@ -128,6 +130,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         profile_pic = profile_data.get('profile_pic')
         is_online = profile_data.get('is_online')
         is_active = profile_data.get('is_active')
+        push_notifications = profile_data.push_notifications('push_notifications')
 
         instance = super(UpdateUserSerializer, self).update(instance, validated_data)
 
@@ -143,6 +146,8 @@ class UpdateUserSerializer(serializers.ModelSerializer):
                 profile.is_online = is_online
             if is_active is not None:
                 profile.is_active = is_active
+            if push_notifications is not None:
+                profile.push_notifications = push_notifications
             profile.save()
         return instance
 
