@@ -1,5 +1,9 @@
 from django.contrib.auth.models import User, Group
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from webpush import send_user_notification
+import json
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -92,9 +96,6 @@ class ProgrammingChallengeView(ReadOnlyModelViewSet):
     @action(detail=False)
     def get_list(self, request):
         pass
-
-
-
 
 # class GroupViewSet(viewsets.ModelViewSet):
 #     """

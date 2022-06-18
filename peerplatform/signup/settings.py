@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'allauth.account',
+    'pushnotifications',
 ]
 
 MIDDLEWARE = [
@@ -145,6 +146,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+WEBPUSH_SETTINGS = {
+   "VAPID_PUBLIC_KEY": config('VAPID_PUBLIC_KEY'),
+   "VAPID_PRIVATE_KEY": config('VAPID_PUBLIC_KEY'),
+   "VAPID_ADMIN_EMAIL": "emmanuelsibanda21@gmail.com"
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

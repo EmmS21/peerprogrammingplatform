@@ -21,7 +21,6 @@ import Ratings from '../profile_tabs/Ratings'
 import axios from 'axios';
 import { useIdleTimer } from 'react-idle-timer'
 
-
 import {
   Button,
   Card,
