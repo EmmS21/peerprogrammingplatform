@@ -9,6 +9,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .api import RegisterApi
 from voice_chat.views import RoomView
+from pushnotifications.views import *
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -30,6 +31,9 @@ urlpatterns = [
     path('update_active/<int:pk>/', views.UpdateProfileActive.as_view(), name='update_activity'),
     path('voice_chat/', include('voice_chat.urls')),
     path('api/programming_challenges/', ProgrammingChallengeView.as_view({'get':'list'}), name='programming_challenges'),
+    path('send/', send),
+    path('index', index),
+    path('firebase-messaging-sw.js/', showFirebaseJS, name='show_firebase_js'),
     # path('api/register', registration_view, name='register'),
     # path('api/users', view.UserCreate.as_view(),name='account-create'),
     # path('token-auth/', obtain_jwt_token)
