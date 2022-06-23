@@ -20,9 +20,8 @@ import StartCodingComponent from '../code/StartCodingComponent';
 import Ratings from '../profile_tabs/Ratings'
 import axios from 'axios';
 import { useIdleTimer } from 'react-idle-timer'
-
-import { fetchToken, onMessageListener } from '../../firebase';
-import { Toast } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
+import PushNotifications from './PushNotifications.js'
 
 import {
   Button,
@@ -50,25 +49,8 @@ import {
         //get room global state
 //        const { useGlobalState } = useContext(useGlobalState)
         fileSelector.setAttribute('type', 'file');
+        const history = useHistory();
 
-        //push notifications implementation
-        const [show, setShow] = useState(false);
-        const [notification, setNotification] = useState({title: '', body: ''});
-        const [isTokenFound, setTokenFound] = useState(false);
-        fetchToken(setTokenFound)
-
-        onMessageListener().then(payload => {
-            setNotification({ title: payload.notification.title,
-                              body: payload.notification.body })
-            setShow(true);
-            console.log(payload);
-        }).catch(err => console.log('failed: ', err));
-
-        const onShowNotificationClicked = () => {
-            setNotification({ title: "Notification",
-                              body: "This is a test notification" })
-            setShow(true);
-        }
 
         //on idle update Profile model activity field
         const handleOnIdle = (event: any) => {
@@ -132,25 +114,7 @@ import {
         return (
               <>
                   <div className="content">
-                    <Toast onClose={() => setShow(false) } show={ show } delay={ 3000 } autohide animation style={{
-                        position: 'absolute',
-                        top: 20,
-                        right: 20,
-                        minWidth: 200
-                    }}>
-                        <Toast.Header>
-                            <strong className="mr-auto">{ notification.title }</strong>
-                            <small>just now</small>
-                        </Toast.Header>
-                        <Toast.Body>{ notification.body }</Toast.Body>
-                    </Toast>
-                    <header className="App-header">
-                        { isTokenFound && <h1> Notification permission enabled </h1> }
-                        { !isTokenFound && <h1> Need notification permission </h1> }
-                        <Button onClick={() => onShowNotificationClicked() }> Show Toast </Button>
-                    </header>
-
-
+                        <PushNotifications />
                         <div class="d-flex flex-row-reverse">
                             <button className="button button-primary button-wide-mobile button-sm" color="primary" onClick={logOutUser}>
                                 Logout
@@ -184,8 +148,10 @@ import {
                           </a>
                         </div>
                         <p className="description text-center">
-
                         </p>
+                      <center>
+                        <button onClick= { () =>history.push('/payments')  }>Pay to unlock</button>
+                      </center>
                       </CardBody>
                       <CardFooter>
                         <hr />
