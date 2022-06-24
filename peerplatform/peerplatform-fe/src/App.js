@@ -19,10 +19,10 @@ import Pages from './components/code/Pages';
 import { RoomContextProvider, useGlobalState } from './context/RoomContextProvider';
 import WaitingRoom from './components/code/WaitingRoom';
 import Room from './components/code/Room';
-import CheckoutForm from './components/payments/CheckoutForm';
 
+import CheckoutForm from './components/payments/CheckoutForm';
 //import { Elements } from '@stripe/react-stripe-js';
-//import { loadStripe } from '@stripe/stripe-js/pure';
+import { loadStripe } from '@stripe/stripe-js/pure';
 
 // Initialize Google Analytics
 ReactGA.initialize(process.env.REACT_APP_GA_CODE);
@@ -37,12 +37,7 @@ const App = () => {
 
   const childRef = useRef();
   let location = useLocation();
-//  const stripePromise = loadStripe('pk_test_');
-//  const [ state ] = useGlobalState();
-//  const room = state.selectedRoom;
-//  console.log('inside pages', room)
-
-//  const room = state.selectedRoom;
+  const stripePromise = loadStripe('pk_test_51LDT6uDMftTw233MKgmBwD3btGNBmCyhvqPJ6qJh1bvudRNl4xATE4gDL1kaPZYxcPD0uan3sx2ttXawUkjQelaO00qJ51XHLo');
 
   useEffect(() => {
     const page = location.pathname;

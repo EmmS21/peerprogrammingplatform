@@ -3,6 +3,7 @@ import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 //import { loadStripe } from '@stripe/stripe-js/pure';
 //import ApiService from "../../api";
 
+
 const CheckoutForm = () => {
     const [error, setError] = useState(null);
     const [email, setEmail] = useState('');
@@ -52,7 +53,7 @@ const CheckoutForm = () => {
             </div>
             <div className='form-row'>
                 <label for='card-element'>Credit or debut card</label>
-                <CardElement id='card-element'/>
+                <CardElement id='card-element' onChange={handleChange}/>
                 <div className='card-errors' role='alert'>{ error }</div>
             </div>
             <button type='submit' className='submit-btn'>

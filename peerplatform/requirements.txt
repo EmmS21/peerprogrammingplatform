@@ -5,3 +5,13 @@ PyJWT==2.4.0
 python-decouple==3.6
 setuptools==49.2.0.post20200714
 six==1.15.0
+django-cors-headers==3.13.0
+django-rest-auth==0.9.5
+django_rest_api==0.1.5
+django-allauth==0.51.0
+twilio==7.9.3
+django-webpush==0.3.4
+stripe==3.4.0
+Pillow==9.1.1
+
+
