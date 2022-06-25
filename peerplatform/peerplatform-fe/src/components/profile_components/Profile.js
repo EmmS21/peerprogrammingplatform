@@ -22,7 +22,6 @@ import axios from 'axios';
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory } from 'react-router-dom';
 import PushNotifications from './PushNotifications.js'
-
 import {
   Button,
   Card,
@@ -36,7 +35,8 @@ import {
   Row,
   Col,
 } from "reactstrap";
-
+import { Button as AntButton, Modal } from 'antd';
+import StripeElementsProvider from '../payments/StripeElementsProvider';
 
     const Profile = () => {
         let { user,logOutUser, updateProfile, retrieveChallenge, getProfileInfo } = useContext(AuthContext)
@@ -50,6 +50,8 @@ import {
 //        const { useGlobalState } = useContext(useGlobalState)
         fileSelector.setAttribute('type', 'file');
         const history = useHistory();
+        //controls payment modal
+        const [visible, setVisible] = useState(false);
 
 
         //on idle update Profile model activity field
@@ -150,7 +152,19 @@ import {
                         <p className="description text-center">
                         </p>
                       <center>
-                        <button onClick= { () =>history.push('/payments')  }>Pay to unlock</button>
+                        <AntButton type="primary" onClick={()=> setVisible(true)}>
+                            Pay to unlock
+                        </AntButton>
+                        <Modal
+                            title="Stripe Payment"
+                            centered
+                            visible={visible}
+                            onOk={ ()=> setVisible(false) }
+                            onCancel={ ()=> setVisible(false) }
+                            width={1000}
+                        >
+                        <StripeElementsProvider />
+                        </Modal>
                       </center>
                       </CardBody>
                       <CardFooter>

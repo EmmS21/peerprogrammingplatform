@@ -1,10 +1,12 @@
 import stripe
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from decouple import config
 
 stripe.api_key = config('STRIPE_SECRET_KEY')
+
 
 @api_view(['POST'])
 def test_payment(request):
@@ -18,3 +20,17 @@ def test_payment(request):
                     data=test_payment_intent)
 
 
+@csrf_exempt
+def save_stripe_info(request):
+    data = request.data
+    email = data['email']
+    payment_method_id = data['payment_method_id']
+
+    customer = stripe.Customer.create(
+        email=email,
+        payment_method=payment_method_id
+    )
+    return Response(status=status.HTTP_200_OK, data={
+        'message': 'Success',
+        'data': {'customer_id': customer.id}
+    })

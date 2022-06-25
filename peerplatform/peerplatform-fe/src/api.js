@@ -10,6 +10,8 @@ export const api = axios.create({
 
 export default class ApiService{
     static saveStripeInfo(data={}){
-        return api.post(`${API_URL}/payments/save-stripe-into/`, data)
+        const result = JSON.stringify(data)
+        console.log(`Api Service has been triggered and contains data: ${result}`)
+        return api.post(`${API_URL}/payments/save-stripe-info/`, data)
     }
 }

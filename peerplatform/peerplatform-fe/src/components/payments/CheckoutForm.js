@@ -1,40 +1,43 @@
 import React, { useState } from 'react';
-import { Elements } from '@stripe/react-stripe-js';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js/pure';
 import ApiService from "../../api";
+import '../../assets/payments/index.css'
 
 
 const CheckoutForm = () => {
     const [error, setError] = useState(null);
     const [email, setEmail] = useState('');
-//    const stripe = useStripe();
-//    const elements = useElements();
+    const stripe = useStripe();
+    const elements = useElements();
 
-//    //validation errors from CardElement
-//    const handleChange = (event) => {
-//        if(event.error){
-//            setError(event.error.message);
-//        } else {
-//            setError(null);
-//        }
-//    }
-//    //handle form submission
-//    const handleSubmit = async (event) => {
-//        event.preventDefault();
-//        const card = elements.getElement(CardElement);
-//        const { paymentMethod, error } = await stripe.createPaymentMethod({
-//            type: 'card',
-//            card: card
-//        });
-//    };
-    const handleChange = () => {
-        console.log('handle change has been triggered')
+    //validation errors from CardElement
+    const handleChange = (event) => {
+        if(event.error){
+            setError(event.error.message);
+        } else {
+            setError(null);
+        }
     }
-
-    const handleSubmit = () => {
-        console.log('handle submit has been triggered')
-    }
+    //handle form submission
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const card = elements.getElement(CardElement);
+        console.log('what is card', card)
+        const { paymentMethod, error } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: card
+        });
+        ApiService.saveStripeInfo({
+            email,
+            paymentMethod_id: paymentMethod.id
+        })
+        .then(resp => {
+            console.log(resp);
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    };
 
     return (
         <form onSubmit={ handleSubmit } className='stripe-form'>
