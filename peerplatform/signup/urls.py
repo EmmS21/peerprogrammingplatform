@@ -31,14 +31,9 @@ urlpatterns = [
     path('update_active/<int:pk>/', views.UpdateProfileActive.as_view(), name='update_activity'),
     path('voice_chat/', include('voice_chat.urls')),
     path('payments/', include('payments.urls')),
-    # path('subscribe/', test_payment),
     path('api/programming_challenges/', ProgrammingChallengeView.as_view({'get':'list'}), name='programming_challenges'),
-    # path('api/register', registration_view, name='register'),
-    # path('api/users', view.UserCreate.as_view(),name='account-create'),
-    # path('token-auth/', obtain_jwt_token)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.site.header = 'The Gradient Boost'
 admin.site.site_title = f'The Gradient Boost Admin Portal'
 admin.site.index_title = f'Welcome to the admin portal Emmanuel'
-

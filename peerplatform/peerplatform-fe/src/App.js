@@ -21,7 +21,7 @@ import WaitingRoom from './components/code/WaitingRoom';
 import Room from './components/code/Room';
 
 import CheckoutForm from './components/payments/CheckoutForm';
-//import { Elements } from '@stripe/react-stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js/pure';
 
 // Initialize Google Analytics
@@ -38,6 +38,10 @@ const App = () => {
   const childRef = useRef();
   let location = useLocation();
   const stripePromise = loadStripe('pk_test_51LDT6uDMftTw233MKgmBwD3btGNBmCyhvqPJ6qJh1bvudRNl4xATE4gDL1kaPZYxcPD0uan3sx2ttXawUkjQelaO00qJ51XHLo');
+
+  const options = {
+    clientSecret: 'sk_test_51LDT6uDMftTw233M9XAwYdnCvLBDNBUIqWNU4gwGVu2BzwcY6cimqpRH78ZLogDoWnJ4zD4M8JJDJj54NagRrVQl00onyo8Lqu',
+  }
 
   useEffect(() => {
     const page = location.pathname;
@@ -58,7 +62,9 @@ const App = () => {
                 <AppRoute exact path="/signup" component={Signup} />
                 <AppRoute exact path="/code_editor" component={CodeEditor} />
                 <AppRoute exact path="/timer" component={Timer} />
-                <AppRoute exact path="/payments" component={CheckoutForm} />
+                <Elements stripe={stripePromise}>
+                    <AppRoute exact path="/payments" component={CheckoutForm} options={options}/>
+                </Elements>
                 <RoomContextProvider useGlobalState={useGlobalState}>
                     <AppRoute exact path="/rooms" component={WaitingRoom} />
                     <PrivateRoute exact path="/profile" component={Profile} render={(props) => <AdminLayout {...props} />} />
@@ -71,3 +77,6 @@ const App = () => {
 }
 
 export default App;
+
+
+//  <Elements stripe={stripePromise}>

@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'allauth.account',
-    'payments'
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -220,6 +220,7 @@ TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
 TWIML_APPLICATION_SID = config('TWIML_APPLICATION_SID')
 TWILIO_API_KEY = config('TWILIO_API_KEY')
 TWILIO_API_SECRET = config('TWILIO_API_SECRET')
+
 
 ALLOWED_HOSTS = [
     ".ngrok.io",
