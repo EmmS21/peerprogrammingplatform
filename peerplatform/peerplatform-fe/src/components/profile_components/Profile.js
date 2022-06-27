@@ -108,6 +108,24 @@ import StripeElementsProvider from '../payments/StripeElementsProvider';
 //            console.log(e.target.files[0].name)
 //        }
 
+        const countDown = () => {
+            let secondsToGo = 5;
+            const modal = Modal.success({
+                title: 'Payment Success',
+                content: `You have successfully paid, this message will close in ${secondsToGo} seconds.`,
+            });
+            const timer = setInterval(() => {
+                secondsToGo -=1;
+                modal.update({
+                    content: `You have successfully paid, this message will close in ${secondsToGo} seconds.`,
+                });
+            }, 1000);
+            setTimeout(() => {
+                clearInterval(timer);
+                modal.destroy();
+            }, secondsToGo * 1000);
+        };
+
         //get profile information
         useEffect(() => {
             getProfileInfo(user.user_id)
@@ -156,14 +174,15 @@ import StripeElementsProvider from '../payments/StripeElementsProvider';
                             Pay to unlock
                         </AntButton>
                         <Modal
-                            title="Stripe Payment"
+                            title="Pay to unlock unlimited peer sessions"
                             centered
                             visible={visible}
-                            onOk={ ()=> setVisible(false) }
+                            okButtonProps={{ style: { display: 'none' } }}
+                            cancelButtonProps={{ style: { display: 'none' } }}
                             onCancel={ ()=> setVisible(false) }
                             width={1000}
                         >
-                        <StripeElementsProvider />
+                        <StripeElementsProvider  setVisible={ setVisible } countDown={ countDown } />
                         </Modal>
                       </center>
                       </CardBody>

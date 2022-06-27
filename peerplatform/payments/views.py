@@ -21,12 +21,15 @@ def test_payment(request):
 
 
 @csrf_exempt
+@api_view(['POST'])
 def save_stripe_info(request):
     data = request.data
+    cardholder_name = data['name']
     email = data['email']
-    payment_method_id = data['payment_method_id']
+    payment_method_id = data['paymentMethod_id']
 
     customer = stripe.Customer.create(
+        name=cardholder_name,
         email=email,
         payment_method=payment_method_id
     )

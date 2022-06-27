@@ -3,10 +3,10 @@ import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import ApiService from "../../api";
 import '../../assets/payments/index.css'
 
-
-const CheckoutForm = () => {
+const CheckoutForm = ({ setVisible, countDown }) => {
     const [error, setError] = useState(null);
     const [email, setEmail] = useState('');
+    const [name, setName] = useState('')
     const stripe = useStripe();
     const elements = useElements();
 
@@ -28,11 +28,18 @@ const CheckoutForm = () => {
             card: card
         });
         ApiService.saveStripeInfo({
+            name: name,
             email,
             paymentMethod_id: paymentMethod.id
         })
         .then(resp => {
-            console.log(resp);
+            if(resp.status === 200) {
+                setVisible(false)
+                countDown()
+                setEmail('')
+                setName('')
+                card.clear()
+            }
         })
         .catch(err => {
             console.log(err)
@@ -46,7 +53,7 @@ const CheckoutForm = () => {
                 <input
                     className='form-input'
                     id='email'
-                    name='name'
+                    name='email'
                     type='email'
                     placeholder='enter your email'
                     required
@@ -56,7 +63,21 @@ const CheckoutForm = () => {
                 />
             </div>
             <div className='form-row'>
-                <label for='card-element'>Credit or debut card</label>
+                <label htmlFor='name'> Card Holder Name</label>
+                <input
+                    className='form-input'
+                    id='name'
+                    name='name'
+                    type='name'
+                    placeholder='enter card holder name'
+                    required
+                    value= { name }
+                    onChange={ (event)=> {
+                        setName(event.target.value)}}
+                />
+            </div>
+            <div className='form-row'>
+                <label for='card-element'>Credit or debit card number</label>
                 <CardElement id='card-element' onChange={handleChange}/>
                 <div className='card-errors' role='alert'>{ error }</div>
             </div>
