@@ -11,8 +11,9 @@ import "../../assets/waitingRoom/app.css";
 const WaitingRoom = () =>  {
     const [state, setState] = useGlobalState();
     const history = useHistory();
-    const { user,logOutUser, updateProfile } = useContext(AuthContext)
+    const { user,logOutUser, updateProfile, pickRandomPartner, getAllUsers } = useContext(AuthContext)
     console.log(`what do we have in state twilioToken: ${state.twilioToken}`)
+    console.log(getAllUsers())
 
     const contentStyle = {
         height: '80px',
@@ -23,14 +24,13 @@ const WaitingRoom = () =>  {
     };
 
 
-//    useEffect((() => {
-//        console.log('use effect is running inside RoomList')
-//        pickRandomPartner()
-//    }), [])
+    useEffect((() => {
+//        getAllUsers()
+        console.log('here are available users', pickRandomPartner())
+    }), [])
 
     const createRoomHandler = () => {
         const userData = {'roomName': state.nickname, 'participantLabel': state.createdRoomTopic}
-        console.log('Inside create room handler', userData.roomName, userData.participantLabel)
         axios.post('http://127.0.0.1:8000/voice_chat/rooms', userData )
             .then(res => {
                 console.log('axios call has been hit', res.data)

@@ -22,7 +22,7 @@ from accounts.models import Profile
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['city', 'country']
+        fields = ['city', 'country', 'is_online', 'is_active']
 
 
 # changed from serializers.HyperLinked to ModelSerializer and then to RegisterSerializer to accurately reflect what this does

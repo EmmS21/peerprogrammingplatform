@@ -165,10 +165,11 @@ export const AuthProvider = ({children}) => {
     }
     //get all users
     let getAllUsers = () => {
-        console.log('inside getAllUsers function')
         axios.get('http://127.0.0.1:8000/users/')
                 .then(res =>{
                     setOnlineUsers([ ...res.data])
+//                    console.log('inside getAllUsers')
+//                    console.log(onlineUsers)
                 })
     }
     //code editor functionality - wait three seconds before getting input
@@ -251,12 +252,13 @@ export const AuthProvider = ({children}) => {
         };
 
     //pick random online,active user
-//    let pickRandomPartner = () => {
-//        const results = onlineUsers.filter(obj => {
-//            return obj.is_online === True && obj.is_active === True
-//        }
-//        console.log('pickRandomPartner triggered', results)
-//    }
+    let pickRandomPartner = () => {
+        const results = onlineUsers.filter(obj => {
+            return obj.profile.is_online === true && obj.profile.is_active === false
+        })
+        console.log(onlineUsers)
+        return results
+    }
 
     //going to be passed down to AuthContext
     let contextData = {
@@ -285,8 +287,8 @@ export const AuthProvider = ({children}) => {
         onSubmit: onSubmit,
         errorText: errorText,
         visible: visible,
-        successSignup: successSignup
-//        pickRandomPartner: pickRandomPartner,
+        successSignup: successSignup,
+        pickRandomPartner: pickRandomPartner,
     }
 
     //so we refresh our refresh token and update state every 4 minutes

@@ -27,12 +27,42 @@ def save_stripe_info(request):
     cardholder_name = data['name']
     email = data['email']
     payment_method_id = data['paymentMethod_id']
+    extra_msg = ''
 
-    customer = stripe.Customer.create(
-        name=cardholder_name,
-        email=email,
-        payment_method=payment_method_id
+    # check if customer with provided email already exists
+    customer_data = stripe.Customer.list(email=email).data
+
+    if len(customer_data) == 0:
+        customer = stripe.Customer.create(
+            name=cardholder_name,
+            email=email,
+            payment_method=payment_method_id,
+            invoice_settings={
+                'default_payment_method': payment_method_id
+            }
+        )
+    else:
+        customer = customer_data[0]
+        extra_msg = 'Customer already created.'
+
+    # creating paymentIntent
+    stripe.PaymentIntent.create(
+        customer=customer,
+        payment_method=payment_method_id,
+        currency='usd',
+        amount=1500,
+        confirm=True
     )
+
+    stripe.Subscription.create(
+        customer=customer,
+        items=[
+            {
+                'price': 'price_1LDTUIDMftTw233M6DtN7knW'
+            }
+        ]
+    )
+
     return Response(status=status.HTTP_200_OK, data={
         'message': 'Success',
         'data': {'customer_id': customer.id}
