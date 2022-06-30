@@ -11,7 +11,11 @@ import "../../assets/waitingRoom/app.css";
 const WaitingRoom = () =>  {
     const [state, setState] = useGlobalState();
     const history = useHistory();
-    const { user,logOutUser, updateProfile, onlineUsers } = useContext(AuthContext)
+    const { user,
+            logOutUser,
+            updateProfile,
+            pairUsers } = useContext(AuthContext)
+    const username = user.username
 //    console.log(`what do we have in state twilioToken: ${state.twilioToken}`)
 //    console.log(getAllUsers())
 
@@ -23,21 +27,8 @@ const WaitingRoom = () =>  {
         background: '#364d79',
     };
 
-    const pickRandom = () => {
-        return Math.round(Math.random()*onlineUsers.length)
-    }
-
-    let checkOnlineUsers = () => {
-        const results = onlineUsers.filter(obj => {
-            return obj.profile.is_online === true && obj.profile.is_active === false
-        })
-        return results
-    }
-
     useEffect((() => {
-//        pickRandom()
-        console.log('what is in pickRandom', checkOnlineUsers() )
-//        console.log('here are available users', pickRandomPartner())
+        console.log('inside pairUsers state', pairUsers)
     }), [])
 
     const createRoomHandler = () => {

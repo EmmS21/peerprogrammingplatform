@@ -22,7 +22,7 @@ from accounts.models import Profile
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['city', 'country', 'is_online', 'is_active']
+        fields = ['city', 'country', 'is_online', 'currently_active']
 
 
 # changed from serializers.HyperLinked to ModelSerializer and then to RegisterSerializer to accurately reflect what this does
@@ -99,7 +99,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     country = serializers.CharField(source='profile.country', allow_blank=True, required=False)
     profile_pic = Base64ImageField(source='profile.profile_pic', max_length=None, use_url=True, required=False)
     is_online = serializers.BooleanField(source='profile.is_online', required=False)
-    is_active = serializers.BooleanField(source='profile.is_active', required=False)
+    currently_active = serializers.BooleanField(source='profile.currently_active', required=False)
     push_notifications = serializers.BooleanField(source='profile.push_notifications', required=False)
 
     # serializers.ImageField(source='profile.profile_pic', use_url=True, required=False)
@@ -108,7 +108,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         model = User
         # , 'city', 'country', 'bio'
         fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic',
-                  'is_online', 'is_active', 'push_notifications']
+                  'is_online', 'currently_active', 'push_notifications']
         # fields = UserDetailsSerializer.Meta.fields + ('city', 'country')
         extra_kwargs = {'username': {'required': False},
                         'email': {'required': False},
@@ -119,7 +119,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
                         'country': {'required': False},
                         'profile_pic': {'required': False},
                         'is_online': {'required': False},
-                        'is_active': {'required': False},
+                        'currently_active': {'required': False},
                         'push_notifications': {'required': False},
                         }
 
@@ -129,8 +129,8 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         country = profile_data.get('country')
         profile_pic = profile_data.get('profile_pic')
         is_online = profile_data.get('is_online')
-        is_active = profile_data.get('is_active')
-        push_notifications = profile_data.push_notifications('push_notifications')
+        currently_active = profile_data.get('currently_active')
+        push_notifications = profile_data.get('push_notifications')
 
         instance = super(UpdateUserSerializer, self).update(instance, validated_data)
 
@@ -144,8 +144,8 @@ class UpdateUserSerializer(serializers.ModelSerializer):
                 profile.profile_pic = profile_pic
             if is_online is not None:
                 profile.is_online = is_online
-            if is_active is not None:
-                profile.is_active = is_active
+            if currently_active is not None:
+                profile.currently_active = currently_active
             if push_notifications is not None:
                 profile.push_notifications = push_notifications
             profile.save()

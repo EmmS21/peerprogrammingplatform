@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 import axiosWithAuth from "../axios"
 import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../context/RoomContextProvider';
+import { onMessageListener } from '../firebase';
 
 
 const AuthContext = createContext()
@@ -35,6 +36,12 @@ export const AuthProvider = ({children}) => {
     const [visible, setVisible] = useState(false);
     const [successSignup, setSuccessSignup] = useState(false)
     const baseURL = "https://judge0-ce.p.rapidapi.com/submissions"
+    //show toast
+    const [show, setShow] = useState(false);
+    const [notification, setNotification] = useState({title: '', body: ''});
+    const [isTokenFound, setTokenFound] = useState(false);
+    //store current and matched users in state
+    const  [pairUsers, setPairUsers] = useState([])
 
     const history = useHistory();
 
@@ -69,6 +76,19 @@ export const AuthProvider = ({children}) => {
         catch(err) {
             alert(response.data.user);
         }
+    }
+
+    onMessageListener().then(payload => {
+        setNotification({ title: payload.notification.title,
+                          body: payload.notification.body })
+        setShow(true);
+        console.log(payload);
+    }).catch(err => console.log('failed: ', err));
+
+    const onShowNotificationClicked = () => {
+        setNotification({ title: "Notification",
+                          body: "This is a test notification" })
+        setShow(true);
     }
 
     //get profile information
@@ -201,6 +221,12 @@ export const AuthProvider = ({children}) => {
                 })
             })
     }
+    //send current and matched users to state
+    const pairProgrammingMatching = ( matchedUser) => {
+        const username =  user.username
+        setPairUsers({username: matchedUser })
+    }
+
 
     const onSubmit = (data) => {
         const user = {
@@ -279,7 +305,18 @@ export const AuthProvider = ({children}) => {
         errorText: errorText,
         visible: visible,
         successSignup: successSignup,
+        onShowNotificationClicked: onShowNotificationClicked,
+        show: show,
+        setShow: setShow,
+        notification: notification,
+        setNotification: setNotification,
+        isTokenFound: isTokenFound,
+        setTokenFound: setTokenFound,
+        pairProgrammingMatching: pairProgrammingMatching,
+        setPairUsers: setPairUsers,
+        pairUsers: pairUsers
     }
+
 
     //so we refresh our refresh token and update state every 4 minutes
     useEffect(()=> {

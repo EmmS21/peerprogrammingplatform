@@ -5,14 +5,41 @@ import { useGlobalState } from '../../context/RoomContextProvider';
 import AuthContext from '../../context/AuthContext';
 
 
+//            logOutUser,
+//            updateProfile,
+//            onlineUsers,
+//            pairProgrammingMatching,
+//            setPairUsers,
+//            pairUsers } = useContext(AuthContext)
+
+
 const StartCodingComponent = () => {
     const history = useHistory();
     const [ state, setState ] = useGlobalState();
-    const { user,logOutUser, updateProfile, getUsers } = useContext(AuthContext)
+    const { user,
+            logOutUser,
+            updateProfile,
+            getUsers,
+            onlineUsers,
+            setPairUsers,
+            pairUsers } = useContext(AuthContext)
 
     //generate room topic name
     const generateRandomTopicNum = () => {
         return Math.random().toString(36).slice(2, 7)
+    }
+
+    //filter online and active users
+    const checkOnlineUsers = () => {
+        const results = onlineUsers.filter(obj => {
+            return obj.profile.is_online === true && obj.profile.currently_active === false && obj.username !== user.username
+        })
+        return results
+    }
+
+    //pick random number to select random user who is online
+    const pickRandom = () => {
+        return Math.abs(Math.round(Math.random() * checkOnlineUsers().length - 1))
     }
 
     //handle submission
@@ -27,6 +54,8 @@ const StartCodingComponent = () => {
         setState((state) => {
             return {...state, rooms,selectedRoom }
         });
+        setPairUsers({ ...pairUsers,
+                        [nickname]: checkOnlineUsers(pickRandom())[0].username })
         history.push('/rooms');
     }
 

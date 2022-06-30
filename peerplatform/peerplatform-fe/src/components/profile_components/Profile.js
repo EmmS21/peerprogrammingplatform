@@ -57,20 +57,20 @@ import StripeElementsProvider from '../payments/StripeElementsProvider';
         //on idle update Profile model activity field
         const handleOnIdle = (event: any) => {
             axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
-                is_active: 'True'
+                currently_active: false
             })
             .then(res => {
-                console.log(res.data)
+                console.log('user is idle',res.data)
             })
         }
 
         //on active update profile model activity field
         const handleOnActive = (event: any) => {
-            axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
-                is_active: 'False'
+            axios.patch(`http://127.0.0.1:8000/update_active/${user.user_id}/`, {
+                currently_active: true
             })
             .then(res => {
-                console.log(res.data)
+                console.log('user active', res.data)
             })
         }
 

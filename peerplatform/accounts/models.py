@@ -15,7 +15,7 @@ class Profile(models.Model):
     profile_pic = models.ImageField(upload_to='profile/%Y/%m/%d', default='media/placeholder.png', blank=False,
                                     null=False)
     is_online = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
+    currently_active = models.BooleanField(default=False)
     push_notifications = models.BooleanField(default=False)
 
     @receiver(user_logged_in)
