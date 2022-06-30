@@ -167,7 +167,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         user = authenticate(**authenticate_kwargs)
         if not user:
             return {
-                'user': 'Not Found',
+                'user': 'Username or password is incorrect',
             }
         token = RefreshToken.for_user(user)
         # customizing token payload

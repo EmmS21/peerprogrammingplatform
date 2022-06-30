@@ -24,6 +24,7 @@ const Login = () => {
             password: password,
         }
         console.log('user login info is working')
+        console.log(newLoginData)
         loginUser(newLoginData);
     }
 

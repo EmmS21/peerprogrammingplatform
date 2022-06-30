@@ -49,8 +49,9 @@ export const AuthProvider = ({children}) => {
     //we are going to pass this information down to login page
     //async function because we must wait for something to happen first
     const loginUser = async (tokens) => {
+        let response = await axios.post('http://127.0.0.1:8000/api/token/',tokens)
         try {
-            let response = await axios.post('http://127.0.0.1:8000/api/token/',tokens)
+//            let response = await axios.post('http://127.0.0.1:8000/api/token/',tokens)
             //we are going to set our tokens in state so we can easily access it
             setAuthTokens(authTokens => ({
                 ...response.data
@@ -66,7 +67,7 @@ export const AuthProvider = ({children}) => {
             history.push('/')
         }
         catch(err) {
-            alert(err.response.data.detail);
+            alert(response.data.user);
         }
     }
 
@@ -168,8 +169,6 @@ export const AuthProvider = ({children}) => {
         axios.get('http://127.0.0.1:8000/users/')
                 .then(res =>{
                     setOnlineUsers([ ...res.data])
-//                    console.log('inside getAllUsers')
-//                    console.log(onlineUsers)
                 })
     }
     //code editor functionality - wait three seconds before getting input
@@ -251,14 +250,6 @@ export const AuthProvider = ({children}) => {
             })
         };
 
-    //pick random online,active user
-    let pickRandomPartner = () => {
-        const results = onlineUsers.filter(obj => {
-            return obj.profile.is_online === true && obj.profile.is_active === false
-        })
-        console.log(onlineUsers)
-        return results
-    }
 
     //going to be passed down to AuthContext
     let contextData = {
@@ -288,7 +279,6 @@ export const AuthProvider = ({children}) => {
         errorText: errorText,
         visible: visible,
         successSignup: successSignup,
-        pickRandomPartner: pickRandomPartner,
     }
 
     //so we refresh our refresh token and update state every 4 minutes
