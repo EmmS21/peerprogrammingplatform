@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'payments',
+    'redisCache',
 ]
 
 MIDDLEWARE = [
@@ -231,3 +232,6 @@ ALLOWED_HOSTS = [
 SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
+
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379

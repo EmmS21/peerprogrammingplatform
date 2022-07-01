@@ -75,9 +75,6 @@ const StartCodingComponent = () => {
                 console.log("error: ", device)
             });
             setState({... state, device, twilioToken, nickname, createdRoomTopic})
-//            setState((state) => {
-//                return {...state, device, twilioToken, nickname, createdRoomTopic}
-//            });
         })
         .catch((error) => {
             console.log(error)

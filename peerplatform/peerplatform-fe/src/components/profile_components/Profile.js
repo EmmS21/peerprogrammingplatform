@@ -39,7 +39,7 @@ import { Button as AntButton, Modal } from 'antd';
 import StripeElementsProvider from '../payments/StripeElementsProvider';
 
     const Profile = () => {
-        let { user,logOutUser, updateProfile, retrieveChallenge, getProfileInfo, getAllUsers } = useContext(AuthContext)
+        let { user,logOutUser, updateProfile, retrieveChallenge, getProfileInfo, getAllUsers, pairUsers } = useContext(AuthContext)
         //store users in state
         const[profileUser, setProfileUser] = useState({user})
         //modal state
@@ -131,6 +131,7 @@ import StripeElementsProvider from '../payments/StripeElementsProvider';
             getProfileInfo(user.user_id)
             //get all users
             getAllUsers()
+            console.log('pair users', pairUsers)
         },[]);
 
         return (

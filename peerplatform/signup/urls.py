@@ -31,6 +31,7 @@ urlpatterns = [
     path('update_active/<int:pk>/', views.UpdateProfileActive.as_view(), name='update_activity'),
     path('voice_chat/', include('voice_chat.urls')),
     path('payments/', include('payments.urls')),
+    path('cache/', include('redisCache.urls')),
     path('api/programming_challenges/', ProgrammingChallengeView.as_view({'get':'list'}), name='programming_challenges'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -4,24 +4,8 @@ import { Button, Toast } from 'react-bootstrap';
 import AuthContext from '../../context/AuthContext';
 
 const PushNotifications = () => {
-//    const [show, setShow] = useState(false);
     const { onShowNotificationClicked, show, setShow, notification, isTokenFound, setTokenFound } = useContext(AuthContext)
-//    const [notification, setNotification] = useState({title: '', body: ''});
-//    const [isTokenFound, setTokenFound] = useState(false);
     fetchToken(setTokenFound)
-
-//    onMessageListener().then(payload => {
-//        setNotification({ title: payload.notification.title,
-//                          body: payload.notification.body })
-//        setShow(true);
-//        console.log(payload);
-//    }).catch(err => console.log('failed: ', err));
-//
-//    const onShowNotificationClicked = () => {
-//        setNotification({ title: "Notification",
-//                          body: "This is a test notification" })
-//        setShow(true);
-//    }
 
         return (
             <>
@@ -44,8 +28,8 @@ const PushNotifications = () => {
                         <Toast.Body>{ notification.body }</Toast.Body>
                 </Toast>
                 <header className="App-header">
-                    { isTokenFound && <h1> Notification permission enabled </h1> }
-                    { !isTokenFound && <h1> Need notification permission </h1> }
+                    { isTokenFound && <h3> Notification permission enabled </h3> }
+                    { !isTokenFound && <h3> Need notification permission </h3> }
                     <Button onClick={() => onShowNotificationClicked() }> Show Toast </Button>
                 </header>
             </>
