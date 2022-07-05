@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
-                                   port=settings.REDIS_PORT, db=0)
+                                   port=settings.REDIS_PORT, db=0, password=settings.REDIS_PASSWORD)
 
 @api_view(['GET', 'POST'])
 def manage_items(request, *args, **kwargs):
@@ -86,4 +86,9 @@ def manage_item(request, *args, **kwargs):
                             'msg': 'Not found'
                         }
                         return Response(response, status=404)
-# Create your views here.
+
+#user makes a request to backend to find a match
+#rest of the work backend
+#talk to redis, find list of avail users
+#try to ask users one by one until they find first available users
+#user joins

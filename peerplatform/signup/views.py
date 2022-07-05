@@ -41,6 +41,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     #changed name from UserSerializer to RegisterSerializer
     serializer_class = RegisterSerializer
+
     # permission_classes = [permissions.IsAuthenticated]
     # print(queryset)
 
