@@ -16,7 +16,7 @@ class Profile(models.Model):
                                     null=False)
     is_online = models.BooleanField(default=False)
     currently_active = models.BooleanField(default=False)
-    push_notifications = models.BooleanField(default=False)
+    is_in_session = models.BooleanField(default=False)
 
     @receiver(user_logged_in)
     def got_online(sender, user, request, **kwargs):

@@ -4,6 +4,7 @@ from .views import manage_items, manage_item
 
 urlpatterns = [
     path("", manage_items, name="items"),
+    # path("/post/", postToRedis, name="postToRedis"),
     path("<slug:key>", manage_item, name="single_item")
 ]
 

@@ -188,7 +188,14 @@ export const AuthProvider = ({children}) => {
     let getAllUsers = () => {
         axios.get('http://127.0.0.1:8000/users/')
                 .then(res =>{
-                    setOnlineUsers([ ...res.data])
+                    const filteredUsers = res.data.filter(filtered =>
+                                                                filtered.profile.is_online === true)
+                    const usernameEmailKeyPair =  filteredUsers.reduce((obj, item) => ({...obj, [item.username]: item.email}) ,{});
+                    console.log('inside getAllUsers state:', usernameEmailKeyPair)
+                    axios.post('http://127.0.0.1:8000/cache/', usernameEmailKeyPair)
+                        .then(res => {
+                            console.log('inside post', res.data)
+                        })
                 })
     }
     //code editor functionality - wait three seconds before getting input

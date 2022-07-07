@@ -4,10 +4,11 @@ import redis
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
+from django.contrib.auth.models import User
+from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
                                    port=settings.REDIS_PORT, db=0, password=settings.REDIS_PASSWORD)
-
 @api_view(['GET', 'POST'])
 def manage_items(request, *args, **kwargs):
     if request.method == 'GET':
@@ -24,13 +25,30 @@ def manage_items(request, *args, **kwargs):
         return Response(response, status=200)
     elif request.method == 'POST':
         item = json.loads(request.body)
-        key = list(item.keys())[0]
-        value = item[key]
-        redis_instance.set(key, value)
+        keys = list(item.keys())
+        values = list(item.values())
+        for i in range(0, len(keys)):
+            redis_instance.set(keys[i], values[i])
         response = {
-            'msg': f"{key} successfully set to {value}"
+            'msg': f"{keys} successfully set to {values}"
         }
         return Response(response, 201)
+
+# def postToRedis(request):
+#     online_users = User.objects.filter(is_online='true').order_by('-date_joined')
+#     print('online users are', online_users)
+#     queue_of_users = { d['username'] for d in online_users }
+#     keys = list(queue_of_users.keys())
+#     values = list(queue_of_users.values())
+#     for i in range(0, len(keys)):
+#         redis_instance.set(keys[i], values[i])
+#     response = {
+#         'msg': f"{keys} successfully set to {values}"
+#     }
+#     return Response(response, 201)
+
+
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def manage_item(request, *args, **kwargs):
