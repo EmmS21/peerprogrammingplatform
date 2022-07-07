@@ -25,10 +25,10 @@ def manage_items(request, *args, **kwargs):
         return Response(response, status=200)
     elif request.method == 'POST':
         item = json.loads(request.body)
-        keys = list(item.keys())
-        values = list(item.values())
-        for i in range(0, len(keys)):
-            redis_instance.set(keys[i], values[i])
+        keys = list(item.keys())[0]
+        print('keys are', keys)
+        values = item[keys]
+        redis_instance.set(keys, values)
         response = {
             'msg': f"{keys} successfully set to {values}"
         }

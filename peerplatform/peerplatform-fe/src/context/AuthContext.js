@@ -190,12 +190,13 @@ export const AuthProvider = ({children}) => {
                 .then(res =>{
                     const filteredUsers = res.data.filter(filtered =>
                                                                 filtered.profile.is_online === true)
+                    setOnlineUsers([ ...filteredUsers])
                     const usernameEmailKeyPair =  filteredUsers.reduce((obj, item) => ({...obj, [item.username]: item.email}) ,{});
                     console.log('inside getAllUsers state:', usernameEmailKeyPair)
-                    axios.post('http://127.0.0.1:8000/cache/', usernameEmailKeyPair)
-                        .then(res => {
-                            console.log('inside post', res.data)
-                        })
+//                    axios.post('http://127.0.0.1:8000/cache/', usernameEmailKeyPair)
+//                        .then(res => {
+//                            console.log('inside post', res.data)
+//                        })
                 })
     }
     //code editor functionality - wait three seconds before getting input
@@ -240,6 +241,7 @@ export const AuthProvider = ({children}) => {
             username: data.username,
             email: data.email,
             password: data.password,
+//            topic: Math.random().toString(36).slice(2,7)
             profile: {
                         city: data.city,
                         country: data.country,

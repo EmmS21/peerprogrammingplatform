@@ -29,12 +29,17 @@ const StartCodingComponent = () => {
         return Math.random().toString(36).slice(2, 7)
     }
 
+//    const pickRandom = () => {
+//        const random =  Math.abs(Math.round(Math.random() * checkOnlineUsers().length - 1))
+//        return checkOnlineUsers()[random].username;
+//    }
     //filter online and active users
     const checkOnlineUsers = () => {
-        const results = onlineUsers.filter(obj => {
-            return obj.profile.is_online === true && obj.profile.currently_active === false && obj.username !== user.username
-        })
-        return results
+//        const results = onlineUsers.filter(obj => {
+//            return obj.profile.is_online === true && obj.profile.currently_active === false && obj.username !== user.username
+//        })
+        console.log('online users', onlineUsers)
+//        return results
     }
 
     //pick random number to select random user who is online
@@ -54,8 +59,8 @@ const StartCodingComponent = () => {
         setState((state) => {
             return {...state, rooms,selectedRoom }
         });
-        setPairUsers({ ...pairUsers,
-                        [nickname]: checkOnlineUsers(pickRandom())[0].username })
+//        setPairUsers({ ...pairUsers,
+//                        [nickname]: checkOnlineUsers(pickRandom())[0].username })
         history.push('/rooms');
     }
 
@@ -83,7 +88,7 @@ const StartCodingComponent = () => {
 
     return (
             <button className="button button-primary button-wide-mobile button-sm"
-                onClick={handleSubmit}> Start Coding
+                onClick={checkOnlineUsers}> Start Coding
             </button>
     );
 };

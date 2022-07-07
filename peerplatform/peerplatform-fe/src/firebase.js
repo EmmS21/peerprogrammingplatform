@@ -17,18 +17,21 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const messaging = getMessaging(firebaseApp);
 
-export const fetchToken = (setTokenFound) => {
-    console.log('fetchToken function has been triggered')
-    return getToken(messaging, {vapidKey: 'BPMSamhIjU6FdjAFDlr9OCMdQE0GPkE8FnhuSnr6ZBjKE5eKFaOT_jU3Lg1cgrh06rZ_L2NXmgwjKHFAo9moOAY'}).then((currentToken) => {
+export const fetchToken = async (setTokenFound) => {
+//    console.log('fetchToken function has been triggered')
+    let token;
+    await getToken(messaging, {vapidKey: 'BPMSamhIjU6FdjAFDlr9OCMdQE0GPkE8FnhuSnr6ZBjKE5eKFaOT_jU3Lg1cgrh06rZ_L2NXmgwjKHFAo9moOAY'}).then((currentToken) => {
         if(currentToken) {
-            console.log('current token for client: ', currentToken);
             setTokenFound(true);
+            token = currentToken
         }
     })
 .catch((err) => {
         console.log('An error occurred while retrieving token.', err);
     });
+    return token
 }
+
 
 export const onMessageListener = () =>
     new Promise((resolve) => {

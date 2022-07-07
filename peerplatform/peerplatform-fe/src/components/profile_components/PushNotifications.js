@@ -1,11 +1,43 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { fetchToken, onMessageListener } from '../../firebase';
 import { Button, Toast } from 'react-bootstrap';
 import AuthContext from '../../context/AuthContext';
+import axios from 'axios'
 
-const PushNotifications = () => {
-    const { onShowNotificationClicked, show, setShow, notification, isTokenFound, setTokenFound } = useContext(AuthContext)
-    fetchToken(setTokenFound)
+const PushNotifications =  () => {
+    const { onShowNotificationClicked, show, setShow, notification, isTokenFound, setTokenFound, user } = useContext(AuthContext)
+    const [token, setToken] = useState('')
+
+//    const fetchingFireBaseToken = async() => {
+//        let result = fetchToken(setTokenFound);
+//        return result.then(res => {
+//            setToken(res)
+//        })
+//        }
+//    console.log('result is', fetchingFireBaseToken())
+
+
+    useEffect(() => {
+        const fetchingFireBaseToken = async() => {
+            let result = await fetchToken(setTokenFound);
+            console.log('result is', result)
+            let newDict = {}
+            const username = user.username
+            newDict[username] = result
+            axios.post('http://127.0.0.1:8000/cache/', newDict)
+                .then(res => console.log(res.data))
+        }
+        fetchingFireBaseToken()
+//        console.log(fetchingFireBaseToken())
+//        const username = user.username
+//        console.log('username is', username, fetchingFireBaseToken())
+//        let newDict = {}
+//        newDict[username] = 'test'
+//        console.log(newDict)
+//        axios.post('127.0.0.1:8000/cache/',)
+//        console.log('what is user', user.username)
+    },[]);
+
 
         return (
             <>
