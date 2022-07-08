@@ -39,7 +39,7 @@ import { Button as AntButton, Modal } from 'antd';
 import StripeElementsProvider from '../payments/StripeElementsProvider';
 
     const Profile = () => {
-        let { user,logOutUser, updateProfile, retrieveChallenge, getProfileInfo, getAllUsers, pairUsers } = useContext(AuthContext)
+        let { user,logOutUser, updateProfile, retrieveChallenge, getProfileInfo, pairUsers } = useContext(AuthContext)
         //store users in state
         const[profileUser, setProfileUser] = useState({user})
         //modal state
@@ -127,11 +127,21 @@ import StripeElementsProvider from '../payments/StripeElementsProvider';
             }, secondsToGo * 1000);
         };
 
+        const updateWaitingRoomStatus = () => {
+        axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
+            in_waiting_room: false
+        })
+        .then(res => {
+            console.log('user is in waiting room', res.data)
+        })
+    }
+
         //get profile information
         useEffect(() => {
             getProfileInfo(user.user_id)
             //get all users
-            getAllUsers()
+//            getAllUsers()
+            updateWaitingRoomStatus()
             console.log('pair users', pairUsers)
         },[]);
 

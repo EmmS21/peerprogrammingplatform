@@ -17,17 +17,17 @@ const PushNotifications =  () => {
 //    console.log('result is', fetchingFireBaseToken())
 
 
-    useEffect(() => {
-        const fetchingFireBaseToken = async() => {
-            let result = await fetchToken(setTokenFound);
-            console.log('result is', result)
-            let newDict = {}
-            const username = user.username
-            newDict[username] = result
-            axios.post('http://127.0.0.1:8000/cache/', newDict)
-                .then(res => console.log(res.data))
-        }
-        fetchingFireBaseToken()
+//    useEffect(() => {
+//        const fetchingFireBaseToken = async() => {
+//            let result = await fetchToken(setTokenFound);
+//            console.log('result is', result)
+//            let newDict = {}
+//            const username = user.username
+//            newDict[username] = result
+//            axios.post('http://127.0.0.1:8000/cache/', newDict)
+//                .then(res => console.log(res.data))
+//        }
+//        fetchingFireBaseToken()
 //        console.log(fetchingFireBaseToken())
 //        const username = user.username
 //        console.log('username is', username, fetchingFireBaseToken())
@@ -36,7 +36,7 @@ const PushNotifications =  () => {
 //        console.log(newDict)
 //        axios.post('127.0.0.1:8000/cache/',)
 //        console.log('what is user', user.username)
-    },[]);
+//    },[]);
 
 
         return (

@@ -22,7 +22,7 @@ from accounts.models import Profile
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['city', 'country', 'is_online', 'currently_active']
+        fields = ['city', 'country', 'is_online', 'currently_active','in_waiting_room']
 
 
 # changed from serializers.HyperLinked to ModelSerializer and then to RegisterSerializer to accurately reflect what this does
@@ -101,6 +101,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     is_online = serializers.BooleanField(source='profile.is_online', required=False)
     currently_active = serializers.BooleanField(source='profile.currently_active', required=False)
     is_in_session = serializers.BooleanField(source='profile.is_in_session', required=False)
+    in_waiting_room = serializers.BooleanField(source='profile.in_waiting_room', required=False)
 
     # serializers.ImageField(source='profile.profile_pic', use_url=True, required=False)
 
@@ -108,7 +109,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         model = User
         # , 'city', 'country', 'bio'
         fields = ['username', 'email', 'password', 'first_name', 'last_name', 'city', 'country', 'profile_pic',
-                  'is_online', 'currently_active', 'is_in_session']
+                  'is_online', 'currently_active', 'is_in_session', 'in_waiting_room']
         # fields = UserDetailsSerializer.Meta.fields + ('city', 'country')
         extra_kwargs = {'username': {'required': False},
                         'email': {'required': False},
@@ -121,6 +122,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
                         'is_online': {'required': False},
                         'currently_active': {'required': False},
                         'is_in_session': {'required': False},
+                        'in_waiting_room': {'required': False},
                         }
 
     def update(self, instance, validated_data):
@@ -131,6 +133,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         is_online = profile_data.get('is_online')
         currently_active = profile_data.get('currently_active')
         is_in_session = profile_data.get('is_in_session')
+        in_waiting_room = profile_data.get('in_waiting_room')
 
         instance = super(UpdateUserSerializer, self).update(instance, validated_data)
 
@@ -148,6 +151,8 @@ class UpdateUserSerializer(serializers.ModelSerializer):
                 profile.currently_active = currently_active
             if is_in_session is not None:
                 profile.is_in_session = is_in_session
+            if in_waiting_room is not None:
+                profile.in_waiting_room = in_waiting_room
             profile.save()
         return instance
 

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../../context/RoomContextProvider';
 import AuthContext from '../../context/AuthContext';
-
+import axios from 'axios';
 
 //            logOutUser,
 //            updateProfile,
@@ -23,6 +23,7 @@ const StartCodingComponent = () => {
             onlineUsers,
             setPairUsers,
             pairUsers } = useContext(AuthContext)
+    const [ allOnlineUsers, setAllOnlineUsers ] = useState({})
 
     //generate room topic name
     const generateRandomTopicNum = () => {
@@ -47,6 +48,55 @@ const StartCodingComponent = () => {
         return Math.abs(Math.round(Math.random() * checkOnlineUsers().length - 1))
     }
 
+    const updateWaitingRoomStatus = () => {
+        axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
+            in_waiting_room: true
+        })
+        .then(res => {
+            console.log('user is in waiting room', res.data)
+        })
+    }
+
+    //randomly pair all available users
+    function getPicks(names) {
+        const arrOfUsers =  names
+        const newDict = {}
+        while(arrOfUsers.length){
+            let randomInd = Math.floor(Math.random() * arrOfUsers.length);
+            let randomItem = arrOfUsers.splice(randomInd, 1)[0];
+            let randomValInd = Math.floor(Math.random() * arrOfUsers.length);
+            let randomVal = arrOfUsers.splice(randomValInd, 1)[0];
+            newDict[randomItem] = randomVal
+        }
+        return newDict
+    }
+
+    const sendWaitingRoomUsersToRedisCache = () => {
+        console.log('sendWaiting')
+        axios.get('http://127.0.0.1:8000/cache/')
+        .then(res =>{
+            console.log('data', res.data)
+            setAllOnlineUsers([ res?.data?.items])
+            console.log('inside state', allOnlineUsers)
+        })
+        //array of all users in redis
+        const newArr = Object.keys(allOnlineUsers).concat(Object.values(allOnlineUsers))
+        axios.get('http://127.0.0.1:8000/users/')
+            .then(res => {
+                    const filteredUsers = res.data.filter(filtered => filtered.profile.in_waiting_room === true)
+                    const allUserNames  = filteredUsers.map(arr => arr.username)
+                    //filter off users who are already in redis cache - create only unique pairs in redis
+                    const uniqueUsers = (allUserNames.filter((x) => {
+                        return (!allOnlineUsers.find((choice) => choice === x));
+                    }));
+                    const newDict = getPicks(uniqueUsers)
+                    //write users to redis cache
+                    axios.post('http://127.0.0.1:8000/cache/', newDict)
+                        .then(res => {
+                            console.log('written into redis', res.data)
+                        })
+            })
+        }
     //handle submission
     const handleSubmit = e => {
         e.preventDefault();
@@ -54,11 +104,15 @@ const StartCodingComponent = () => {
         const createdRoomTopic = generateRandomTopicNum()
         setupTwilio(nickname, createdRoomTopic);
         const selectedRoom = { room_name: state.createdRoomTopic, participants: [] };
+        console.log(`selected Room ${selectedRoom}`)
         const rooms = state.rooms;
+        updateWaitingRoomStatus()
         const roomId = rooms.push(selectedRoom);
         setState((state) => {
             return {...state, rooms,selectedRoom }
         });
+//        getAllUsers()
+        sendWaitingRoomUsersToRedisCache()
 //        setPairUsers({ ...pairUsers,
 //                        [nickname]: checkOnlineUsers(pickRandom())[0].username })
         history.push('/rooms');
@@ -80,6 +134,7 @@ const StartCodingComponent = () => {
                 console.log("error: ", device)
             });
             setState({... state, device, twilioToken, nickname, createdRoomTopic})
+            console.log(`setupTwilio has been hit, device: ${device}, twilioToken: ${twilioToken}`)
         })
         .catch((error) => {
             console.log(error)
@@ -88,7 +143,7 @@ const StartCodingComponent = () => {
 
     return (
             <button className="button button-primary button-wide-mobile button-sm"
-                onClick={checkOnlineUsers}> Start Coding
+                onClick={handleSubmit}> Join Waiting Room
             </button>
     );
 };

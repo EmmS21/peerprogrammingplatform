@@ -185,20 +185,20 @@ export const AuthProvider = ({children}) => {
         }
     }
     //get all users
-    let getAllUsers = () => {
-        axios.get('http://127.0.0.1:8000/users/')
-                .then(res =>{
-                    const filteredUsers = res.data.filter(filtered =>
-                                                                filtered.profile.is_online === true)
-                    setOnlineUsers([ ...filteredUsers])
-                    const usernameEmailKeyPair =  filteredUsers.reduce((obj, item) => ({...obj, [item.username]: item.email}) ,{});
-                    console.log('inside getAllUsers state:', usernameEmailKeyPair)
-//                    axios.post('http://127.0.0.1:8000/cache/', usernameEmailKeyPair)
-//                        .then(res => {
-//                            console.log('inside post', res.data)
-//                        })
-                })
-    }
+//    let getAllUsers = () => {
+//        axios.get('http://127.0.0.1:8000/users/')
+//                .then(res =>{
+//                    const filteredUsers = res.data.filter(filtered =>
+//                                                                filtered.profile.is_online === true)
+//                    setOnlineUsers([ ...filteredUsers])
+//                    const usernameEmailKeyPair =  filteredUsers.reduce((obj, item) => ({...obj, [item.username]: item.email}) ,{});
+//                    console.log('inside getAllUsers state:', usernameEmailKeyPair)
+////                    axios.post('http://127.0.0.1:8000/cache/', usernameEmailKeyPair)
+////                        .then(res => {
+////                            console.log('inside post', res.data)
+////                        })
+//                })
+//    }
     //code editor functionality - wait three seconds before getting input
     const threeSecondWait = () => {
             return new Promise(resolve => setTimeout(() => resolve("result"),3000));
@@ -296,7 +296,7 @@ export const AuthProvider = ({children}) => {
         getProfileInfo: getProfileInfo,
         retrieveChallenge: retrieveChallenge,
         challengeInState: challengeInState,
-        getAllUsers: getAllUsers,
+//        getAllUsers: getAllUsers,
         onlineUsers: onlineUsers,
         availableUsers: availableUsers,
         sendCodeJudge0: sendCodeJudge0,

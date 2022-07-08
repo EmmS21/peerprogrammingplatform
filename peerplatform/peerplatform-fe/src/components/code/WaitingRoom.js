@@ -5,7 +5,7 @@ import { useGlobalState } from '../../context/RoomContextProvider';
 import { useFetchRooms } from '../../hooks/useFetchRooms';
 import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
-import OnlineUsersCarousel from './OnlineUsersCarousel';
+//import OnlineUsersCarousel from './OnlineUsersCarousel';
 import "../../assets/waitingRoom/app.css";
 
 const WaitingRoom = () =>  {
@@ -15,7 +15,6 @@ const WaitingRoom = () =>  {
             logOutUser,
             updateProfile,
             pairUsers } = useContext(AuthContext)
-    const username = user.username
 //    console.log(`what do we have in state twilioToken: ${state.twilioToken}`)
 //    console.log(getAllUsers())
 
@@ -27,8 +26,21 @@ const WaitingRoom = () =>  {
         background: '#364d79',
     };
 
+//    function getUserPairsFromRedis() {
+//        axios.get('http://127.0.0.1:8000/cache/')
+//            .then(res => {
+//                console.log('user pairs', res)
+//            })
+//    }
+
     useEffect((() => {
-        console.log('inside pairUsers state', pairUsers)
+        console.log('useEffect running')
+//        axios.get('http://127.0.0.1:8000/cache/')
+//            .then(res => {
+//                console.log('user pairs', res.data.items)
+//            })
+
+//        console.log('function running', getUserPairsFromRedis())
     }), [])
 
     const createRoomHandler = () => {
@@ -63,7 +75,6 @@ const WaitingRoom = () =>  {
 
     return (
     <>
-        <OnlineUsersCarousel/>
         <center><h6>How it works</h6></center>
                 <p className='text'>The session will be split into 5 phases:</p>
                 <ul>
