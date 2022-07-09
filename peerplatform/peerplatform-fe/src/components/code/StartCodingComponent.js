@@ -22,7 +22,8 @@ const StartCodingComponent = () => {
             getUsers,
             onlineUsers,
             setPairUsers,
-            pairUsers } = useContext(AuthContext)
+            pairUsers,
+            config } = useContext(AuthContext)
     const [ allOnlineUsers, setAllOnlineUsers ] = useState({})
 
     //generate room topic name
@@ -73,7 +74,7 @@ const StartCodingComponent = () => {
 
     const sendWaitingRoomUsersToRedisCache = () => {
         console.log('sendWaiting')
-        axios.get('http://127.0.0.1:8000/cache/')
+        axios(config)
         .then(res =>{
             console.log('data', res.data)
             setAllOnlineUsers([ res?.data?.items])
@@ -85,11 +86,15 @@ const StartCodingComponent = () => {
             .then(res => {
                     const filteredUsers = res.data.filter(filtered => filtered.profile.in_waiting_room === true)
                     const allUserNames  = filteredUsers.map(arr => arr.username)
+                    console.log('users from django', allUserNames)
                     //filter off users who are already in redis cache - create only unique pairs in redis
                     const uniqueUsers = (allUserNames.filter((x) => {
-                        return (!allOnlineUsers.find((choice) => choice === x));
+                        return (!newArr.find((choice) => choice === x));
                     }));
+                    console.log('unique users', uniqueUsers)
+                    //randomly pair unique users return as an object of unique users
                     const newDict = getPicks(uniqueUsers)
+                    console.log('dictionary:', newDict)
                     //write users to redis cache
                     axios.post('http://127.0.0.1:8000/cache/', newDict)
                         .then(res => {
@@ -111,7 +116,6 @@ const StartCodingComponent = () => {
         setState((state) => {
             return {...state, rooms,selectedRoom }
         });
-//        getAllUsers()
         sendWaitingRoomUsersToRedisCache()
 //        setPairUsers({ ...pairUsers,
 //                        [nickname]: checkOnlineUsers(pickRandom())[0].username })

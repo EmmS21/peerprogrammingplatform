@@ -235,6 +235,15 @@ export const AuthProvider = ({children}) => {
         setPairUsers({username: matchedUser })
     }
 
+    //redis get request
+    const config = {
+        method: 'GET',
+        url: 'http://127.0.0.1:8000/cache/',
+        headers: {
+            "accept": "*/*",
+        }
+    }
+
 
     const onSubmit = (data) => {
         const user = {
@@ -296,6 +305,7 @@ export const AuthProvider = ({children}) => {
         getProfileInfo: getProfileInfo,
         retrieveChallenge: retrieveChallenge,
         challengeInState: challengeInState,
+        config: config,
 //        getAllUsers: getAllUsers,
         onlineUsers: onlineUsers,
         availableUsers: availableUsers,

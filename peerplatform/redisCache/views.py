@@ -7,15 +7,16 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 
+
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
                                    port=settings.REDIS_PORT, db=0, password=settings.REDIS_PASSWORD)
 @api_view(['GET', 'POST'])
 def manage_items(request, *args, **kwargs):
     if request.method == 'GET':
-        items = {}
+        items = []
         count = 0
-        for key in redis_instance.keys("*"):
-            items[key.decode("utf-8", 'ignore')] = redis_instance.get(key)
+        for elem in redis_instance.smembers("pairs"):
+            items.append(elem.decode("utf-8"))
             count += 1
         response = {
             'count': count,
@@ -24,13 +25,11 @@ def manage_items(request, *args, **kwargs):
         }
         return Response(response, status=200)
     elif request.method == 'POST':
-        item = json.loads(request.body)
-        keys = list(item.keys())
-        values = list(item.values())
-        for i in range(0, len(keys)):
-            redis_instance.set(keys[i], values[i])
+        new_users = request.body
+        for i in range(0, len(new_users)):
+            redis_instance.sadd('pairs', bytes(str(new_users[i]), "utf-8"))
         response = {
-            'msg': f"{keys} successfully set to {values}"
+            'msg': f'set contains: {new_users}'
         }
         return Response(response, 201)
 

@@ -14,7 +14,8 @@ const WaitingRoom = () =>  {
     const { user,
             logOutUser,
             updateProfile,
-            pairUsers } = useContext(AuthContext)
+            pairUsers,
+            config } = useContext(AuthContext)
 //    console.log(`what do we have in state twilioToken: ${state.twilioToken}`)
 //    console.log(getAllUsers())
 
@@ -35,12 +36,10 @@ const WaitingRoom = () =>  {
 
     useEffect((() => {
         console.log('useEffect running')
-//        axios.get('http://127.0.0.1:8000/cache/')
-//            .then(res => {
-//                console.log('user pairs', res.data.items)
-//            })
-
-//        console.log('function running', getUserPairsFromRedis())
+        axios(config)
+            .then(res => {
+                console.log('what are we getting from redis', res.data.items)
+            })
     }), [])
 
     const createRoomHandler = () => {
