@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
-
+import re
 
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
                                    port=settings.REDIS_PORT, db=0, password=settings.REDIS_PASSWORD)
@@ -25,9 +25,10 @@ def manage_items(request, *args, **kwargs):
         }
         return Response(response, status=200)
     elif request.method == 'POST':
-        new_users = request.body
+        new_users = request.body.decode("utf-8").split(",")
         for i in range(0, len(new_users)):
-            redis_instance.sadd('pairs', bytes(str(new_users[i]), "utf-8"))
+            print('each iter', new_users[i])
+            redis_instance.sadd('pairs', re.sub("[\"\']", "", new_users[i]).strip('[]'))
         response = {
             'msg': f'set contains: {new_users}'
         }
