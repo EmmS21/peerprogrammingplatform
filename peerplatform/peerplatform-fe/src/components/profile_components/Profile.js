@@ -22,6 +22,7 @@ import axios from 'axios';
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory } from 'react-router-dom';
 import PushNotifications from './PushNotifications.js'
+
 import {
   Button,
   Card,
@@ -37,9 +38,14 @@ import {
 } from "reactstrap";
 import { Button as AntButton, Modal } from 'antd';
 import StripeElementsProvider from '../payments/StripeElementsProvider';
-
+//
+//    const { onShowNotificationClicked, show, setShow, notification, isTokenFound, setTokenFound, user } = useContext(AuthContext)
+//    const [token, setToken] = useState('')
+//    const [toastVisible, setToastVisible] = useState(false)
     const Profile = () => {
-        let { user,logOutUser, updateProfile, retrieveChallenge, getProfileInfo, pairUsers } = useContext(AuthContext)
+        let { user, logOutUser,
+              updateProfile, retrieveChallenge,
+              getProfileInfo, pairUsers } = useContext(AuthContext)
         //store users in state
         const[profileUser, setProfileUser] = useState({user})
         //modal state
@@ -52,6 +58,7 @@ import StripeElementsProvider from '../payments/StripeElementsProvider';
         const history = useHistory();
         //controls payment modal
         const [visible, setVisible] = useState(false);
+        const [token, setToken] = useState('')
 
 
         //on idle update Profile model activity field
@@ -96,18 +103,6 @@ import StripeElementsProvider from '../payments/StripeElementsProvider';
             }
             updateProfile(updatedProfileInfo);
         }
-        //open file browser on click
-//        const openFile = (e) => {
-////            fileSelector.onChange = fileSelectedHandler
-//            fileSelector.click();
-//            console.log(e.target.files[0])
-////            const { current } = inputRef
-////            console.log(e.target.files[0])
-//        }
-//        //on change handler
-//        const pictureSelector = (e) => {
-//            console.log(e.target.files[0].name)
-//        }
 
         const countDown = () => {
             let secondsToGo = 5;

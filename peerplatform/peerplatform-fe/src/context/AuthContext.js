@@ -42,6 +42,7 @@ export const AuthProvider = ({children}) => {
     const [isTokenFound, setTokenFound] = useState(false);
     //store current and matched users in state
     const  [pairUsers, setPairUsers] = useState([])
+    const [ allOnlineUsers, setAllOnlineUsers ] = useState([])
 
     const history = useHistory();
 
@@ -333,7 +334,9 @@ export const AuthProvider = ({children}) => {
         setTokenFound: setTokenFound,
         pairProgrammingMatching: pairProgrammingMatching,
         setPairUsers: setPairUsers,
-        pairUsers: pairUsers
+        pairUsers: pairUsers,
+        allOnlineUsers: allOnlineUsers,
+        setAllOnlineUsers: setAllOnlineUsers,
     }
 
 

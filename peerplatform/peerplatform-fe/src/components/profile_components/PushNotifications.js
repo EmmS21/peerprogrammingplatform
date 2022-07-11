@@ -7,14 +7,15 @@ import axios from 'axios'
 const PushNotifications =  () => {
     const { onShowNotificationClicked, show, setShow, notification, isTokenFound, setTokenFound, user } = useContext(AuthContext)
     const [token, setToken] = useState('')
+    const [toastVisible, setToastVisible] = useState(false)
 
-//    const fetchingFireBaseToken = async() => {
-//        let result = fetchToken(setTokenFound);
-//        return result.then(res => {
-//            setToken(res)
-//        })
-//        }
-//    console.log('result is', fetchingFireBaseToken())
+    const fetchingFireBaseToken = async() => {
+        let result = fetchToken(setTokenFound);
+        return result.then(res => {
+            setToken(res)
+        })
+        }
+    console.log('result is', fetchingFireBaseToken())
 
 
 //    useEffect(() => {
@@ -60,8 +61,8 @@ const PushNotifications =  () => {
                         <Toast.Body>{ notification.body }</Toast.Body>
                 </Toast>
                 <header className="App-header">
-                    { isTokenFound && <h3> Notification permission enabled </h3> }
-                    { !isTokenFound && <h3> Need notification permission </h3> }
+                    { isTokenFound && console.log('Notification permission enabled') }
+                    { !isTokenFound && <center><p> Need notification permission </p></center> }
                     <Button onClick={() => onShowNotificationClicked() }> Show Toast </Button>
                 </header>
             </>

@@ -23,8 +23,10 @@ const StartCodingComponent = () => {
             onlineUsers,
             setPairUsers,
             pairUsers,
+            allOnlineUsers,
+            setAllOnlineUsers,
             config } = useContext(AuthContext)
-    const [ allOnlineUsers, setAllOnlineUsers ] = useState({})
+//    const [ allOnlineUsers, setAllOnlineUsers ] = useState([])
 
     //generate room topic name
     const generateRandomTopicNum = () => {
@@ -73,32 +75,29 @@ const StartCodingComponent = () => {
     }
 
     const sendWaitingRoomUsersToRedisCache = () => {
-        console.log('sendWaiting')
-        axios(config)
-        .then(res =>{
-            console.log('data', res.data)
-            setAllOnlineUsers([ res?.data?.items])
-            console.log('inside state', allOnlineUsers)
-        })
-        //array of all users in redis
-        const newArr = Object.keys(allOnlineUsers).concat(Object.values(allOnlineUsers))
+//        console.log('sendWaiting')
+//        axios(config)
+//        .then(res =>{
+//            console.log('data', res.data)
+//            setAllOnlineUsers([ res?.data?.items])
+//            console.log('inside state', allOnlineUsers)
+//        })
+//        //array of all users in redis
+//        const newArr = Object.keys(allOnlineUsers).concat(Object.values(allOnlineUsers))
         axios.get('http://127.0.0.1:8000/users/')
             .then(res => {
                     const filteredUsers = res.data.filter(filtered => filtered.profile.in_waiting_room === true)
                     const allUserNames  = filteredUsers.map(arr => arr.username)
-                    console.log('users from django', allUserNames)
-                    //filter off users who are already in redis cache - create only unique pairs in redis
-                    const uniqueUsers = (allUserNames.filter((x) => {
-                        return (!newArr.find((choice) => choice === x));
-                    }));
-                    console.log('unique users', uniqueUsers)
-                    //randomly pair unique users return as an object of unique users
-                    const newDict = getPicks(uniqueUsers)
-                    console.log('dictionary:', newDict)
-                    //write users to redis cache
-                    axios.post('http://127.0.0.1:8000/cache/', newDict)
+                    //write users to Redis set
+                    axios.post('http://127.0.0.1:8000/cache/', allUserNames)
                         .then(res => {
-                            console.log('written into redis', res.data)
+                            console.log('into redis', res.data)
+                        })
+                        axios(config)
+                        .then(res => {
+                            const availUsers = res.data.elements.filter(name => name !== user.username)
+                            setAllOnlineUsers([ ...availUsers])
+                            console.log('inside state', allOnlineUsers)
                         })
             })
         }

@@ -11,9 +11,6 @@ const firebaseConfig = {
     measurementId: "G-DZ47GH30DE"
 };
 
-
-
-
 const firebaseApp = initializeApp(firebaseConfig);
 const messaging = getMessaging(firebaseApp);
 
@@ -31,6 +28,8 @@ export const fetchToken = async (setTokenFound) => {
     });
     return token
 }
+
+//FirebaseInstanceId.getInstance().getToken()
 
 
 export const onMessageListener = () =>

@@ -16,12 +16,11 @@ def manage_items(request, *args, **kwargs):
         items = []
         count = 0
         for elem in redis_instance.smembers("pairs"):
+            print('getting from redis', elem.decode("utf-8"))
             items.append(elem.decode("utf-8"))
             count += 1
         response = {
-            'count': count,
-            'msg': f"Found {count} items.",
-            'items': items
+            'elements': items
         }
         return Response(response, status=200)
     elif request.method == 'POST':

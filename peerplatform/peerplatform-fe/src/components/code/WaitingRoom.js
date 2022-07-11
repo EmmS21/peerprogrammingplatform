@@ -7,6 +7,7 @@ import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
 //import OnlineUsersCarousel from './OnlineUsersCarousel';
 import "../../assets/waitingRoom/app.css";
+import PushNotifications from '../profile_components/PushNotifications'
 
 const WaitingRoom = () =>  {
     const [state, setState] = useGlobalState();
@@ -15,6 +16,7 @@ const WaitingRoom = () =>  {
             logOutUser,
             updateProfile,
             pairUsers,
+            allOnlineUsers,
             config } = useContext(AuthContext)
 //    console.log(`what do we have in state twilioToken: ${state.twilioToken}`)
 //    console.log(getAllUsers())
@@ -27,20 +29,25 @@ const WaitingRoom = () =>  {
         background: '#364d79',
     };
 
-//    function getUserPairsFromRedis() {
-//        axios.get('http://127.0.0.1:8000/cache/')
-//            .then(res => {
-//                console.log('user pairs', res)
-//            })
+//    function pickRandom() {
+//        return allOnlineUsers[Math.floor(Math.random()* allOnlineUsers.length)]
 //    }
 
+    //pair up array of online users into object
+    function getPicks(names) {
+        const newDict = {}
+        const newName = names.slice(0).sort(function(){ return Math.random()-0.5 }).map(function(name, index, arr){
+            newDict[name] =  arr[(index+1)%arr.length];
+        });
+        return newDict
+    }
+
+
     useEffect((() => {
-        console.log('useEffect running')
-        axios(config)
-            .then(res => {
-                console.log('what are we getting from redis', res.data.items)
-            })
+        console.log('useEffect running, users:', getPicks(allOnlineUsers))
     }), [])
+
+
 
     const createRoomHandler = () => {
         const userData = {'roomName': state.nickname, 'participantLabel': state.createdRoomTopic}
@@ -74,6 +81,7 @@ const WaitingRoom = () =>  {
 
     return (
     <>
+        <PushNotifications/>
         <center><h6>How it works</h6></center>
                 <p className='text'>The session will be split into 5 phases:</p>
                 <ul>
