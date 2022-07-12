@@ -96,7 +96,11 @@ const StartCodingComponent = () => {
                         axios(config)
                         .then(res => {
                             const availUsers = res.data.elements.filter(name => name !== user.username)
-                            setAllOnlineUsers([ ...availUsers])
+                            console.log('availUsers', availUsers)
+                            setAllOnlineUsers(result => [...result, availUsers]);
+//                            setAllOnlineUsers([ ...availUsers])
+//                            setAllOnlineUsers((data) => [ ...availUsers])
+//                            setAllOnlineUsers([ ...availUsers])
                             console.log('inside state', allOnlineUsers)
                         })
             })

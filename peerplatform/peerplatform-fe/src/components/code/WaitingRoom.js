@@ -33,18 +33,22 @@ const WaitingRoom = () =>  {
 //        return allOnlineUsers[Math.floor(Math.random()* allOnlineUsers.length)]
 //    }
 
-    //pair up array of online users into object
-    function getPicks(names) {
+    //pair up array of online users into
+    function createDict(data){
         const newDict = {}
-        const newName = names.slice(0).sort(function(){ return Math.random()-0.5 }).map(function(name, index, arr){
-            newDict[name] =  arr[(index+1)%arr.length];
-        });
+        while(data.length !== 0){
+            const randomAnswer = data[Math.floor(Math.random()*data.length)]
+            data.splice(data.indexOf(randomAnswer), 1)
+            const secondAnswer = data[Math.floor(Math.random()*data.length)]
+            data.splice(data.indexOf(secondAnswer), 1)
+            newDict[randomAnswer] = secondAnswer
+        }
         return newDict
     }
 
 
     useEffect((() => {
-        console.log('useEffect running, users:', getPicks(allOnlineUsers))
+        console.log('useEffect running, users:', createDict(allOnlineUsers))
     }), [])
 
 
