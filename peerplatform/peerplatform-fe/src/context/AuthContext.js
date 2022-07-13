@@ -1,4 +1,4 @@
-import React, { createContext,useState, useEffect } from 'react';
+import React, { createContext,useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 //decoding token with this function
 import jwt_decode from 'jwt-decode';
@@ -43,6 +43,7 @@ export const AuthProvider = ({children}) => {
     //store current and matched users in state
     const  [pairUsers, setPairUsers] = useState([])
     const [ allOnlineUsers, setAllOnlineUsers ] = useState([])
+    const availableOnlineUsers = useRef([])
 
     const history = useHistory();
 
@@ -337,6 +338,7 @@ export const AuthProvider = ({children}) => {
         pairUsers: pairUsers,
         allOnlineUsers: allOnlineUsers,
         setAllOnlineUsers: setAllOnlineUsers,
+        availableOnlineUsers: availableOnlineUsers,
     }
 
 

@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'payments',
     'redisCache',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -119,7 +120,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'signup.wsgi.application'
-
+ASGI_APPLICATION = 'signup.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -131,6 +132,14 @@ DATABASES = {
     }
 }
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

@@ -19,7 +19,7 @@ const Room = ({room}) => {
         const params = {
             roomName: roomName, participantLabel: nickname
         };
-        console.log(`UseEffect inside rooms, params: ${params}`)
+        console.log(`inside Room useEffect, roomName: ${roomName}, participantLabel:${nickname}`)
 //        if (!call) {
 //            const callPromise = device.connect({ params });
 //            callPromise.then((call) => {

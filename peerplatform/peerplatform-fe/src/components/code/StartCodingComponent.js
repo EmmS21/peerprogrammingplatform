@@ -5,14 +5,6 @@ import { useGlobalState } from '../../context/RoomContextProvider';
 import AuthContext from '../../context/AuthContext';
 import axios from 'axios';
 
-//            logOutUser,
-//            updateProfile,
-//            onlineUsers,
-//            pairProgrammingMatching,
-//            setPairUsers,
-//            pairUsers } = useContext(AuthContext)
-
-
 const StartCodingComponent = () => {
     const history = useHistory();
     const [ state, setState ] = useGlobalState();
@@ -25,25 +17,16 @@ const StartCodingComponent = () => {
             pairUsers,
             allOnlineUsers,
             setAllOnlineUsers,
-            config } = useContext(AuthContext)
-//    const [ allOnlineUsers, setAllOnlineUsers ] = useState([])
+            config, availableOnlineUsers } = useContext(AuthContext)
 
     //generate room topic name
     const generateRandomTopicNum = () => {
         return Math.random().toString(36).slice(2, 7)
     }
 
-//    const pickRandom = () => {
-//        const random =  Math.abs(Math.round(Math.random() * checkOnlineUsers().length - 1))
-//        return checkOnlineUsers()[random].username;
-//    }
     //filter online and active users
     const checkOnlineUsers = () => {
-//        const results = onlineUsers.filter(obj => {
-//            return obj.profile.is_online === true && obj.profile.currently_active === false && obj.username !== user.username
-//        })
         console.log('online users', onlineUsers)
-//        return results
     }
 
     //pick random number to select random user who is online
@@ -75,33 +58,23 @@ const StartCodingComponent = () => {
     }
 
     const sendWaitingRoomUsersToRedisCache = () => {
-//        console.log('sendWaiting')
-//        axios(config)
-//        .then(res =>{
-//            console.log('data', res.data)
-//            setAllOnlineUsers([ res?.data?.items])
-//            console.log('inside state', allOnlineUsers)
-//        })
-//        //array of all users in redis
-//        const newArr = Object.keys(allOnlineUsers).concat(Object.values(allOnlineUsers))
         axios.get('http://127.0.0.1:8000/users/')
             .then(res => {
                     const filteredUsers = res.data.filter(filtered => filtered.profile.in_waiting_room === true)
                     const allUserNames  = filteredUsers.map(arr => arr.username)
+                    //specifying key we will be using to retrieve these users in Redis with pre-defined pattern to clearly identify key in server
+                    console.log('allusernames push is', allUserNames)
                     //write users to Redis set
                     axios.post('http://127.0.0.1:8000/cache/', allUserNames)
                         .then(res => {
                             console.log('into redis', res.data)
                         })
+                        //get all users who aren't the current user
                         axios(config)
                         .then(res => {
                             const availUsers = res.data.elements.filter(name => name !== user.username)
-                            console.log('availUsers', availUsers)
-                            setAllOnlineUsers(result => [...result, availUsers]);
-//                            setAllOnlineUsers([ ...availUsers])
-//                            setAllOnlineUsers((data) => [ ...availUsers])
-//                            setAllOnlineUsers([ ...availUsers])
-                            console.log('inside state', allOnlineUsers)
+                            availableOnlineUsers.current = availUsers
+                            console.log('inside StartCodingComponent', availableOnlineUsers.current)
                         })
             })
         }
@@ -109,25 +82,19 @@ const StartCodingComponent = () => {
     const handleSubmit = e => {
         e.preventDefault();
         const nickname = user.username;
-        const createdRoomTopic = generateRandomTopicNum()
-        setupTwilio(nickname, createdRoomTopic);
-        const selectedRoom = { room_name: state.createdRoomTopic, participants: [] };
-        console.log(`selected Room ${selectedRoom}`)
+        setupTwilio(nickname);
         const rooms = state.rooms;
         updateWaitingRoomStatus()
-        const roomId = rooms.push(selectedRoom);
         setState((state) => {
-            return {...state, rooms,selectedRoom }
+            return {...state, rooms }
         });
         sendWaitingRoomUsersToRedisCache()
-//        setPairUsers({ ...pairUsers,
-//                        [nickname]: checkOnlineUsers(pickRandom())[0].username })
         history.push('/rooms');
     }
 
-    const setupTwilio = (nickname, createdRoomTopic) => {
+    const setupTwilio = (nickname) => {
         fetch(`http://127.0.0.1:8000/voice_chat/token/${nickname}`)
-        .then(response => response.json())
+        .then(response => console.log('setupTwilio returns: ',response.json()))
         .then(data => {
             // setup device
             const twilioToken = JSON.parse(data).token;
@@ -135,13 +102,14 @@ const StartCodingComponent = () => {
             device.updateOptions(twilioToken, {
                 codecPreferences: ['opus', 'pcmu'],
                 fakeLocalDTMF: true,
-                maxAverageBitrate: 16000
+                maxAverageBitrate: 16000,
+                maxCallSignalingTimeoutMs: 30000
             });
             device.on('error', (device) => {
                 console.log("error: ", device)
             });
-            setState({... state, device, twilioToken, nickname, createdRoomTopic})
-            console.log(`setupTwilio has been hit, device: ${device}, twilioToken: ${twilioToken}`)
+            setState({... state, device, twilioToken, nickname})
+//            console.log(`setupTwilio has been hit, device: ${device}, twilioToken: ${twilioToken}`)
         })
         .catch((error) => {
             console.log(error)
