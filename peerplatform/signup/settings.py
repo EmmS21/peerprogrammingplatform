@@ -136,11 +136,13 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("redis://default:redispw@localhost", 49154)],
         },
     },
 }
 
+# default:redispw@127.0.0.1", 49155
+# redis://default:redispw@localhost:49153
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -162,7 +164,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://default:redispw@localhost:49155",
+        "LOCATION": "redis://default:redispw@localhost:49154",
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
@@ -258,5 +260,5 @@ SIMPLE_JWT = {
 }
 
 REDIS_HOST = 'localhost'
-REDIS_PORT = 49155
+REDIS_PORT = 49154
 REDIS_PASSWORD = 'redispw'

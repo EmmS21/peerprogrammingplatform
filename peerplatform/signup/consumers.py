@@ -3,38 +3,38 @@ from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync, sync_to_async
 from channels.layers import get_channel_layer
 import json
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 
 
 @database_sync_to_async
 def get_user(user_id):
     try:
-        return Users.objects.get(id=user_id)
+        return User.objects.get(id=user_id)
     except:
         return AnonymousUser()
 @database_sync_to_async
 def create_notification(receiver,typeof="task_created",status="unread"):
-    notification_to_create=notifications.objects.create(user_revoker=receiver,type_of_notification=typeof)
+    notification_to_create = notifications.objects.create(user_revoker=receiver,type_of_notification=typeof)
     print('I am here to help')
     return (notification_to_create.user_revoker.username,notification_to_create.type_of_notification)
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def websocket_connect(self, event):
-        print(self.scope)
+        # print('scope is:', self.scope)
         await self.accept()
         await self.send(json.dumps({
-            "type": "websocket.send",
-            "text": "hello world"
+            "type": "connection_established",
+            "text": "connection successful"
         }))
         self.room_name='test_consumer'
         self.room_group_name='test_consumer_group'
-        await self.channel_layer.group_add(self.room_group_name,self.channel_name)
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         self.send({
             "type": "websocket.send",
             "text": "room made"
         })
 
-    async def websocket_receive(self,event):
+    async def websocket_receive(self, event):
         print(event)
         data_to_get = json.loads(event['text'])
         user_to_get = await get_user(int(data_to_get))

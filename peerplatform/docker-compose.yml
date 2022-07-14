@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  redis:
+    restart: always
+    image: redis:latest
+    ports:
+      - "49153:6379"
+  pairprogramming_be:
+    restart: always
+    depends_on:
+      - redis
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
+    env_file:
+      - ./signup/.env
+      - ./payments/.env
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8001"
+    container_name: "pairprogramming_be"
+    volumes:
+      - "C:/Users/15512/Desktop/django-project/peerplatform://pairprogramming_be"
+    working_dir:
+      "/C:/Users/15512/Desktop/django-project/peerplatform"
+  pairprogramming_fe:
+    restart: always
+    command: bash -c "npm install"
+    container_name: "pairprogramming_fe"
+    build:
+      context: ./peerplatform-fe/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3001"
+    depends_on:
+      - pairprogramming_be
+    volumes:
+      - "C:/Users/15512/Desktop/django-project/peerplatform/peerplatform-fe://pairprogramming_fe"
