@@ -1,14 +1,14 @@
 version: "3.8"
 services:
-  redis:
-    restart: always
-    image: redis:latest
-    ports:
-      - "49153:6379"
+#  redis:
+#    restart: always
+#    image: redis:latest
+#    ports:
+#      - "6379:6379"
   pairprogramming_be:
     restart: always
-    depends_on:
-      - redis
+#    depends_on:
+#      - redis-428w
     command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     env_file:
       - ./signup/.env
@@ -20,10 +20,10 @@ services:
     ports:
       - "8000:8000"
     container_name: "pairprogramming_be"
-    volumes:
-      - "C:/Users/15512/Desktop/django-project/peerplatform://pairprogramming_be"
-    working_dir:
-      "/C:/Users/15512/Desktop/django-project/peerplatform"
+#    volumes:
+#      - "C:/Users/15512/Desktop/django-project/peerplatform://pairprogramming_be"
+#    working_dir:
+#      "/C:/Users/15512/Desktop/django-project/peerplatform"
   pairprogramming_fe:
     restart: always
     command: "npm start"
@@ -35,5 +35,8 @@ services:
       - "3000:3001"
     depends_on:
       - pairprogramming_be
-    volumes:
-      - "C:/Users/15512/Desktop/django-project/peerplatform/peerplatform-fe://pairprogramming_fe"
+#    volumes:
+#      - "C:/Users/15512/Desktop/django-project/peerplatform/peerplatform-fe://pairprogramming_fe"
+
+
+#Error 99 connecting to localhost:49153. Cannot assign requested address.
