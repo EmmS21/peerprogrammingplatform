@@ -136,7 +136,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis://default:redispw@localhost", 49154)],
+            "hosts": [("redis://default:redispw@localhost", 49153)],
         },
     },
 }
@@ -164,7 +164,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://default:redispw@localhost:49154",
+        "LOCATION": "redis://default:redispw@localhost:49153",
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
@@ -252,7 +252,8 @@ TWILIO_API_SECRET = config('TWILIO_API_SECRET')
 ALLOWED_HOSTS = [
     ".ngrok.io",
     "127.0.0.1",
-    "localhost"
+    "localhost",
+    "0.0.0.0"
 ]
 
 SIMPLE_JWT = {
@@ -260,5 +261,5 @@ SIMPLE_JWT = {
 }
 
 REDIS_HOST = 'localhost'
-REDIS_PORT = 49154
+REDIS_PORT = 49153
 REDIS_PASSWORD = 'redispw'
