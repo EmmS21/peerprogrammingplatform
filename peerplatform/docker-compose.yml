@@ -33,7 +33,7 @@ services:
       context: .//peerplatform-fe/
       dockerfile: Dockerfile
     ports:
-      - "3000:3001"
+      - "3000:3000"
     depends_on:
       - pairprogramming_be
 #    volumes:
