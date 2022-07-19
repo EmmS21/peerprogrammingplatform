@@ -133,7 +133,7 @@ Defining private routes and other routes (ie. AppRoute). Also other files relate
 
 
 #Technologies/Frameworks
-Built using: Django and React
+Built using: Django, React and Redis
 
 Django Dependencies: `requirements.txt` (Let me know if there are packages not included in requirements.txt)
 
@@ -148,6 +148,7 @@ Django Dependencies: `requirements.txt` (Let me know if there are packages not i
 clone the project and run the following commands. You will need to install ngrok to interact with Twilio Programming Voice API
 - https://ngrok.com/
 - What is ngrok? -> 'Ngrok is a cross-platform application that exposes local server ports to the Internet.'
+- Alternatively, you can download Docker and run the project using the docker containers contained within this project. You will need some .env files that are not available on GitHub to complete this process
 
 ```
 pip install -r requirements.txt

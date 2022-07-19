@@ -52,9 +52,11 @@
     "reactstrap": "^9.0.1",
     "sass": "^1.49.7",
     "sendbird-calls": "^1.9.3",
+    "socket.io-client": "4.4.0",
     "styled-components": "^5.3.5",
     "util": "^0.12.4",
     "vuera": "^0.2.7",
+    "websocket": "^1.0.34",
     "yup": "^0.32.11"
   },
   "repository": {

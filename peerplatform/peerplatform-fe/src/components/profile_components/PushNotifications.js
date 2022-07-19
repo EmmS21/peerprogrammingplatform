@@ -1,13 +1,17 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { fetchToken, onMessageListener } from '../../firebase';
 import { Button, Toast } from 'react-bootstrap';
 import AuthContext from '../../context/AuthContext';
-import axios from 'axios'
+import axios from 'axios';
+//import socketIOClient from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 const PushNotifications =  () => {
     const { onShowNotificationClicked, show, setShow, notification, isTokenFound, setTokenFound, user } = useContext(AuthContext)
     const [token, setToken] = useState('')
     const [toastVisible, setToastVisible] = useState(false)
+    const ENDPOINT = 'ws://127.0.0.1:8000/connect/testing/';
+    const socketRef = useRef();
 
     const fetchingFireBaseToken = async() => {
         let result = fetchToken(setTokenFound);
@@ -16,7 +20,6 @@ const PushNotifications =  () => {
         })
         }
     console.log('result is', fetchingFireBaseToken())
-
 
 //    useEffect(() => {
 //        const fetchingFireBaseToken = async() => {
@@ -38,6 +41,14 @@ const PushNotifications =  () => {
 //        axios.post('127.0.0.1:8000/cache/',)
 //        console.log('what is user', user.username)
 //    },[]);
+        useEffect(() => {
+            socketRef.current = new WebSocket(ENDPOINT)
+            socketRef.current.onopen = () => console.log('ws opened')
+            socketRef.current.onmessage = e => {
+                const message = JSON.parse(e.data);
+                console.log('ws data:', message.text)
+            };
+        }, []);
 
 
         return (
@@ -63,7 +74,7 @@ const PushNotifications =  () => {
                 <header className="App-header">
                     { isTokenFound && console.log('Notification permission enabled') }
                     { !isTokenFound && <center><p> Need notification permission </p></center> }
-                    <Button onClick={() => onShowNotificationClicked() }> Show Toast </Button>
+                    <Button> Testing Button </Button>
                 </header>
             </>
         );

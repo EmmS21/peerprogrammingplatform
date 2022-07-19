@@ -29,10 +29,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         self.room_name='test_consumer'
         self.room_group_name='test_consumer_group'
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-        self.send({
+        self.send(json.dumps({
             "type": "websocket.send",
             "text": "room made"
-        })
+        }))
 
     async def websocket_receive(self, event):
         print(event)
