@@ -4,7 +4,7 @@ from asgiref.sync import async_to_sync, sync_to_async
 from channels.layers import get_channel_layer
 import json
 from django.contrib.auth.models import User, AnonymousUser
-
+from django.conf import settings
 
 @database_sync_to_async
 def get_user(user_id):
@@ -19,12 +19,15 @@ def create_notification(receiver,typeof="task_created",status="unread"):
     return (notification_to_create.user_revoker.username,notification_to_create.type_of_notification)
 
 class NotificationConsumer(AsyncWebsocketConsumer):
+    webpush_settings = getattr(settings, 'WEBPUSH_SETTINGS', {})
+    vapid_key = webpush_settings.get('VAPID_PUBLIC_KEY')
+
     async def websocket_connect(self, event):
         # print('scope is:', self.scope)
         await self.accept()
         await self.send(json.dumps({
             "type": "connection_established",
-            "text": "connection successful"
+            "text": "You have been matched, click accept to redirect to your pair programming session"
         }))
         self.room_name='test_consumer'
         self.room_group_name='test_consumer_group'
@@ -33,6 +36,13 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             "type": "websocket.send",
             "text": "room made"
         }))
+        #service worker - runs inside browser, will consume message from websocket, will read message and display a notification
+        #similar to chat app, pass in name when you open a websocket
+        #backend server will store info as dictionary - when server sends notification it knows who to
+        #send room in backend to both users so they click on this
+        #windows.location/react router
+    # def save_subscription(self, subscription):
+    #     return
 
     async def websocket_receive(self, event):
         print(event)

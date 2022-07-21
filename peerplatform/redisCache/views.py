@@ -13,7 +13,6 @@ redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
                                    password=settings.REDIS_PASSWORD
                                    )
 
-
 @api_view(['GET', 'POST'])
 def manage_items(request, *args, **kwargs):
     if request.method == 'GET':
@@ -29,6 +28,7 @@ def manage_items(request, *args, **kwargs):
         return Response(response, status=200)
     elif request.method == 'POST':
         new_users = request.body.decode("utf-8").split(",")
+        print('users', new_users)
         for i in range(0, len(new_users)):
             print('each iter', new_users[i])
             redis_instance.sadd('pairs', re.sub("[\"\']", "", new_users[i]).strip('[]'))
@@ -36,21 +36,6 @@ def manage_items(request, *args, **kwargs):
             'msg': f'set contains: {new_users}'
         }
         return Response(response, 201)
-
-
-# def postToRedis(request):
-#     online_users = User.objects.filter(is_online='true').order_by('-date_joined')
-#     print('online users are', online_users)
-#     queue_of_users = { d['username'] for d in online_users }
-#     keys = list(queue_of_users.keys())
-#     values = list(queue_of_users.values())
-#     for i in range(0, len(keys)):
-#         redis_instance.set(keys[i], values[i])
-#     response = {
-#         'msg': f"{keys} successfully set to {values}"
-#     }
-#     return Response(response, 201)
-
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def manage_item(request, *args, **kwargs):
@@ -196,3 +181,28 @@ def manage_post_object(request, *args, **kwargs):
                             'msg': 'Not found'
                         }
                         return Response(response, status=404)
+
+# post and get from redis channel layer
+# @api_view(['GET', 'POST'])
+# def subscriptions_to_redis_channel(request, *args, **kwargs):
+#     if request.method == 'GET':
+#         subs = []
+#         count = 0
+#         for elem in redis_channel.smembers("channel"):
+#             print('getting from redis', elem.decode("utf-8"))
+#             subs.append(elem.decode("utf-8"))
+#             count += 1
+#         response = {
+#             'subscriptions': subs
+#         }
+#         return Response(response, status=200)
+#     elif request.method == 'POST':
+#         subscriptions = request.body.decode("utf-8").split(",")
+#         print('users', subscriptions)
+#         for i in range(0, len(subscriptions)):
+#             print('each iter', subscriptions[i])
+#             redis_channel.sadd('pairs', re.sub("[\"\']", "", subscriptions[i]).strip('[]'))
+#         response = {
+#             'msg': f' subscriptions set contains: {subscriptions}'
+#         }
+#         return Response(response, 201)
