@@ -2,6 +2,8 @@ from django.contrib.auth.models import User, Group
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from pywebpush import webpush
 from webpush import send_user_notification
 import json
 from rest_framework.authentication import TokenAuthentication
@@ -11,6 +13,7 @@ from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.views import APIView
 
+from . import settings
 from .serializers import RegisterSerializer, PasswordSerializer, UpdateUserSerializer, CustomTokenObtainPairSerializer, ProgrammingChallengeSerializer
 from rest_framework.permissions import AllowAny
 #restrict type of request that can be made to post request
@@ -21,6 +24,12 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from accounts.models import models
 
 from accounts.models import ProgrammingChallenge, Profile
+from webpush.utils import send_to_subscription, _process_subscription_info
+
+
+# from pywebpush import WebPusher
+
+
 #
 # @api_view(['POST',])
 # def registration_view(request):
@@ -39,7 +48,22 @@ from accounts.models import ProgrammingChallenge, Profile
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
-    #changed name from UserSerializer to RegisterSerializer
+    subscription = {"endpoint":"https://fcm.googleapis.com/fcm/send/e4uDcE68SzE:APA91bGqDa_-Bf0habaBR-HyoCS0nNHRJ5bfu9RFwqS9IfhE0i5Fbi9SM39BKER1YNq4yX8QFB7GYNORrWNckj1q8X69s_0vPKKqxEZ5ih_Z4jrVViBp_rrTA7Xx6YwRy9WTHjR0pMlm","expirationTime":None,"keys":{"p256dh":"BNROVejeCHDw6vRdclq4-EZCVdwM19gfkQcQQS0NbxMLZwhnqKEkt_pM7EC3-v7xdalGUlQXkOuyOCeulCPR5ZM","auth":"hcJPvZcbWftScKkKB4QMlg"}}
+    payload = {"head": "Welcome!", "body": "Hello World"}
+    webpush_settings = getattr(settings, 'WEBPUSH_SETTINGS', {})
+    vapid_private_key = webpush_settings.get('VAPID_PRIVATE_KEY')
+    vapid_admin_email = webpush_settings.get('VAPID_ADMIN_EMAIL')
+
+    vapid_data = {
+        'vapid_private_key': vapid_private_key,
+        'vapid_claims': {"sub": "mailto:{}".format(vapid_admin_email)}
+    }
+    # webpush(subscription_info=subscription,
+    #         data=json.dumps(payload),
+    #         vapid_private_key=vapid_private_key)
+    print('queryset:', queryset[0])
+    # send_user_notification(user=subscription, payload=payload, ttl=0)
+    # changed name from UserSerializer to RegisterSerializer
     serializer_class = RegisterSerializer
 
     # permission_classes = [permissions.IsAuthenticated]
@@ -85,6 +109,7 @@ class UpdateProfileView(generics.UpdateAPIView):
                 return Response(data='no such user!', status=status.HTTP_400_BAD_REQUEST)
 
 
+
 class UpdateProfileActive(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UpdateUserSerializer
@@ -105,3 +130,23 @@ class ProgrammingChallengeView(ReadOnlyModelViewSet):
 #     queryset = Group.objects.all()
 #     serializer_class = GroupSerializer
 #     # permission_classes = [permissions.IsAuthenticated]
+
+@require_POST
+@csrf_exempt
+def send_push(request):
+    try:
+        body = request.body
+        data = json.loads(body)
+        subscription = {"endpoint":"https://fcm.googleapis.com/fcm/send/e4uDcE68SzE:APA91bGqDa_-Bf0habaBR-HyoCS0nNHRJ5bfu9RFwqS9IfhE0i5Fbi9SM39BKER1YNq4yX8QFB7GYNORrWNckj1q8X69s_0vPKKqxEZ5ih_Z4jrVViBp_rrTA7Xx6YwRy9WTHjR0pMlm",
+                        "expirationTime": None,
+                        "keys": {"p256dh": "BNROVejeCHDw6vRdclq4-EZCVdwM19gfkQcQQS0NbxMLZwhnqKEkt_pM7EC3-v7xdalGUlQXkOuyOCeulCPR5ZM",
+                                 "auth": "hcJPvZcbWftScKkKB4QMlg"}}
+        if 'head' not in data or 'body' not in data or 'id' not in data:
+            return JsonResponse(status=400, data={"message": "Invalid data format"})
+        user_id = data['id']
+        user = get_object_or_404(User, pk=user_id)
+        payload = {'head': data['head'], 'body': data['body']}
+        send_user_notification(user=subscription, payload=payload, ttl=1000)
+        return JsonResponse(status=200, data={"message": "Web push successful"})
+    except TypeError:
+        return JsonResponse(status=500, data={"message": "An error occurred"})

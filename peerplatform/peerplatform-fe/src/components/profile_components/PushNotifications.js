@@ -19,7 +19,7 @@ const PushNotifications =  () => {
             setToken(res)
         })
         }
-    console.log('result is', fetchingFireBaseToken())
+//    console.log('result is', fetchingFireBaseToken())
 
 //    useEffect(() => {
 //        const fetchingFireBaseToken = async() => {

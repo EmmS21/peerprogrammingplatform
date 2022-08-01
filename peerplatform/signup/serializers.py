@@ -44,20 +44,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         user = User.objects.create(**validated_data)
         Profile.objects.create(**profile_data, user=user)
         return user
-        # user = User.objects.create_user(
-        #                                 username=validated_data['username'],
-        #                                 first_name=validated_data['first_name'],
-        #                                 last_name=validated_data['last_name'],
-        #                                 # password=validated_data['password'],
-        #                                 email=validated_data['email'])
-        # user.set_password(validated_data['password'])
-        #
-        # #added fields from profile
-        # # user.profile.city = validated_data['city']
-        # # user.profile.country = validated_data['country']
-        # # user.profile.bio = validated_data['bio']
-        # user.save()
-        # return user
+
+# }
 
 # upload profile picture using base64 encoding string instead of raw file (not supported by default)
 class Base64ImageField(serializers.ImageField):

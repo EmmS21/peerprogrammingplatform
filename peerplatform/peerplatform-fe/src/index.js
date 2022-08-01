@@ -12,48 +12,49 @@ import './assets/scss/style.scss';
 
 const history = createBrowserHistory();
 
-const check = () => {
-    if(!('serviceWorker' in navigator)) {
-        throw new Error('No Service Worker support!')
-    }
-    if (!('PushManager' in window)) {
-        throw new Error('No Push API Support!')
-    }
-    console.log('check is running')
-}
+//const check = () => {
+//    if(!('serviceWorker' in navigator)) {
+//        throw new Error('No Service Worker support!')
+//    }
+//    if (!('PushManager' in window)) {
+//        throw new Error('No Push API Support!')
+//    }
+//    console.log('check is running')
+//}
+////
+//const registerServiceWorker = async () => {
+//    const swRegistration = await navigator.serviceWorker.register('./service.js')
+//    console.log('registering service worker')
+//    return swRegistration;
+//}
 //
-const registerServiceWorker = async () => {
-    const swRegistration = await navigator.serviceWorker.register('./service.js')
-    return swRegistration;
-}
-
-const requestNotificationPermission = async () => {
-    const permission = await window.Notification.requestPermission();
-    if(permission !== 'granted') {
-        throw new Error('Permission not granted for Notification');
-    }
-}
-
-const showLocalNotification = (title, body, swRegistration) => {
-    const options = {
-        body,
-    };
-    swRegistration.showNotification(title, options)
-//       / .then(res => {
-//            console.log('promise returns', res)
-//        });
-//    console.log('what is title:', title)
-};
-
-const main = async () => {
-    check()
-    const swRegistration = await registerServiceWorker();
-    const permission = await requestNotificationPermission();
-    console.log('main is running and permissions are', Notification.permission)
-    showLocalNotification('This is title', 'this is the message', swRegistration);
-}
-
-main();
+//const requestNotificationPermission = async () => {
+//    const permission = await window.Notification.requestPermission();
+//    if(permission !== 'granted') {
+//        throw new Error('Permission not granted for Notification');
+//    }
+//}
+//
+//const showLocalNotification = (title, body, swRegistration) => {
+//    const options = {
+//        body,
+//    };
+//    swRegistration.showNotification(title, options)
+////       / .then(res => {
+////            console.log('promise returns', res)
+////        });
+////    console.log('what is title:', title)
+//};
+//
+//const main = async () => {
+//    check()
+//    const swRegistration = await registerServiceWorker();
+//    const permission = await requestNotificationPermission();
+//    console.log('main is running and permissions are', Notification.permission)
+//    showLocalNotification('This is title', 'this is the message', swRegistration);
+//}
+//
+//main();
 
 ReactDOM.render(
   <Router history={history}>

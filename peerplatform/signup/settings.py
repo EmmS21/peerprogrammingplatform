@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'redisCache',
     'channels',
     'redis_channels',
+    'webpush',
 ]
 
 MIDDLEWARE = [
