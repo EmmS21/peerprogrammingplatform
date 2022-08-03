@@ -34,6 +34,7 @@ const WaitingRoom = () =>  {
     };
     //pick random user from state - user's match
     function pickRandom() {
+        console.log('available users are', availableOnlineUsers.current)
         return availableOnlineUsers.current[Math.floor(Math.random()* allOnlineUsers.length)]
     }
 
@@ -50,45 +51,52 @@ const WaitingRoom = () =>  {
 //        return newDict
 //    }
 
-    useEffect((() => {
-        const username = user.username
-        console.log('inside useEffect', username)
-        const matchedUsers = pickRandom()
-        setUsersInState(matchedUsers)
-        const currUsers = availableOnlineUsers.current
-        console.log('matchedUser:', usersInState)
-        //if user has been matched show notification
-        if(matchedUsers){countDown(matchedUsers)}
-//        console.log('who is online current', currUsers)
-//        console.log('matchedUser is', matchedUsers)
-//        console.log('paired users are:'. pairedUsers)
-//        const updatedData = availableOnlineUsers.current
-//        setUsersInState(createDict(updatedData))
-//        console.log('what is in setUsersInState:', usersInState)
-//        console.log('useEffect running, users:', createDict(allOnlineUsers))
-    }), [availableOnlineUsers])
+
+//var newArr={};
+//for(var i=0,len=arrayKeys.length;i<len;i+=2) {
+//    newArr[arrayKeys[i]]=(arrayKeys[i+1]);
+//}
+//console.log(newArr)
+
+    function randomizeAndMatch(allUsers) {
+        let newArr = {}
+        for(var i=0, len=allUsers.length; i<len; i+=2) {
+            newArr[allUsers[i]] =  (allUsers[i+1])
+        }
+        return newArr
+    }
+
+        useEffect((() => {
+            console.log('randomized:', randomizeAndMatch(availableOnlineUsers.current))
+            handleRoomCreate()
+            const username = user.username
+    //        const matchedUsers = pickRandom()
+    //        setUsersInState(matchedUsers)
+            //if user has been matched show notification
+    //        if(matchedUsers){countDown(matchedUsers)}
+        }), [availableOnlineUsers])
 
     //show user notification if they have been matched
-    const countDown = (matchedUsers) => {
-        let secondsToGo = 5;
-        const modal = Modal.success({
-            title: `You have been matched with ${matchedUsers}. Please do not refresh this page`,
-            content: `Please click start once this modal closes. ${secondsToGo} seconds.`,
-        });
-        const timer = setInterval(() => {
-            secondsToGo -= 1;
-            modal.update({
-                content: `Please click start once this modal closes. ${secondsToGo} seconds.`,
-            });
-        }, 1000);
-        setTimeout(() => {
-            clearInterval(timer);
-            modal.destroy();
-            }, secondsToGo * 1000);
-    };
+//    const countDown = (matchedUsers) => {
+//        let secondsToGo = 5;
+//        const modal = Modal.success({
+//            title: `You have been matched with ${matchedUsers}. Please do not refresh this page`,
+//            content: `Please click start once this modal closes. ${secondsToGo} seconds.`,
+//        });
+//        const timer = setInterval(() => {
+//            secondsToGo -= 1;
+//            modal.update({
+//                content: `Please click start once this modal closes. ${secondsToGo} seconds.`,
+//            });
+//        }, 1000);
+//        setTimeout(() => {
+//            clearInterval(timer);
+//            modal.destroy();
+//            }, secondsToGo * 1000);
+//    };
 
-    const createRoomHandler = (username) => {
-        const userData = {'roomName': username+usersInState, 'participantLabel': [username, usersInState] }
+    const createRoomHandler = (curr,matched) => {
+        const userData = {'roomName': curr+matched, 'participantLabel': [curr, matched] }
         axios.post('http://127.0.0.1:8000/voice_chat/rooms', userData )
             .then(res => {
                 console.log('axios call has been hit', res.data)
@@ -103,47 +111,51 @@ const WaitingRoom = () =>  {
         return Math.random().toString(36).slice(2, 7)
     }
 
-    function createRoomsWith() {
-        console.log('what is username', user.username)
-        const createdRoomTopic = user.username+usersInState
-        setState({  ...state, createdRoomTopic })
-        const selectedRoom = {
-            room_name: state.createdRoomTopic, participants: [user.username, usersInState]
-        };
-        console.log(`what is in the selectedRoom variable roomName: ${selectedRoom.room_name} participants: ${selectedRoom.participants}`)
-        const rooms = state.rooms
-        const roomId = rooms.push(selectedRoom)
-        setState({ ...state, rooms, selectedRoom, roomId });
-        if(usersInState) {
-            createRoomHandler(user.username)
-        }
-        else {
-            console.log('No match found yet')
-        }
-    }
+
+//for ( let [k, v] of new Map( Object.entries(randomizeAndMatch(availableOnlineUsers.current))) ) {
+//            const createdRoomTopic = k+v
+//            setState({ ...state, createdRoomTopic})
+//            const selectedRoom = {
+//                room_name: state.createdRoomTopic, participants: [k,v]
+//            }
+//            const rooms = state.rooms
+//            const roomId = rooms.push(selectedRoom)
+//            setState({ ...state, rooms, selectedRoom, roomId });
+//            if(usersInState) {
+//                created
+//            }
+//        }
 
 
     const handleRoomCreate = () => {
-        const createdRoomTopic = generateRandomTopicNum()
-        setState({ ...state, createdRoomTopic })
-        const selectedRoom = {
-            room_name: state.createdRoomTopic, participants: []
-        };
-        const rooms = state.rooms; //do we need this, rooms is empty after all
-        console.log(`Rooms currently has, rooms: ${JSON.stringify(rooms)}`)
-        const roomId = rooms.push(selectedRoom);
-        console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
-        setState({...state, rooms, selectedRoom, roomId});
+        console.log('handleRoomCreate is running')
+        for ( let [k, v] of new Map( Object.entries(randomizeAndMatch(availableOnlineUsers.current)))){
+                const createdRoomTopic = k+v
+                setState({ ...state, createdRoomTopic})
+                const selectedRoom = {
+                    room_name: state.createdRoomTopic, participants: [k,v]
+                };
+                setState({ ...state, selectedRoom})
+                const rooms = state.rooms;
+                const roomId = rooms.push(selectedRoom)
+                createRoomHandler(k,v);
+                history.push(`/rooms/${roomId}`)
+            }
+    }
+//        const createdRoomTopic = generateRandomTopicNum()
+//        setState({ ...state, createdRoomTopic })
+//        const selectedRoom = {
+//            room_name: state.createdRoomTopic, participants: []
+//        };
+//        const rooms = state.rooms; //do we need this, rooms is empty after all
+//        console.log(`Rooms currently has, rooms: ${JSON.stringify(rooms)}`)
+//        const roomId = rooms.push(selectedRoom);
+//        console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
+//        setState({...state, rooms, selectedRoom, roomId});
 //        console.log(`in state selectedRoom is: ${state.selectedRoom} and createdRoomTopic is: ${state.createdRoomTopic} roomId: ${roomId}`)
 //        createRoomHandler(username, matchedUsers)
-        history.push(`/rooms/${roomId}`);
-    };
-
-    function redirectUsers(users){
-        for (const prop in users) {
-            console.log(`${prop}: ${users[prop]}`);
-        }
-    }
+//        history.push(`/rooms/${roomId}`);
+//    };
 
 
     return (
@@ -159,9 +171,6 @@ const WaitingRoom = () =>  {
                     <li><strong>Rating</strong> To close things off you will rate each other on; i.) logic, ii.) collaboration iii.) general coding skills and iv.) communication </li>
                 </ul>
             <div>
-                <center>
-                    <button onClick={createRoomsWith}>Start Session</button>
-                </center>
             </div>
     </>
     );

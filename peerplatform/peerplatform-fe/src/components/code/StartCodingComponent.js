@@ -19,21 +19,6 @@ const StartCodingComponent = () => {
             setAllOnlineUsers,
             config, availableOnlineUsers } = useContext(AuthContext)
 
-    //generate room topic name
-    const generateRandomTopicNum = () => {
-        return Math.random().toString(36).slice(2, 7)
-    }
-
-    //filter online and active users
-    const checkOnlineUsers = () => {
-        console.log('online users', onlineUsers)
-    }
-
-    //pick random number to select random user who is online
-    const pickRandom = () => {
-        return Math.abs(Math.round(Math.random() * checkOnlineUsers().length - 1))
-    }
-
     const updateWaitingRoomStatus = () => {
         axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
             in_waiting_room: true
@@ -43,38 +28,25 @@ const StartCodingComponent = () => {
         })
     }
 
-    //randomly pair all available users
-    function getPicks(names) {
-        const arrOfUsers =  names
-        const newDict = {}
-        while(arrOfUsers.length){
-            let randomInd = Math.floor(Math.random() * arrOfUsers.length);
-            let randomItem = arrOfUsers.splice(randomInd, 1)[0];
-            let randomValInd = Math.floor(Math.random() * arrOfUsers.length);
-            let randomVal = arrOfUsers.splice(randomValInd, 1)[0];
-            newDict[randomItem] = randomVal
-        }
-        return newDict
-    }
-
+//making this code redundant
     const sendWaitingRoomUsersToRedisCache = () => {
         axios.get('http://127.0.0.1:8000/users/')
             .then(res => {
                     const filteredUsers = res.data.filter(filtered => filtered.profile.in_waiting_room === true)
                     const allUserNames  = filteredUsers.map(arr => arr.username)
                     //specifying key we will be using to retrieve these users in Redis with pre-defined pattern to clearly identify key in server
-                    console.log('allusernames push is', allUserNames)
                     //write users to Redis set
                     axios.post('http://127.0.0.1:8000/cache/', allUserNames)
                         .then(res => {
-                            console.log('into redis', res.data)
+//                            console.log('into redis', res.data)
                         })
                         //get all users who aren't the current user
                         axios(config)
                         .then(res => {
-                            const availUsers = res.data.elements.filter(name => name !== user.username)
-                            availableOnlineUsers.current = availUsers
-                            console.log('inside StartCodingComponent', availableOnlineUsers.current)
+//                            const availUsers = res.data.elements.filter(name => name !== user.username)
+//                            console.log('res', res.data.elements)
+                            availableOnlineUsers.current = res.data.elements
+                            console.log('inside StartCodingComponent, all users are:', availableOnlineUsers.current)
                         })
             })
         }

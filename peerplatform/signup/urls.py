@@ -4,7 +4,7 @@ from rest_framework import routers
 from . import views
 from rest_framework_simplejwt.views import (TokenRefreshView, TokenVerifyView)
 from .serializers import CustomTokenObtainPairView
-from .views import ProgrammingChallengeView, send_push
+from .views import ProgrammingChallengeView, send_push, CacheView
 from django.conf import settings
 from django.conf.urls.static import static
 from .api import RegisterApi
@@ -34,6 +34,7 @@ urlpatterns = [
     path('cache/', include('redisCache.urls')),
     path('subscriptions/', include('redis_channels.urls')),
     path('send_push/', send_push, name='send_push'),
+    path('cacheUsers/', CacheView, name='cacheUsers'),
     path('webpush/', include('webpush.urls')),
     path('api/programming_challenges/', ProgrammingChallengeView.as_view({'get': 'list'}), name='programming_challenges'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

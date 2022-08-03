@@ -9,8 +9,11 @@ import * as serviceWorker from './serviceWorker';
 //import * as service from './service'
 
 import './assets/scss/style.scss';
+import { CookiesProvider } from 'react-cookie';
+
 
 const history = createBrowserHistory();
+
 
 //const check = () => {
 //    if(!('serviceWorker' in navigator)) {
@@ -57,10 +60,12 @@ const history = createBrowserHistory();
 //main();
 
 ReactDOM.render(
-  <Router history={history}>
-    <App />
-  </Router>,
-  document.getElementById('root')
+    <Router history={history}>
+      <CookiesProvider>
+        <App />
+      </CookiesProvider>
+    </Router>,
+    document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change

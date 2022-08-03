@@ -35,7 +35,7 @@ class RoomView(View):
 
     def post(self, request, *args, **kwargs):
         room_name = request.POST.get("roomName", "default")
-        participant_label = request.POST.get("participantLabel","default")
+        participant_label = request.POST.get("participantLabel", "default")
         response = VoiceResponse()
         dial = Dial()
         dial.conference(

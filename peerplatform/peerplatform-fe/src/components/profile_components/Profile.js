@@ -38,6 +38,7 @@ import {
 } from "reactstrap";
 import { Button as AntButton, Modal } from 'antd';
 import StripeElementsProvider from '../payments/StripeElementsProvider';
+import { useCookies } from 'react-cookie';
 
     const Profile = () => {
         let { user, logOutUser,
@@ -56,47 +57,48 @@ import StripeElementsProvider from '../payments/StripeElementsProvider';
         //controls payment modal
         const [visible, setVisible] = useState(false);
         const [token, setToken] = useState('')
-
+        const [cookies, setCookie] = useCookies();
+//
         //service worker
-        const check = () => {
-            if(!('serviceWorker' in navigator)) {
-                throw new Error('No Service Worker support!')
-            }
-            if (!('PushManager' in window)) {
-                throw new Error('No Push API Support!')
-            }
-            console.log('check is running')
-        }
+//        const check = () => {
+//            if(!('serviceWorker' in navigator)) {
+//                throw new Error('No Service Worker support!')
+//            }
+//            if (!('PushManager' in window)) {
+//                throw new Error('No Push API Support!')
+//            }
+//            console.log('check is running')
+//        }
+//
+//
+//        const registerServiceWorker = async () => {
+//            const swRegistration = await navigator.serviceWorker.register('./service.js')
+//            console.log('registering service worker')
+//            return swRegistration;
+//        }
+//
+//        const requestNotificationPermission = async () => {
+//            const permission = await window.Notification.requestPermission();
+//            if(permission !== 'granted') {
+//                throw new Error('Permission not granted for Notification');
+//            }
+//        }
+//
+//        const showLocalNotification = (title, body, swRegistration) => {
+//            const options = {
+//                body,
+//            };
+//            swRegistration.showNotification(title, options)
+//        };
+//        //run main function to register service worker and get subscription object
+//        const main = async () => {
+//            check()
+//            const swRegistration = await registerServiceWorker();
+//            const permission = await requestNotificationPermission();
+//            showLocalNotification('This is title', 'this is the message', swRegistration);
+//        }
 
-        const registerServiceWorker = async () => {
-            const swRegistration = await navigator.serviceWorker.register('./service.js')
-            console.log('registering service worker')
-            return swRegistration;
-        }
-
-        const requestNotificationPermission = async () => {
-            const permission = await window.Notification.requestPermission();
-            if(permission !== 'granted') {
-                throw new Error('Permission not granted for Notification');
-            }
-        }
-
-        const showLocalNotification = (title, body, swRegistration) => {
-            const options = {
-                body,
-            };
-            swRegistration.showNotification(title, options)
-        };
-        //run main function to register service worker and get subscription object
-        const main = async () => {
-            check()
-            const swRegistration = await registerServiceWorker();
-            const permission = await requestNotificationPermission();
-            console.log('main is running and permissions are', Notification.permission)
-            showLocalNotification('This is title', 'this is the message', swRegistration);
-        }
-
-        main();
+//        main();
 
 
         //on idle update Profile model activity field
@@ -167,7 +169,7 @@ import StripeElementsProvider from '../payments/StripeElementsProvider';
         .then(res => {
 //            console.log('user is in waiting room', res.data)
         })
-    }
+        }
 
         //get profile information
         useEffect(() => {

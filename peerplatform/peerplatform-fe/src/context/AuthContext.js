@@ -113,7 +113,7 @@ export const AuthProvider = ({children}) => {
 //        axios.put(`http://127.0.0.1:8000/update_profile/${userData.user_id}/`, userData)
 //            .then(res => {
 //                setUser({ ...user, first_name:res.data.first_name,
-//                        last_name: res.data_last_name,
+//                          last_name: res.data_last_name,
 //                        username: res.data.username,
 //                        city: res.data.city,
 //                        country: res.data.country })
@@ -232,7 +232,7 @@ export const AuthProvider = ({children}) => {
             })
     }
     //send current and matched users to state
-    const pairProgrammingMatching = ( matchedUser) => {
+    const pairProgrammingMatching = (matchedUser) => {
         const username =  user.username
         setPairUsers({username: matchedUser })
     }

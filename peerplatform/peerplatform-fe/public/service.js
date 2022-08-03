@@ -1,5 +1,4 @@
-//encodes the base64 public key
-//console.log('service worker running')
+
 const urlB64ToUint8Array = base64String => {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
     const base64 = (base64String + padding).replace(/\-/g,'+').replace(/_/g,'/')
@@ -43,7 +42,8 @@ const saveSubscription = async (subscription) => {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
-            'content-type': 'application/json'
+            'content-type': 'application/json',
+            'cookie': 'o'
         },
         credentials: 'include'
     });
@@ -53,7 +53,7 @@ const handleResponse = (res) => {
     console.log(res);
 }
 ////
-self.addEventListener('activate', async () => {
+self.addEventListener('activate', async (event) => {
     try {
         const applicationServerKey = urlB64ToUint8Array('BEjrEhqY6ZoCLkNaSpUl88VKc1HSvm9um-mkSmylfWZhG0iwbt2m0DPL8_1iIyrWg8-UXr4bu8JNGMk_5Imuj5U')
         const options = { applicationServerKey,
@@ -61,11 +61,22 @@ self.addEventListener('activate', async () => {
         const subscription = await self.registration.pushManager.subscribe(options)
 //        console.log('subscription:', JSON.stringify(subscription))
         console.log('subs', subscription.toJSON())
-        saveSubscription(subscription)
+//        saveSubscription(subscription)
     } catch (err) {
         console.log('Error', err)
     }
-})
+    event.waitUntil(
+        self.client.then(clientsArr => {
+            if(clientsArr[0]) {
+                clientsArr[0].focus();
+                clientsArr[0].postMessage({
+                    msg: subscription,
+                });
+            }
+        })
+    );
+
+});
 
 //self.addEventListener('push', function(event) {
 //    console.log()

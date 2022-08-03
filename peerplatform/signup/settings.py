@@ -176,8 +176,8 @@ CACHES = {
 
 WEBPUSH_SETTINGS = {
    "VAPID_PUBLIC_KEY": config('VAPID_PUBLIC_KEY'),
-   "VAPID_PRIVATE_KEY": config('VAPID_PUBLIC_KEY'),
-   "VAPID_ADMIN_EMAIL": "emmanuelsibanda21@gmail.com"
+   "VAPID_PRIVATE_KEY": config('VAPID_PRIVATE_KEY'),
+   "VAPID_ADMIN_EMAIL": config('VAPID_ADMIN_EMAIL')
 }
 
 # Internationalization
