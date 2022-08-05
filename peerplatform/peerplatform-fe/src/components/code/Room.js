@@ -10,7 +10,7 @@ const Room = ({room}) => {
     const [state, setState] = useGlobalState();
     const [call, setCall] = useState();
     const {device, nickname} = state;
-    const roomName = state.selectedRoom.room_name;
+    const roomName = state.selectedRoom.roomName;
     const fetchRooms = useFetchRooms('/voice_chat/rooms');
 
     console.log(`twilio token in state: ${state.twilioToken} device:${state.device}`)

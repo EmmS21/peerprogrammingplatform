@@ -23,7 +23,8 @@ const WaitingRoom = () =>  {
     const [usersInState, setUsersInState] = useState('')
 
 //    console.log(`what do we have in state twilioToken: ${state.twilioToken}`)
-//    console.log(getAllUsers())
+//    console.log(`debug logs: ${Twilio.Voice.setLogLevel(.debug)}`)
+
 
     const contentStyle = {
         height: '80px',
@@ -65,16 +66,15 @@ const WaitingRoom = () =>  {
         }
         return newArr
     }
+    //pipe output of randomizeAndMatch - then have another function that finalizes the data
+    //finalized in exact shape I want it
 
         useEffect((() => {
             console.log('randomized:', randomizeAndMatch(availableOnlineUsers.current))
+
             handleRoomCreate()
             const username = user.username
-    //        const matchedUsers = pickRandom()
-    //        setUsersInState(matchedUsers)
-            //if user has been matched show notification
-    //        if(matchedUsers){countDown(matchedUsers)}
-        }), [availableOnlineUsers])
+        }), [])
 
     //show user notification if they have been matched
 //    const countDown = (matchedUsers) => {
@@ -97,6 +97,8 @@ const WaitingRoom = () =>  {
 
     const createRoomHandler = (curr,matched) => {
         const userData = {'roomName': curr+matched, 'participantLabel': [curr, matched] }
+//        setState()
+        console.log(`userData roomName: ${userData.roomName}, participantLabel: ${userData.participantLabel}`)
         axios.post('http://127.0.0.1:8000/voice_chat/rooms', userData )
             .then(res => {
                 console.log('axios call has been hit', res.data)
@@ -129,17 +131,24 @@ const WaitingRoom = () =>  {
 
     const handleRoomCreate = () => {
         console.log('handleRoomCreate is running')
+        //passing a callback to set state
+        //finish for loop, then set state
+        //just get final dataset needed
         for ( let [k, v] of new Map( Object.entries(randomizeAndMatch(availableOnlineUsers.current)))){
                 const createdRoomTopic = k+v
-                setState({ ...state, createdRoomTopic})
+//                console.log('createdRoomTopic is:', createdRoomTopic)
+                setState({ ...state, [createdRoomTopic]: createdRoomTopic})
+                console.log('state.createdRoomTopic', state.createdRoomTopic)
                 const selectedRoom = {
-                    room_name: state.createdRoomTopic, participants: [k,v]
+                    roomName: createdRoomTopic, participants: [k,v]
                 };
                 setState({ ...state, selectedRoom})
+                console.log(`inside selectedRoom state: ${state.selectedRoom}`)
                 const rooms = state.rooms;
                 const roomId = rooms.push(selectedRoom)
                 createRoomHandler(k,v);
-                history.push(`/rooms/${roomId}`)
+                console.log('inside selectedRoom state', state.selectedRoom.roomName)
+//                history.push(`/rooms/${roomId}`)
             }
     }
 //        const createdRoomTopic = generateRandomTopicNum()

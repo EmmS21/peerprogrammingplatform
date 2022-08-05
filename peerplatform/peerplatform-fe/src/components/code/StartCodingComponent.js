@@ -4,6 +4,7 @@ import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../../context/RoomContextProvider';
 import AuthContext from '../../context/AuthContext';
 import axios from 'axios';
+import WebSocketInstance from '../../websocket/Connect';
 
 const StartCodingComponent = () => {
     const history = useHistory();
@@ -60,13 +61,15 @@ const StartCodingComponent = () => {
         setState((state) => {
             return {...state, rooms }
         });
+        WebSocketInstance.connect()
+        WebSocketInstance.sendData(availableOnlineUsers.current)
         sendWaitingRoomUsersToRedisCache()
         history.push('/rooms');
     }
 
     const setupTwilio = (nickname) => {
         fetch(`http://127.0.0.1:8000/voice_chat/token/${nickname}`)
-        .then(response => console.log('setupTwilio returns: ',response.json()))
+        .then(response => response.json())
         .then(data => {
             // setup device
             const twilioToken = JSON.parse(data).token;
