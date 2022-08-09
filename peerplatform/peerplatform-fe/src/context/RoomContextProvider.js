@@ -8,6 +8,7 @@ const initialState = {
     twilioToken: '',
     device: null,
     roomId: '',
+    onlineUsers: [],
 };
 
 const RoomContext = createContext(null);

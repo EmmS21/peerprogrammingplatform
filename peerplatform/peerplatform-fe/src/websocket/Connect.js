@@ -18,10 +18,6 @@ class WebSocketService {
     this.socketRef.onopen = (data) => {
       console.log('WebSocket open');
       }
-//    this.socketRef.onmessage = e => {
-//      this.socketNewMessage(e.data);
-//    };
-
     this.socketRef.onerror = e => {
       console.log(e.message);
     };
@@ -30,15 +26,20 @@ class WebSocketService {
       this.connect();
     };
   }
-  sendData(data){
+  async sendData(data){
     if(this.socketRef.readyState === WebSocket.OPEN) {
-        console.log('data has been sent', data)
         this.socketRef.send(data)
+        this.socketRef.onmessage = e => {
+            const result = JSON.parse(JSON.stringify(e.data))
+            console.log('received in client:', result)
+            return result
+        }
     }
     else {
         console.log('we are still waiting')
         this.socketRef.addEventListener('open', () => this.sendData(data))
     }
+//    console.log('what is retVal', retVal)
   }
   };
 const WebSocketInstance = WebSocketService.getInstance()

@@ -134,7 +134,7 @@ const WaitingRoom = () =>  {
         //passing a callback to set state
         //finish for loop, then set state
         //just get final dataset needed
-        for ( let [k, v] of new Map( Object.entries(randomizeAndMatch(availableOnlineUsers.current)))){
+        for ( let [k, v] of new Map( Object.entries(state.availUsers))){
                 const createdRoomTopic = k+v
 //                console.log('createdRoomTopic is:', createdRoomTopic)
                 setState({ ...state, [createdRoomTopic]: createdRoomTopic})
@@ -148,7 +148,7 @@ const WaitingRoom = () =>  {
                 const roomId = rooms.push(selectedRoom)
                 createRoomHandler(k,v);
                 console.log('inside selectedRoom state', state.selectedRoom.roomName)
-//                history.push(`/rooms/${roomId}`)
+                history.push(`/rooms/${roomId}`)
             }
     }
 //        const createdRoomTopic = generateRandomTopicNum()

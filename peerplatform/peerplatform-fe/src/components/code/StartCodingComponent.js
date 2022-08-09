@@ -25,7 +25,7 @@ const StartCodingComponent = () => {
             in_waiting_room: true
         })
         .then(res => {
-            console.log('user is in waiting room', res.data)
+//            console.log('user is in waiting room', res.data)
         })
     }
 
@@ -47,7 +47,7 @@ const StartCodingComponent = () => {
 //                            const availUsers = res.data.elements.filter(name => name !== user.username)
 //                            console.log('res', res.data.elements)
                             availableOnlineUsers.current = res.data.elements
-                            console.log('inside StartCodingComponent, all users are:', availableOnlineUsers.current)
+//                            console.log('inside StartCodingComponent, all users are:', availableOnlineUsers.current)
                         })
             })
         }
@@ -62,9 +62,28 @@ const StartCodingComponent = () => {
             return {...state, rooms }
         });
         WebSocketInstance.connect()
-        WebSocketInstance.sendData(availableOnlineUsers.current)
+        let availUsers = null ;
+        function wrapper(){
+            availUsers = WebSocketInstance.sendData(availableOnlineUsers.current).then((res) => {return res})
+            return availUsers
+        }
+        console.log('data is', wrapper())
+//        function getResult(){
+//            wrapper().then((res) => {
+//                return res
+//            })
+//        }
+//        wrapper().then(console.log)
+//        setState({ ...state, [onlineUsers]: await WebSocketInstance.sendData(availableOnlineUsers.current)})
+//        wrapper().then(res => { setState({ ...state, [onlineUsers]: res}) } )
+//        console.log('state is', state.onlineUsers)
+//        console.log('availUsers is:', wrapper())
+        //sending and receiving
+//        WebSocketInstance.sendData(availableOnlineUsers.current)
+//        setState({ ...state, [onlineUsers]: availUsers})
+//        console.log('inside state', state.availUsers)
         sendWaitingRoomUsersToRedisCache()
-        history.push('/rooms');
+//        history.push('/rooms');
     }
 
     const setupTwilio = (nickname) => {
