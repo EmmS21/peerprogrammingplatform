@@ -241,7 +241,7 @@ import { useCookies } from 'react-cookie';
                           <Row>
                             <Col className="ml-auto mr-auto" lg="6">
                               <small>
-                                 User score
+                                 User Score
                               </small>
                             </Col>
                             <Col className="mr-auto" lg="6">
