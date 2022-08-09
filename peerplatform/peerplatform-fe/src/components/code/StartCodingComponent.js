@@ -63,11 +63,14 @@ const StartCodingComponent = () => {
         });
         WebSocketInstance.connect()
         let availUsers = null ;
-        function wrapper(){
-            availUsers = WebSocketInstance.sendData(availableOnlineUsers.current).then((res) => {return res})
-            return availUsers
-        }
-        console.log('data is', wrapper())
+//        function wrapper(){
+//            availUsers = WebSocketInstance.sendData(availableOnlineUsers.current).then((res) => {return res})
+//            return availUsers
+//        }
+        console.log('response is', WebSocketInstance.sendData(availableOnlineUsers.current))
+//        WebSocketInstance.sendData(availableOnlineUsers.current)
+//        console.log('we are receiving', WebSocketInstance.receive())
+//        .then((res) => {console.log('response is', res)})
 //        function getResult(){
 //            wrapper().then((res) => {
 //                return res

@@ -27,20 +27,22 @@ class WebSocketService {
     };
   }
   async sendData(data){
-    if(this.socketRef.readyState === WebSocket.OPEN) {
-        this.socketRef.send(data)
-        this.socketRef.onmessage = e => {
-            const result = JSON.parse(JSON.stringify(e.data))
-            console.log('received in client:', result)
-            return result
-        }
-    }
-    else {
+    if(this.socketRef.readyState !== WebSocket.OPEN) {
         console.log('we are still waiting')
-        this.socketRef.addEventListener('open', () => this.sendData(data))
+        await new Promise((resolve, reject) => {
+            this.socketRef.addEventListener('open', resolve);
+        });
     }
-//    console.log('what is retVal', retVal)
-  }
+    const sentData = ['testUser','userTwo']
+    this.socketRef.send(sentData)
+    return new Promise((resolve, reject) => {
+        this.socketRef.onmessage = e => {
+            console.log('received in client:', e.data)
+            resolve(e.data);
+        }
+    })
   };
+  }
 const WebSocketInstance = WebSocketService.getInstance()
 export default WebSocketInstance;
+

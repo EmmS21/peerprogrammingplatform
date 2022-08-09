@@ -187,3 +187,20 @@ const WaitingRoom = () =>  {
 
 export default React.memo(WaitingRoom);
 
+
+//  async sendData(data){
+//    if(this.socketRef.readyState !== WebSocket.OPEN) {
+//        console.log('we are still waiting')
+//        await new Promise((resolve, reject) => {
+//            this.socketRef.addEventListener('open', resolve);
+//        });
+//    }
+//    const sentData = ['testUser','userTwo']
+//    this.socketRef.send(sentData)
+//    return new Promise((resolve, reject) => {
+//        this.socketRef.onmessage = e => {
+//            console.log('received in client:', e.data)
+//            resolve(e.data);
+//        }
+//    })
+//  }
