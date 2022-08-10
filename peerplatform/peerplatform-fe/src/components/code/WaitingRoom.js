@@ -69,31 +69,21 @@ const WaitingRoom = () =>  {
     //pipe output of randomizeAndMatch - then have another function that finalizes the data
     //finalized in exact shape I want it
 
-        useEffect((() => {
-            console.log('randomized:', randomizeAndMatch(availableOnlineUsers.current))
+    useEffect((() => {
+        console.log('randomized:', randomizeAndMatch(availableOnlineUsers.current))
+        handleRoomCreate()
+        const username = user.username
+    }), [])
 
-            handleRoomCreate()
-            const username = user.username
-        }), [])
-
-    //show user notification if they have been matched
-//    const countDown = (matchedUsers) => {
-//        let secondsToGo = 5;
-//        const modal = Modal.success({
-//            title: `You have been matched with ${matchedUsers}. Please do not refresh this page`,
-//            content: `Please click start once this modal closes. ${secondsToGo} seconds.`,
-//        });
-//        const timer = setInterval(() => {
-//            secondsToGo -= 1;
-//            modal.update({
-//                content: `Please click start once this modal closes. ${secondsToGo} seconds.`,
-//            });
-//        }, 1000);
-//        setTimeout(() => {
-//            clearInterval(timer);
-//            modal.destroy();
-//            }, secondsToGo * 1000);
-//    };
+    function createTwilioConference(){
+        console.log('create twilio conference function triggered')
+        let result = null;
+        axios.post('http://127.0.0.1:8000/voice_chat/rooms')
+            .then(res =>{
+                result = res
+            })
+        return result
+    }
 
     const createRoomHandler = (curr,matched) => {
         const userData = {'roomName': curr+matched, 'participantLabel': [curr, matched] }
@@ -113,57 +103,25 @@ const WaitingRoom = () =>  {
         return Math.random().toString(36).slice(2, 7)
     }
 
-
-//for ( let [k, v] of new Map( Object.entries(randomizeAndMatch(availableOnlineUsers.current))) ) {
-//            const createdRoomTopic = k+v
-//            setState({ ...state, createdRoomTopic})
-//            const selectedRoom = {
-//                room_name: state.createdRoomTopic, participants: [k,v]
-//            }
-//            const rooms = state.rooms
-//            const roomId = rooms.push(selectedRoom)
-//            setState({ ...state, rooms, selectedRoom, roomId });
-//            if(usersInState) {
-//                created
-//            }
-//        }
-
-
     const handleRoomCreate = () => {
         console.log('handleRoomCreate is running')
-        //passing a callback to set state
-        //finish for loop, then set state
-        //just get final dataset needed
-        for ( let [k, v] of new Map( Object.entries(state.availUsers))){
-                const createdRoomTopic = k+v
-//                console.log('createdRoomTopic is:', createdRoomTopic)
-                setState({ ...state, [createdRoomTopic]: createdRoomTopic})
-                console.log('state.createdRoomTopic', state.createdRoomTopic)
-                const selectedRoom = {
-                    roomName: createdRoomTopic, participants: [k,v]
-                };
-                setState({ ...state, selectedRoom})
-                console.log(`inside selectedRoom state: ${state.selectedRoom}`)
-                const rooms = state.rooms;
-                const roomId = rooms.push(selectedRoom)
-                createRoomHandler(k,v);
-                console.log('inside selectedRoom state', state.selectedRoom.roomName)
-                history.push(`/rooms/${roomId}`)
-            }
+        //iteratively creating Twilio Conference rooms from backend and getting xml response
+
+        const createdRoomTopic = generateRandomTopicNum()
+        setState({ ...state, createdRoomTopic })
+        const selectedRoom = {
+            room_name: state.createdRoomTopic, participants: []
+        };
+        const rooms = state.rooms; //do we need this, rooms is empty after all
+        console.log(`Rooms currently has, rooms: ${JSON.stringify(rooms)}`)
+        const roomId = rooms.push(selectedRoom);
+        console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
+        setState({...state, rooms, selectedRoom, roomId});
+        console.log(`in state selectedRoom is: ${state.selectedRoom} and createdRoomTopic is: ${state.createdRoomTopic} roomId: ${roomId}`)
+        createRoomHandler(username, matchedUsers)
+        history.push(`/rooms/${roomId}`);
     }
-//        const createdRoomTopic = generateRandomTopicNum()
-//        setState({ ...state, createdRoomTopic })
-//        const selectedRoom = {
-//            room_name: state.createdRoomTopic, participants: []
-//        };
-//        const rooms = state.rooms; //do we need this, rooms is empty after all
-//        console.log(`Rooms currently has, rooms: ${JSON.stringify(rooms)}`)
-//        const roomId = rooms.push(selectedRoom);
-//        console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
-//        setState({...state, rooms, selectedRoom, roomId});
-//        console.log(`in state selectedRoom is: ${state.selectedRoom} and createdRoomTopic is: ${state.createdRoomTopic} roomId: ${roomId}`)
-//        createRoomHandler(username, matchedUsers)
-//        history.push(`/rooms/${roomId}`);
+
 //    };
 
 

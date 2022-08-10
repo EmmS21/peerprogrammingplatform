@@ -61,32 +61,12 @@ const StartCodingComponent = () => {
         setState((state) => {
             return {...state, rooms }
         });
+        sendWaitingRoomUsersToRedisCache()
         WebSocketInstance.connect()
         let availUsers = null ;
-//        function wrapper(){
-//            availUsers = WebSocketInstance.sendData(availableOnlineUsers.current).then((res) => {return res})
-//            return availUsers
-//        }
-        console.log('response is', WebSocketInstance.sendData(availableOnlineUsers.current))
-//        WebSocketInstance.sendData(availableOnlineUsers.current)
-//        console.log('we are receiving', WebSocketInstance.receive())
-//        .then((res) => {console.log('response is', res)})
-//        function getResult(){
-//            wrapper().then((res) => {
-//                return res
-//            })
-//        }
-//        wrapper().then(console.log)
-//        setState({ ...state, [onlineUsers]: await WebSocketInstance.sendData(availableOnlineUsers.current)})
-//        wrapper().then(res => { setState({ ...state, [onlineUsers]: res}) } )
-//        console.log('state is', state.onlineUsers)
-//        console.log('availUsers is:', wrapper())
-        //sending and receiving
-//        WebSocketInstance.sendData(availableOnlineUsers.current)
-//        setState({ ...state, [onlineUsers]: availUsers})
-//        console.log('inside state', state.availUsers)
-        sendWaitingRoomUsersToRedisCache()
-//        history.push('/rooms');
+//        sending data through websocket
+        WebSocketInstance.sendData()
+        history.push('/rooms');
     }
 
     const setupTwilio = (nickname) => {
