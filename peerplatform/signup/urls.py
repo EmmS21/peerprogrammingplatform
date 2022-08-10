@@ -32,7 +32,6 @@ urlpatterns = [
     path('voice_chat/', include('voice_chat.urls')),
     path('payments/', include('payments.urls')),
     path('cache/', include('redisCache.urls')),
-    path('subscriptions/', include('redis_channels.urls')),
     path('send_push/', send_push, name='send_push'),
     path('cacheUsers/', CacheView, name='cacheUsers'),
     path('webpush/', include('webpush.urls')),

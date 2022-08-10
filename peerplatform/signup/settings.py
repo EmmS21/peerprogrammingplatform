@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     'payments',
     'redisCache',
     'channels',
-    'redis_channels',
     'webpush',
 ]
 
@@ -267,4 +266,5 @@ REDIS_PORT = 49153
 # REDIS_PORT = 49153
 REDIS_PASSWORD = 'redispw'
 
-
+REDIS_HOST_LAYER = 'localhost'
+REDIS_PORT_LAYER = 6379

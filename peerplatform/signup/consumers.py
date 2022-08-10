@@ -1,10 +1,12 @@
-import asyncio
-import json
 from channels.consumer import AsyncConsumer
-from random import randint
 from time import sleep
-from channels.db import database_sync_to_async
 import random
+import redis
+from django.conf import settings
+
+redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
+                                   port=settings.REDIS_PORT_LAYER, db=0
+                                   )
 
 class PracticeConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
@@ -25,6 +27,10 @@ class PracticeConsumer(AsyncConsumer):
         #dict with matched users
         avail_users = dict(zip(elem, elem))
         print("receiving this:", avail_users)
+        keys = list(avail_users.keys())
+        values = list(avail_users.values())
+        for i in range(0, len(keys)):
+            redis_instance.set(keys[i], values[i])
         #create conference room names
         # room_name = []
         # #list of conf rooms concatenating key, value pairs
@@ -36,7 +42,8 @@ class PracticeConsumer(AsyncConsumer):
         sleep(1)
         await self.send({
             "type": "websocket.send",
-            "text": json.dumps(avail_users),
+            "text": "redis set successfully"
+            # "text": json.dumps(avail_users),
         })
 
     async def websocket_disconnect(self, event):
