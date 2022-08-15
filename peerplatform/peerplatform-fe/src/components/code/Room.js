@@ -9,13 +9,16 @@ const Room = ({room}) => {
     const history = useHistory();
     const [state, setState] = useGlobalState();
     const [call, setCall] = useState();
+    //we already have device in state
     const {device, nickname} = state;
+    //roomName is currently in RoomsView
     const roomName = state.selectedRoom.roomName;
     const fetchRooms = useFetchRooms('/voice_chat/rooms');
 
     console.log(`twilio token in state: ${state.twilioToken} device:${state.device}`)
 
     useEffect(() => {
+    //roomName not in state
         const params = {
             roomName: roomName, participantLabel: nickname
         };

@@ -1,4 +1,5 @@
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -36,12 +37,14 @@ class RoomView(View):
         return JsonResponse({"rooms": rooms_reps})
 
     def post(self, request, *args, **kwargs):
+        twilio_conf = []
         for x, y in self.items.items():
+            print('inside for loop', x, y)
             # room_name = request.POST.get("roomName", "default")
-            room_name = request.POST.get(str(x)+str(y), "default")
+            room_name = str(x)+str(y)
             print('room name is', room_name)
             # participant_label = request.POST.get("participantLabel", "default")
-            participant_label = request.POST.get(str(x)+str(y), "default")
+            participant_label = str(x)+str(y)
             response = VoiceResponse()
             dial = Dial()
             dial.conference(
@@ -51,7 +54,11 @@ class RoomView(View):
             )
             print(dial)
             response.append(dial)
-            return HttpResponse(response.to_xml(), content_type="text/xml")
+            print('type of resp:', type(response))
+            twilio_conf.append(response)
+            print('twilio_conference list:', twilio_conf)
+        # redirect('http://localhost:3000/')
+        return HttpResponse(twilio_conf[2].to_xml(), content_type="text/xml")
 
 class TokenView(View):
     def get(self, request, username, *args, **kwargs):

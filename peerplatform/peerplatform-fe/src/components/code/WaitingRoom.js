@@ -85,19 +85,23 @@ const WaitingRoom = () =>  {
         return result
     }
 
-    const createRoomHandler = (curr,matched) => {
-        const userData = {'roomName': curr+matched, 'participantLabel': [curr, matched] }
-//        setState()
-        console.log(`userData roomName: ${userData.roomName}, participantLabel: ${userData.participantLabel}`)
-        axios.post('http://127.0.0.1:8000/voice_chat/rooms', userData )
-            .then(res => {
-                console.log('axios call has been hit', res.data)
-            })
-//        axios.post('http://127.0.0.1:8000/cache/', allUserNames)
+//    const createRoomHandler = (curr,matched) => {
+//        const userData = {'roomName': curr+matched, 'participantLabel': [curr, matched] }
+//        console.log(`userData roomName: ${userData.roomName}, participantLabel: ${userData.participantLabel}`)
+//        axios.post('http://127.0.0.1:8000/voice_chat/rooms', userData )
 //            .then(res => {
-//                 console.log('into redis', res.data)
+//                console.log('axios call has been hit', res.data)
 //            })
+//    }
+    //new createRoomHandler without having to pass in data
+    function createRoomHandler(){
+        axios.post('http://127.0.0.1:8000/voice_chat/rooms')
+            .then(res =>{
+                console.log('axios hit', res.data)
+            })
     }
+
+
 
     const generateRandomTopicNum = () => {
         return Math.random().toString(36).slice(2, 7)
@@ -105,8 +109,8 @@ const WaitingRoom = () =>  {
 
     const handleRoomCreate = () => {
         console.log('handleRoomCreate is running')
-        //iteratively creating Twilio Conference rooms from backend and getting xml response
-
+        //get all users from redis cache
+        //create room topics for each pair to store in state
         const createdRoomTopic = generateRandomTopicNum()
         setState({ ...state, createdRoomTopic })
         const selectedRoom = {
@@ -117,9 +121,9 @@ const WaitingRoom = () =>  {
         const roomId = rooms.push(selectedRoom);
         console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
         setState({...state, rooms, selectedRoom, roomId});
-        console.log(`in state selectedRoom is: ${state.selectedRoom} and createdRoomTopic is: ${state.createdRoomTopic} roomId: ${roomId}`)
-        createRoomHandler(username, matchedUsers)
-        history.push(`/rooms/${roomId}`);
+//        createRoomHandler(username, matchedUsers)
+        createRoomHandler()
+//        history.push(`/rooms/${roomId}`);
     }
 
 //    };
