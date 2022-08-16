@@ -57,8 +57,9 @@ class RoomView(View):
             print('type of resp:', type(response))
             twilio_conf.append(response)
             print('twilio_conference list:', twilio_conf)
-        # redirect('http://localhost:3000/')
-        return HttpResponse(twilio_conf[2].to_xml(), content_type="text/xml")
+        redirect('http://localhost:3000/rooms/1')
+        return HttpResponse(twilio_conf[0].to_xml(), content_type="text/xml")
+
 
 class TokenView(View):
     def get(self, request, username, *args, **kwargs):
