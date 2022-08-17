@@ -78,6 +78,3 @@ const App = () => {
 }
 
 export default App;
-
-
-//  <Elements stripe={stripePromise}>

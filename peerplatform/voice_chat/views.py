@@ -37,28 +37,20 @@ class RoomView(View):
         return JsonResponse({"rooms": rooms_reps})
 
     def post(self, request, *args, **kwargs):
-        twilio_conf = []
-        for x, y in self.items.items():
-            print('inside for loop', x, y)
-            # room_name = request.POST.get("roomName", "default")
-            room_name = str(x)+str(y)
-            print('room name is', room_name)
-            # participant_label = request.POST.get("participantLabel", "default")
-            participant_label = str(x)+str(y)
-            response = VoiceResponse()
-            dial = Dial()
-            dial.conference(
-                name=room_name,
-                participant_label=participant_label,
-                start_conference_on_enter=True,
-            )
-            print(dial)
-            response.append(dial)
-            print('type of resp:', type(response))
-            twilio_conf.append(response)
-            print('twilio_conference list:', twilio_conf)
-        redirect('http://localhost:3000/rooms/1')
-        return HttpResponse(twilio_conf[0].to_xml(), content_type="text/xml")
+        room_name = request.POST.get("roomName", "default")
+        participant_label = request.POST.get("participantLabel", "default")
+        response = VoiceResponse()
+        dial = Dial()
+        dial.conference(
+            name=room_name,
+            participant_label=participant_label,
+            start_conference_on_enter=True,
+        )
+        print(dial)
+        response.append(dial)
+        return HttpResponse(response.to_xml(), content_type="text/xml")
+        #send a broadcast message to both user+ matched user
+    #function to send notification
 
 
 class TokenView(View):

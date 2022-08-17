@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@firebase/app": "^0.7.26",
     "@headlessui/react": "^1.6.0",
     "@hookform/resolvers": "^2.9.1",
@@ -12,7 +13,7 @@
     "@stripe/stripe-js": "^1.32.0",
     "@twilio/voice-sdk": "^2.1.1",
     "@types/react-select": "^5.0.1",
-    "antd": "^4.19.5",
+    "antd": "^4.22.5",
     "axios": "^0.26.0",
     "babel-loader": "^8.2.4",
     "babel-preset-react-app": "^10.0.1",
