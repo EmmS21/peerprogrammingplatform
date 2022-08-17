@@ -12,9 +12,8 @@
 
 
 .table {
-  width: 100%;
-  padding: -50px;
-  margin-top: -200px;
+  margin-left: 110px;
+  margin-top: 48px;
 }
 
 .row {
@@ -23,8 +22,6 @@
 }
 .column {
     flex-grow: 1;
-    flex-direction: row;
-    flex: 1;
 }
 /* Clear floats after the columns */
 .row:after {
@@ -41,6 +38,10 @@
   padding: 0;
   -webkit-transition: 0.3s;
   transition: 0.3s;
+}
+
+.price {
+  margin-right: 61px;
 }
 
 .price li {
@@ -130,3 +131,4 @@ p {
   -moz-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
   transition: all 0.3s ease 0s;
 }
+

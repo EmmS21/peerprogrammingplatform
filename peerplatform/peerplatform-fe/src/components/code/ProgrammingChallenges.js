@@ -12,14 +12,20 @@ export default function ProgrammingChallenge() {
                 <PageHeader
                     className="site-page-header"
                     onBack={()=> null}
-                    title=  { challengeInState.slug }
+                    title=  { challengeInState.challenge_name }
                 />
                 <Collapse accordion>
                     <Panel header="Description" key="1">
-                        <a>{challengeInState.description}</a>
+                        <a>{challengeInState.challenge_description}</a>
                     </Panel>
-                    <Panel header="Link to Question" key="2">
-                        <a href={challengeInState.url} target="_blank">{challengeInState.url}</a>
+                    <Panel header="Example 1" key="2">
+                        <code>{challengeInState.challenge_example_one}</code>
+                    </Panel>
+                    <Panel header="Example 2" key="3">
+                        <code>{challengeInState.challenge_example_two}</code>
+                    </Panel>
+                    <Panel header="Example 3" key="4">
+                        <code>{challengeInState.challenge_example_three}</code>
                     </Panel>
                 </Collapse>
                 <Button type="primary" ghost onClick={retrieveChallenge}>

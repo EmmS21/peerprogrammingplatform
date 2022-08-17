@@ -2,11 +2,10 @@ import React, { Component,useState,useEffect,useContext } from "react";
 import secure_login from "../../assets/images/secure_login.svg"
 import "../../assets/scss/core/signup_components/_signup.scss"
 import AxiosInstance from "../../AxiosApi.js";
-
 import { connect } from "react-redux";
 import { login } from "./LoginActions.js";
-import { withRouter } from "react-router-dom";  // new import
-import PropTypes from "prop-types";             // new import
+import { withRouter } from "react-router-dom";
+import PropTypes from "prop-types";
 import axios from 'axios'
 import AuthContext from '../../context/AuthContext'
 
@@ -19,12 +18,11 @@ const Login = () => {
 
     const handleSubmit = e => {
         e.preventDefault();
+        console.log(`username:${username} password:${password}`)
         const newLoginData = {
             username: username,
             password: password,
         }
-        console.log('user login info is working')
-        console.log(newLoginData)
         loginUser(newLoginData);
     }
 
@@ -42,7 +40,6 @@ const Login = () => {
                 type="text"
                 name="username"
                 placeholder="username"
-                value= {username}
                 onChange = {e => setUserName(e.target.value)}
                 required
               />{' '}
@@ -53,7 +50,6 @@ const Login = () => {
                 type="password"
                 name="password"
                 placeholder="password"
-                value= {password}
                 onChange = { e => setPassword(e.target.value)}
                 required
               />{' '}

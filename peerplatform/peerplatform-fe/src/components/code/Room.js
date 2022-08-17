@@ -9,17 +9,28 @@ const Room = ({room}) => {
     const history = useHistory();
     const [state, setState] = useGlobalState();
     const [call, setCall] = useState();
+    //we already have device in state
     const {device, nickname} = state;
+<<<<<<< HEAD
+    const roomName = state.selectedRoom.room_name;
+=======
+    //roomName is currently in RoomsView
     const roomName = state.selectedRoom.roomName;
-    const fetchRooms = useFetchRooms('http://127.0.0.1:8000/voice_chat/rooms');
+>>>>>>> parent of 96faf56 (joining rooms approach)
+    const fetchRooms = useFetchRooms('/voice_chat/rooms');
 
     console.log(`twilio token in state: ${state.twilioToken} device:${state.device}`)
 
     useEffect(() => {
+    //roomName not in state
         const params = {
             roomName: roomName, participantLabel: nickname
         };
+<<<<<<< HEAD
+=======
+        console.log(`inside Room useEffect, roomName: ${roomName}, participantLabel:${nickname}`)
         console.log('participants are:', state.selectedRoom.participants)
+>>>>>>> parent of 96faf56 (joining rooms approach)
         if (!call) {
             const callPromise = device.connect({ params });
             callPromise.then((call) => {
@@ -39,25 +50,15 @@ const Room = ({room}) => {
         handleLeaveRoom();
         setState({...state, createdRoomTopic: null}); // clear created room.
     };
-    const refreshRooms  = () => {
-        fetchRooms()
-            .then(rooms => {
-                const selectedRoom = rooms.find((room) => {
-                    return room.room_name = roomName
-                });
-                if(selectedRoom){
-                    setState({ ...state, selectedRoom});
-                }
-            });
-    }
+
 
     return (
     <>
-        <h1></h1>
-        <p>Others in the room</p>
-
         <CodeEditor/>
         <div>
+            <div>
+                {state.selectedRoom.participants.length === 1? <button onClick={handleEndRoom}>End room</button>: null}
+            </div>
         </div>
     </>
     )

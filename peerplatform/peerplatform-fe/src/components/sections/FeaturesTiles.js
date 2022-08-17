@@ -45,7 +45,7 @@ const FeaturesTiles = ({
 
   const sectionHeader = {
     title: 'Collaborate, code and grow',
-    paragraph: 'Solve programming challenges collaboratively.'
+    paragraph: 'Get matched with a random peer and collaborate over an hour and 20 minutes to solve a programming challenge. Chat with peers, walk them through your logic and learn new ways to solve problems.'
   };
 
   return (

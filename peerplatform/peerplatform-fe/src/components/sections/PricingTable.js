@@ -60,11 +60,18 @@ const PricingTable = ({
                         <ul className="price">
                             <li className="header">
                                 Free Trial
+                                <br />
+                                <br />
+                                <p>Try our platform for 5 days </p>
                                 <div className="button_cont" align="center">
                                     <a className="btn" target="_blank" rel="nofollow noopener">
-                                        2 Free Matches
+                                        Try it out
                                     </a>
+                                    <br />
                                 </div>
+                            </li>
+                            <li>
+                              <p>Try our platform for 5 days at no cost</p>
                             </li>
                         </ul>
                     </div>
@@ -72,12 +79,17 @@ const PricingTable = ({
                         <ul className="price">
                             <li className="header">
                                 Unlimited Access
-                            <span> $15/month</span>
+                                <br />
+                            <span className="dollar">15</span>
+                            <p>per month</p>
                             <div className="button_cont" align="center">
                                 <a className="btn" target="_blank" rel="nofollow noopener">
-                                Unlimited Matches
+                                Sign Up
                                 </a>
                             </div>
+                            </li>
+                            <li>
+                               <p>Get unlimited access</p>
                             </li>
                         </ul>
                     </div>

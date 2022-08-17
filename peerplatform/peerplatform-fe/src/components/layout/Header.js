@@ -129,10 +129,7 @@ const Header = ({
                                         <button className="button button-primary button-wide-mobile button-sm" onClick={logOutUser}>Logout</button>
                                     </div>
                         ): (
-                            <div className="parentButtons">
-                                <Link to={"/login"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Login</Link>
-                                <Link to={"/signup"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Sign up</Link>
-                            </div>
+                            <Link to={"/signup"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Sign up</Link>
                             )
                         }
                       </li>
@@ -145,6 +142,17 @@ const Header = ({
     </header>
   );
 }
+//
+//            <Link to="/">Home</Link>
+//            <span> | </span>
+//            { user ? (
+//                        <p onClick={logOutUser}>Logout</p>
+//            ): (
+//                <Link to="/login">Login</Link>
+//            )}
+//            <Link to="/login" >Login</Link>
+//
+//            {user && <p>Hello {user.username}</p>}
 
 Header.propTypes = propTypes;
 Header.defaultProps = defaultProps;

@@ -1,5 +1,8 @@
+from Cython import typeof
+from django.shortcuts import render
+
+# Create your views here.
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -7,20 +10,13 @@ from twilio.twiml.voice_response import VoiceResponse, Dial
 from django.conf import settings
 from twilio.jwt.access_token import AccessToken, grants
 from twilio.rest import Client
-import json
-import redis
-from django.conf import settings
+import jwt
+import pprint
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
-                                   port=settings.REDIS_PORT_LAYER, db=0
-                                   )
 
 @method_decorator(csrf_exempt, name="dispatch")
 class RoomView(View):
-    items = {}
-    for key in redis_instance.keys("*"):
-        items[key.decode("utf-8", 'ignore')] = redis_instance.get(key)
     def get(self, request, *args, **kwargs):
         rooms = client.conferences.stream(
             status="in-progress"
@@ -37,8 +33,9 @@ class RoomView(View):
         return JsonResponse({"rooms": rooms_reps})
 
     def post(self, request, *args, **kwargs):
+<<<<<<< HEAD
         room_name = request.POST.get("roomName", "default")
-        participant_label = request.POST.get("participantLabel", "default")
+        participant_label = request.POST.get("participantLabel","default")
         response = VoiceResponse()
         dial = Dial()
         dial.conference(
@@ -49,9 +46,31 @@ class RoomView(View):
         print(dial)
         response.append(dial)
         return HttpResponse(response.to_xml(), content_type="text/xml")
-        #send a broadcast message to both user+ matched user
-    #function to send notification
+=======
+        twilio_conf = []
+        for x, y in self.items.items():
+            print('inside for loop', x, y)
+            # room_name = request.POST.get("roomName", "default")
+            room_name = str(x)+str(y)
+            print('room name is', room_name)
+            # participant_label = request.POST.get("participantLabel", "default")
+            participant_label = str(x)+str(y)
+            response = VoiceResponse()
+            dial = Dial()
+            dial.conference(
+                name=room_name,
+                participant_label=participant_label,
+                start_conference_on_enter=True,
+            )
+            print(dial)
+            response.append(dial)
+            print('type of resp:', type(response))
+            twilio_conf.append(response)
+            print('twilio_conference list:', twilio_conf)
+        redirect('http://localhost:3000/rooms/1')
+        return HttpResponse(twilio_conf[0].to_xml(), content_type="text/xml")
 
+>>>>>>> parent of 96faf56 (joining rooms approach)
 
 class TokenView(View):
     def get(self, request, username, *args, **kwargs):
@@ -67,6 +86,5 @@ class TokenView(View):
         )
         access_token.add_grant(voice_grant)
         jwt_token = access_token.to_jwt()
-        full_data = { 'token': jwt_token.decode()}
         # print(type(jwt_token))
-        return JsonResponse(json.dumps(full_data), content_type="application/json", safe=False)
+        return JsonResponse({"token": jwt_token})

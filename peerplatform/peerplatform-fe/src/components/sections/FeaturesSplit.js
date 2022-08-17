@@ -85,7 +85,7 @@ const FeaturesSplit = ({
                   src={require('./../../assets/images/features-part1.png')}
                   alt="Select Language and Difficulty"
                   width={528}
-                  height={300} />
+                  height={396} />
               </div>
             </div>
 
@@ -111,7 +111,7 @@ const FeaturesSplit = ({
                   src={require('./../../assets/images/features-part2.png')}
                   alt="Get matched"
                   width={528}
-                  height={300} />
+                  height={396} />
               </div>
             </div>
 
@@ -136,7 +136,7 @@ const FeaturesSplit = ({
                 <Image
                   src={require('./../../assets/images/features-part3.png')}
                   width={528}
-                  height={300} />
+                  height={396} />
               </div>
             </div>
 

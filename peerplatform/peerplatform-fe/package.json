@@ -3,17 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",
+<<<<<<< HEAD
+=======
     "@firebase/app": "^0.7.26",
+>>>>>>> parent of 96faf56 (joining rooms approach)
     "@headlessui/react": "^1.6.0",
-    "@hookform/resolvers": "^2.9.1",
     "@monaco-editor/react": "^4.4.1",
     "@react-md/autocomplete": "^5.1.2",
-    "@stripe/react-stripe-js": "^1.9.0",
-    "@stripe/stripe-js": "^1.32.0",
     "@twilio/voice-sdk": "^2.1.1",
     "@types/react-select": "^5.0.1",
-    "antd": "^4.22.5",
+    "antd": "^4.19.5",
     "axios": "^0.26.0",
     "babel-loader": "^8.2.4",
     "babel-preset-react-app": "^10.0.1",
@@ -23,27 +22,19 @@
     "classnames": "^2.2.6",
     "codemirror": "^5.65.2",
     "connected-react-router": "^6.9.2",
-    "firebase": "^9.8.3",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.15",
     "perfect-scrollbar": "^1.5.5",
     "prismjs": "^1.27.0",
     "react": "^16.13.1",
     "react-ace": "^9.5.0",
-    "react-bootstrap": "^2.4.0",
     "react-codemirror2": "^7.2.1",
-    "react-cookie": "^4.1.1",
-    "react-cookies": "^0.1.1",
     "react-countdown-circle-timer": "^3.0.9",
     "react-dom": "^16.13.1",
     "react-ga": "^2.7.0",
-    "react-hook-form": "^7.32.1",
     "react-icons": "^4.3.1",
-    "react-idle-timer": "^5.3.0",
     "react-imgpro": "^1.4.1",
-    "react-loader-spinner": "^5.1.5",
     "react-modal": "^3.14.4",
-    "react-pricing-table": "^0.3.0",
     "react-redux": "^7.2.6",
     "react-router-dom": "^5.3.0",
     "react-scripts": "^5.0.0",
@@ -55,12 +46,10 @@
     "reactstrap": "^9.0.1",
     "sass": "^1.49.7",
     "sendbird-calls": "^1.9.3",
-    "socket.io-client": "4.4.0",
     "styled-components": "^5.3.5",
     "util": "^0.12.4",
-    "vuera": "^0.2.7",
-    "websocket": "^1.0.34",
-    "yup": "^0.32.11"
+    "vue-loader": "^17.0.0",
+    "vuera": "^0.2.7"
   },
   "repository": {
     "type": "git",
@@ -70,8 +59,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "ketchup": "git pull origin main"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

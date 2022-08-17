@@ -52,10 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'allauth.account',
-    'payments',
-    'redisCache',
-    'channels',
-    'webpush',
+    'online_users',
+    # 'active_users',
 ]
 
 MIDDLEWARE = [
@@ -66,10 +64,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.cache.UpdateCacheMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
+    'online_users.middleware.OnlineNowMiddleware',
+    # 'active_users.middleware.ActiveUsersSessionMiddleware',
+    # 'accounts.middleware.ActiveUserMiddleware',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -121,7 +118,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'signup.wsgi.application'
-ASGI_APPLICATION = 'signup.asgi.application'
+
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -133,15 +130,7 @@ DATABASES = {
     }
 }
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": "redis://channellayer@redis-local:6379/0",
-    },
-}
 
-# default:redispw@127.0.0.1", 49155
-# redis://default:redispw@localhost:49153
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -160,24 +149,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://default:redispw@localhost:49153",
-        # "LOCATION": "redis://redis-local:6379/0",
-        "TIMEOUT": 5 * 60,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient"
-        },
-        "KEY_PREFIX": "pairprogramming"
-    }
-}
-
-WEBPUSH_SETTINGS = {
-   "VAPID_PUBLIC_KEY": config('VAPID_PUBLIC_KEY'),
-   "VAPID_PRIVATE_KEY": config('VAPID_PRIVATE_KEY'),
-   "VAPID_ADMIN_EMAIL": config('VAPID_ADMIN_EMAIL')
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -221,16 +192,29 @@ ACCOUNT_UNIQUE_EMAIL = True
 
 #Rest Framework config.
 REST_FRAMEWORK = {
-    'DATETIME_FORMAT': "%m/%d/%Y %H:%M:%S",
+    'DATETIME_FORMAT': "%m/%d/%Y %I:%M%P",
     'DEFAULT_PERMISSION_CLASSES': (
         # 'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
 }
+
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#         'LOCATION': '127.0.0.1:11211',
+#     }
+# }
+# # num of seconds of inactivity before a user is marked offline
+# USER_ONLINE_TIMEOUT = 300
+#
+# # Number of seconds that we will keep track of inactive users for before
+# # their last seen is removed from the cache
+# USER_LASTSEEN_TIMEOUT = 60 * 60 * 24 * 7
 
 # AUTH_USER_MODEL = 'accounts.CustomerUser'
 # SIMPLE_JWT = {
@@ -248,23 +232,8 @@ TWIML_APPLICATION_SID = config('TWIML_APPLICATION_SID')
 TWILIO_API_KEY = config('TWILIO_API_KEY')
 TWILIO_API_SECRET = config('TWILIO_API_SECRET')
 
-
 ALLOWED_HOSTS = [
     ".ngrok.io",
     "127.0.0.1",
-    "localhost",
-    "0.0.0.0"
+    "localhost"
 ]
-
-SIMPLE_JWT = {
-    'UPDATE_LAST_LOGIN': True,
-}
-
-REDIS_HOST = 'localhost'
-# REDIS_HOST = 'redis-local'
-REDIS_PORT = 49153
-# REDIS_PORT = 49153
-REDIS_PASSWORD = 'redispw'
-
-REDIS_HOST_LAYER = 'localhost'
-REDIS_PORT_LAYER = 6379

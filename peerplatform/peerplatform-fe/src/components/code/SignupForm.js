@@ -1,25 +1,40 @@
-import React from 'react';
+import React, { useContext, useState }  from 'react';
 import { useHistory } from 'react-router-dom';
 import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../../context/RoomContextProvider';
+import AuthContext from '../../context/AuthContext';
+
 
 const SignupForm = () => {
-    const [state, setState] = useGlobalState()
-    const updateNickname = (nickname) => {
-        setState({ ...state, nickname});
+    const history = useHistory();
+    const [ state, setState ] = useGlobalState();
+    const { user,logOutUser, updateProfile } = useContext(AuthContext)
+
+    //generate room topic name
+    const generateRandomTopicNum = () => {
+        return Math.random().toString(36).slice(2, 7)
     }
-    const history = useHistory()
+
+
+    //handle submission
     const handleSubmit = e => {
         e.preventDefault();
-        const nickname = state.nickname;
-        setupTwilio(nickname);
+        const nickname = user.username;
+        const createdRoomTopic = generateRandomTopicNum()
+        setupTwilio(nickname, createdRoomTopic);
+        const selectedRoom = { room_name: state.createdRoomTopic, participants: [] };
+        const rooms = state.rooms;
+        const roomId = rooms.push(selectedRoom);
+        setState((state) => {
+            return {...state, rooms,selectedRoom }
+        });
         history.push('/rooms');
-    };
+    }
 
-   const setupTwilio = (nickname) => {
-        fetch(`/api/token/${nickname}`)
+    const setupTwilio = (nickname, createdRoomTopic) => {
+        fetch(`http://127.0.0.1:8000/voice_chat/token/${nickname}`)
         .then(response => response.json())
-        .then(data =>   {
+        .then(data => {
             // setup device
             const twilioToken = data.token;
             const device = new Device(twilioToken);
@@ -32,23 +47,21 @@ const SignupForm = () => {
                 console.log("error: ", device)
             });
             setState((state) => {
-                return {...state, device, twilioToken}
+                return {...state, device, twilioToken, nickname, createdRoomTopic}
             });
         })
         .catch((error) => {
             console.log(error)
         })
-
     };
+
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                placeholder="Enter nickname"
-                onChange={ e => updateNickname(e.target.value)}
-            />
-             <input type="submit" value="Submit" />
-        </form>
+            <button className="button button-primary button-wide-mobile button-sm"
+                onClick={handleSubmit}> Start Coding
+            </button>
     );
 };
+
 export default SignupForm;
+
+
