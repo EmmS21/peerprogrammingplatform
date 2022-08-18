@@ -1,0 +1,89 @@
+* [33mbd2a313[m[33m ([m[1;36mHEAD -> [m[1;32morigin[m[33m, [m[1;31mnew-origin/origin[m[33m)[m changes
+* [33m96faf56[m[33m ([m[1;31mnew-origin/main[m[33m, [m[1;32mmaster[m[33m, [m[1;32mmain[m[33m)[m joining rooms approach
+* [33maedfba7[m writing my first test for login component
+* [33ma86400b[m looping through users not working
+* [33m3e27415[m LeetCode and algos drained me, I need to rest
+* [33med8a53f[m setting up process to iteratively create twilio conference rooms
+* [33m6ab0c8b[m returning response from websocket
+* [33m71feb4d[m Tuesday 6 August, no changes
+* [33maab79fd[m receiving data in websocket
+* [33m044c59f[m iteratively triggering conference call - not working yet
+* [33m4881e57[m send_push function added
+* [33m7491b06[m still setting up service workers to send push notifications
+* [33ma3eb513[m websocket test working in client and server
+* [33m4675828[m entire project has been dockerized successfully
+* [33m1c8a18b[m backend has been dockerized successfully
+* [33me707381[m Docker is killing me!
+* [33ma0ca5a6[m backend containerized, running, but cannot visit dev server url
+* [33mb15fa1b[m dockerized project successfully
+* [33m9b5ada4[m setting up websockets
+* [33m40620b8[m why isnt availUsers saving to state
+* [33mcb34368[m users paired into object
+* [33m7025ef9[m set up REDIS to write users to set
+* [33mf7329db[m creating redis set
+* [33m7231705[m sending random, unique pairs of users to redis as key value pair
+* [33m54e8d0d[m sending user and token to redis
+* [33m4ef436f[m sending online users to redis
+* [33md281d16[m redis finally set up
+* [33m65a556f[m trying to set up redis
+* [33m0132c2b[m working on matching function
+* [33m82b9639[m render backend error messages in login if user enters incorrect login details
+* [33m5e08b67[m stripe intergration complete
+* [33m9f008ab[m stripe integration working!
+* [33m37b206f[m stripe intergration is working but getting no attribute data error in Django view
+* [33mc30b156[m fixed stripe integration issue regarding invalid hook
+* [33mf05fc9f[m cleanup, adding more libraries to requirements.txt
+* [33m3af98ca[m stripe issues
+* [33m01a6573[m using firebase for push notifications: step 1
+* [33m5e486aa[m created push notifications app, trying firebase web push notifications option
+* [33m5ed0b56[m added ketchup script + new Profile model field- push notifications
+* [33meda6a08[m front end changes to home page
+* [33ma3b65a4[m rendering server side errors on signup component
+* [33m4126806[m client side validation for signup form and alerts for errors coming from server
+* [33m206c8b1[m added backend password validation and fixed signup bug returning error message when user signsup
+* [33mb5455d8[m added login button to dashboard
+* [33ma34b1ae[m parsing token to JSON to parse to return token key value inside object
+* [33me65b2e1[m pulling programming challenges from CodeWars API and abstracting functions from components
+* [33m3c486f3[m abstracted away getAllUsers function retrieving all users registered from onlineUsersCarousel component to AuthContext
+* [33mb2e15d0[m added carousel showing all registered users in waiting room before pair programming session commences and code editor is rendered
+* [33m58e62e8[m Added documentation outlining how we check if a user is online and active
+* [33mfe707b8[m When user is idle for 15 minutes an axios call updates the Profile model field is_active to False, when user is active, field is updated to True
+* [33mc84bbf4[m added field and serializer function to track if user is logged in
+* [33m3355fac[m edited models, can now see if users are online: need to handle failed login attempts
+* [33mfc31fa4[m rate users modal - frontend
+* [33mcae2359[m update profile picture, incorrect padding when updating profile pic issue???
+* [33m7480656[m Twilio chatroom working with CodeEditor
+* [33mf4a4050[m Drop in Audio voice fix
+* [33mfc0f786[m Twilio error -incoming allow
+* [33mdce859b[m added project roadmap + moved APIKeys to .env
+* [33m85759fb[m cleaning up read me
+* [33mad6edb9[m edited readme in parent folder
+* [33m7e3f5ef[m edited readme
+* [33m51a2713[m cleaning up update profile
+* [33md9a0b87[m working on VoiceAPI intergration
+* [33m1ad6cd0[m code editor built using Vue
+* [33ma15c215[m working on update user profile and modal
+* [33m5c5d006[m sending photo to payload
+* [33m4faa972[m odal issues
+* [33m8ecf4df[m extending user model
+* [33m0ea8c06[m changes to dashboard form
+* [33mb112ee0[m building profile page - resolved error with nucleo.scss
+* [33m47373b9[m building profile page - sorting out scss
+* [33m91a83a5[m login+logout functionality
+* [33mbe3e159[m signup process issue
+* [33m6b79c5d[m Friday changes fourth
+* [33m40543f2[m Friday changes third
+* [33m079ee56[m Friday CHanges two
+*   [33m7ede6d0[m friday changes
+[32m|[m[33m\[m  
+[32m|[m * [33mb763871[m Update serializers.py
+[32m|[m * [33m3a3ba48[m created home page
+[32m|[m * [33md1d75fb[m created home page with react
+[32m|[m * [33md9164fb[m React Home Page created
+[32m|[m * [33mfaa7227[m first commit
+[32m|[m * [33m39affa0[m initial commit
+* [33mfdae12b[m changes Friday
+* [33meed8136[m react home page
+* [33m7c273e4[m first commit
+* [33m509add4[m first commit
+* [33m9454ab5[m initial commit: signup process

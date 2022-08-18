@@ -196,7 +196,7 @@ import { useCookies } from 'react-cookie';
                       <div className="image">
                         <img
                           alt="..."
-                          src={`http://127.0.0.1:8000/media/${user.photo.replace(/['"]+/g, '')}`}
+                          src={`http://127.0.0.1:8000/media/${user.photo}`}
                         />
                       </div>
                       <CardBody>
@@ -208,11 +208,11 @@ import { useCookies } from 'react-cookie';
                                     <img
                                         alt="..."
                                         className="avatar border-gray"
-                                        src={`http://127.0.0.1:8000/media/${user.photo.replace(/['"]+/g, '')}`}
+                                        src={`http://127.0.0.1:8000/media/${user.photo}`}
                                     />
                                 </div>
                             </label>
-                            <h5 className="title">Hi, { user.username[0].toUpperCase()+user.username.slice(1) }</h5>
+                            <h5 className="title">Hi, { user.username }</h5>
                             <h6> { user.city }, { user.country } </h6>
                           </a>
                         </div>
