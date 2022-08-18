@@ -10,6 +10,7 @@ from twilio.rest import Client
 import json
 import redis
 from django.conf import settings
+from django.contrib.auth.models import User
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
@@ -18,9 +19,6 @@ redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
 
 @method_decorator(csrf_exempt, name="dispatch")
 class RoomView(View):
-    items = {}
-    for key in redis_instance.keys("*"):
-        items[key.decode("utf-8", 'ignore')] = redis_instance.get(key)
     def get(self, request, *args, **kwargs):
         rooms = client.conferences.stream(
             status="in-progress"
@@ -37,8 +35,15 @@ class RoomView(View):
         return JsonResponse({"rooms": rooms_reps})
 
     def post(self, request, *args, **kwargs):
-        room_name = request.POST.get("roomName", "default")
-        participant_label = request.POST.get("participantLabel", "default")
+        request_body = json.loads(request.body)
+        room_name = request_body.get("roomName")
+        participant_label = request_body["participantLabel"]
+        curr_username = request_body.get('currUser')
+        matched_user = request_body.get('matchedUser')
+        current_user_id = User.objects.get(
+                                            username=curr_username).pk
+        matched_user_id = User.objects.get(
+                                            username=matched_user).pk
         response = VoiceResponse()
         dial = Dial()
         dial.conference(
