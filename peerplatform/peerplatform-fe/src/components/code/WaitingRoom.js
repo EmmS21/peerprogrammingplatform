@@ -8,7 +8,7 @@ import AuthContext from '../../context/AuthContext';
 //import OnlineUsersCarousel from './OnlineUsersCarousel';
 import "../../assets/waitingRoom/app.css";
 import PushNotifications from '../profile_components/PushNotifications'
-import { Button, Modal } from 'antd';
+import { Button, Modal, notification } from 'antd';
 
 
 const WaitingRoom = () =>  {
@@ -19,8 +19,18 @@ const WaitingRoom = () =>  {
             updateProfile,
             pairUsers,
             allOnlineUsers,
-            config, availableOnlineUsers } = useContext(AuthContext)
+            availableOnlineUsers,
+            config } = useContext(AuthContext)
     const [usersInState, setUsersInState] = useState('')
+
+    const openNotification = () => {
+        const args = {
+            message: 'You have not been matched yet',
+            description: 'Please wait a little longer while we find you a match',
+            duration: 4,
+        };
+        notification.open(args);
+    };
 
 //    console.log(`what do we have in state twilioToken: ${state.twilioToken}`)
 //    console.log(`debug logs: ${Twilio.Voice.setLogLevel(.debug)}`)
@@ -37,12 +47,16 @@ const WaitingRoom = () =>  {
     useEffect((() => {
         const username = user.username
         console.log('username is', username)
-        console.log('available users', availableOnlineUsers.current)
-        let matchedUser = availableOnlineUsers.current.filter(elem =>
-                                                                elem !== username && elem !== 'null'
-                                                                && elem !== 'undefined'
+        let matchedUser = availableOnlineUsers.current.filter(user =>
+                                                                user !== username && user !== 'null'
+                                                                && user !== 'undefined'
                                                                 ).pop()
-        console.log('matchedUser is', matchedUser)
+//        availableOnlineUsers.current = availableOnlineUsers.current.filter(user =>
+//                                                                            user !== username
+//                                                                            && user !== matchedUser
+//        )
+//        console.log('available users is now:', availableOnlineUsers.current)
+//        console.log('matchedUser is', matchedUser)
         handleRoomCreate(username, matchedUser)
     }), [availableOnlineUsers.current])
 
@@ -51,9 +65,8 @@ const WaitingRoom = () =>  {
         let result = null;
         axios.post('http://127.0.0.1:8000/voice_chat/rooms')
             .then(res =>{
-                result = res
+                console.log('response is', res.data)
             })
-        return result
     }
 
     //new createRoomHandler without having to pass in data
@@ -72,6 +85,14 @@ const WaitingRoom = () =>  {
             })
     }
 
+    function deleteMatchedUsersRedis(username, matchedUser){
+        console.log('deleteMatched triggered')
+        axios.delete('http://127.0.0.1:8000/cache/', username)
+            .then(res=> {
+                console.log('axios delete response', res)
+            })
+    }
+
 
 
     const generateRandomTopicNum = () => {
@@ -83,17 +104,36 @@ const WaitingRoom = () =>  {
         //get all users from redis cache
         //create room topics for each pair to store in state
         const createdRoomTopic = username+matchedUser
+        console.log('createdRoomTopic is', createdRoomTopic)
         setState({ ...state, createdRoomTopic })
+        console.log('room topic inside state', state.createdRoomTopic)
         const selectedRoom = {
-            room_name: state.createdRoomTopic, participants: []
+            room_name: createdRoomTopic, participants: []
         };
+        selectedRoom.participants.push(username)
+        selectedRoom.participants.push(matchedUser)
+        console.log('selectedroom participants', selectedRoom.participants)
         const rooms = state.rooms; //do we need this, rooms is empty after all
-//        console.log(`Rooms currently has, rooms: ${JSON.stringify(rooms)}`)
         const roomId = rooms.push(selectedRoom);
         console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
         setState({...state, rooms, selectedRoom, roomId});
         createRoomHandler(username, matchedUser)
-//        history.push(`/rooms/${roomId}`);
+        deleteMatchedUsersRedis(username, matchedUser)
+        //delete user from redis cache
+//        'http://127.0.0.1:8000/cache/
+
+//        availableOnlineUsers.current =  availableOnlineUsers.current.filter(x => x !== username);
+//        console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)
+//        if(matchedUser !== null){
+//            availableOnlineUsers.current =  availableOnlineUsers.current.filter(x => x !== username);
+//            console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)
+////            history.push(`/rooms/${roomId}`);
+//
+//        }
+//        else {
+//            openNotification();
+//        }
+//        window.location.replace(`/rooms/${roomId}`);
     }
 
 //    };
@@ -101,7 +141,6 @@ const WaitingRoom = () =>  {
 
     return (
     <>
-        <PushNotifications/>
         <center><h6>How it works</h6></center>
                 <p className='text'>The session will be split into 5 phases:</p>
                 <ul>

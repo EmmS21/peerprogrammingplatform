@@ -127,60 +127,23 @@ def post_object(request, *args, **kwargs):
         return Response(response, 201)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['DELETE'])
 def manage_post_object(request, *args, **kwargs):
-    if request.method == 'GET':
-        if kwargs['key']:
-            value = redis_instance.get(kwargs['key'])
-            if value:
-                response = {
-                    'key': kwargs['key'],
-                    'value': value,
-                    'msg': 'success'
-                }
-                return Response(response, status=200)
-            else:
-                response = {
-                    'key': kwargs['key'],
-                    'value': None,
-                    'msg': 'Not found'
-                }
-                return Response(response, status=404)
-        elif request.method == 'PUT':
-            if kwargs['key']:
-                request_data = json.loads(request.body)
-                new_value = request_data['new_value']
-                value = redis_instance.get(kwargs['key'])
-                if value:
-                    redis_instance.set(kwargs['key'], new_value)
-                    response = {
-                        'key': kwargs['key'],
-                        'value': value,
-                        'msg': f"Successfully updated {kwargs['key']}"
-                    }
-                    return Response(response, status=200)
-                else:
-                    response = {
-                        'key': kwargs['key'],
-                        'value': None,
-                        'msg': 'Not found'
-                    }
-                    return Response(response, status=404)
-            elif request.method == 'DELETE':
-                if kwargs['key']:
-                    result = redis_instance.delete(kwargs['key'])
-                    if result == 1:
-                        response = {
-                            'msg': f"{kwargs['key']} successfully deleted"
-                        }
-                        return Response(response, status=404)
-                    else:
-                        response = {
-                            'key': kwargs['key'],
-                            'value': None,
-                            'msg': 'Not found'
-                        }
-                        return Response(response, status=404)
+    request_body = json.loads(request.body)
+    username = request_body.get('username')
+    result = redis_instance.delete(username)
+    if result == 1:
+        response = {
+            'msg': f"{request.body} successfully deleted"
+        }
+        return Response(response, status=404)
+    else:
+        response = {
+            'key': request.body,
+            'value': None,
+            'msg': 'Not found'
+        }
+        return Response(response, status=404)
 
 # post and get from redis channel layer
 # @api_view(['GET', 'POST'])

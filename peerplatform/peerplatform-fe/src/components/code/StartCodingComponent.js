@@ -29,7 +29,6 @@ const StartCodingComponent = () => {
         })
     }
 
-//making this code redundant
     const sendWaitingRoomUsersToRedisCache = () => {
         axios.get('http://127.0.0.1:8000/users/')
             .then(res => {
@@ -46,6 +45,7 @@ const StartCodingComponent = () => {
                         .then(res => {
                             console.log('online users', res.data.elements)
                             availableOnlineUsers.current = res.data.elements
+                            console.log('availusers in startcoding is now', availableOnlineUsers.current)
                         })
             })
         }

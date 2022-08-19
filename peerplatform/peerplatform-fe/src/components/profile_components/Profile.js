@@ -58,48 +58,6 @@ import { useCookies } from 'react-cookie';
         const [visible, setVisible] = useState(false);
         const [token, setToken] = useState('')
         const [cookies, setCookie] = useCookies();
-//
-        //service worker
-//        const check = () => {
-//            if(!('serviceWorker' in navigator)) {
-//                throw new Error('No Service Worker support!')
-//            }
-//            if (!('PushManager' in window)) {
-//                throw new Error('No Push API Support!')
-//            }
-//            console.log('check is running')
-//        }
-//
-//
-//        const registerServiceWorker = async () => {
-//            const swRegistration = await navigator.serviceWorker.register('./service.js')
-//            console.log('registering service worker')
-//            return swRegistration;
-//        }
-//
-//        const requestNotificationPermission = async () => {
-//            const permission = await window.Notification.requestPermission();
-//            if(permission !== 'granted') {
-//                throw new Error('Permission not granted for Notification');
-//            }
-//        }
-//
-//        const showLocalNotification = (title, body, swRegistration) => {
-//            const options = {
-//                body,
-//            };
-//            swRegistration.showNotification(title, options)
-//        };
-//        //run main function to register service worker and get subscription object
-//        const main = async () => {
-//            check()
-//            const swRegistration = await registerServiceWorker();
-//            const permission = await requestNotificationPermission();
-//            showLocalNotification('This is title', 'this is the message', swRegistration);
-//        }
-
-//        main();
-
 
         //on idle update Profile model activity field
         const handleOnIdle = (event: any) => {
@@ -174,8 +132,6 @@ import { useCookies } from 'react-cookie';
         //get profile information
         useEffect(() => {
             getProfileInfo(user.user_id)
-            //get all users
-//            getAllUsers()
             updateWaitingRoomStatus()
             console.log('pair users', pairUsers)
         },[]);
@@ -183,8 +139,7 @@ import { useCookies } from 'react-cookie';
         return (
               <>
                   <div className="content">
-                        <PushNotifications />
-                        <div class="d-flex flex-row-reverse">
+1                        <div class="d-flex flex-row-reverse">
                             <button className="button button-primary button-wide-mobile button-sm" color="primary" onClick={logOutUser}>
                                 Logout
                             </button>

@@ -50,6 +50,7 @@ class PracticeConsumer(AsyncConsumer):
         # when websocket disconnects
         print("disconnected", event)
 
+
 #if using http request, when a person joins waiting room, they make a request to the backend
 #if no-one return a message indicating this || volume -> backroute job that will run every x minutes => cronjob
 #redirecting pairs to their appropriate rooms -> window.location.href //from the frontend //react router
