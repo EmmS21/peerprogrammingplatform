@@ -87,7 +87,10 @@ const WaitingRoom = () =>  {
 
     function deleteMatchedUsersRedis(username, matchedUser){
         console.log('deleteMatched triggered')
-        axios.delete('http://127.0.0.1:8000/cache/', username)
+        const deletingUsers = {}
+        deletingUsers['username'] = username
+        deletingUsers['matched'] = matchedUser
+        axios.delete('http://127.0.0.1:8000/cache/delete', deletingUsers)
             .then(res=> {
                 console.log('axios delete response', res)
             })

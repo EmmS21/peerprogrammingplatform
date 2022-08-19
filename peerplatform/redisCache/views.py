@@ -131,15 +131,17 @@ def post_object(request, *args, **kwargs):
 def manage_post_object(request, *args, **kwargs):
     request_body = json.loads(request.body)
     username = request_body.get('username')
-    result = redis_instance.delete(username)
-    if result == 1:
+    matched = request_body.get('matched')
+    result = redis_instance.srem('pairs', username)
+    second_result = redis_instance.srem('pairs', matched)
+    if result == 1 and second_result == 1:
         response = {
-            'msg': f"{request.body} successfully deleted"
+            'msg': f"{username} and f{matched} successfully deleted"
         }
         return Response(response, status=404)
     else:
         response = {
-            'key': request.body,
+            'key': username+matched,
             'value': None,
             'msg': 'Not found'
         }
