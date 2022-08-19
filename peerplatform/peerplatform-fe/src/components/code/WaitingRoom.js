@@ -94,6 +94,10 @@ const WaitingRoom = () =>  {
             .then(res=> {
                 console.log('axios delete response', res)
             })
+//        availableOnlineUsers.current =  availableOnlineUsers.current.filter(user =>
+//                                            user !== username && user !== matchedUser
+//        )
+//        console.log('availableusers now contains', availableOnlineUsers.current)
     }
 
 
@@ -121,9 +125,6 @@ const WaitingRoom = () =>  {
         console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
         setState({...state, rooms, selectedRoom, roomId});
         createRoomHandler(username, matchedUser)
-        deleteMatchedUsersRedis(username, matchedUser)
-        //delete user from redis cache
-//        'http://127.0.0.1:8000/cache/
 
 //        availableOnlineUsers.current =  availableOnlineUsers.current.filter(x => x !== username);
 //        console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)

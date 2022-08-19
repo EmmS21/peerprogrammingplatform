@@ -139,7 +139,7 @@ import { useCookies } from 'react-cookie';
         return (
               <>
                   <div className="content">
-1                        <div class="d-flex flex-row-reverse">
+                        <div class="d-flex flex-row-reverse">
                             <button className="button button-primary button-wide-mobile button-sm" color="primary" onClick={logOutUser}>
                                 Logout
                             </button>
