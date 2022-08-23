@@ -50,6 +50,16 @@ class PracticeConsumer(AsyncConsumer):
         # when websocket disconnects
         print("disconnected", event)
 
+class UserId(AsyncConsumer):
+    async def second_connection(self, event):
+        print("second connection", event)
+        await self.send({"type": "websocket.accept", })
+
+    async def second_receive(self, event):
+        print("received", event)
+
+    # async def second_receive(self, event):
+
 
 #if using http request, when a person joins waiting room, they make a request to the backend
 #if no-one return a message indicating this || volume -> backroute job that will run every x minutes => cronjob

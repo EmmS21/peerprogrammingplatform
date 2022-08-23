@@ -163,7 +163,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://default:redispw@localhost:49153",
+        "LOCATION": "redis://default:redispw@localhost:49154",
         # "LOCATION": "redis://redis-local:6379/0",
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
@@ -262,7 +262,7 @@ SIMPLE_JWT = {
 
 REDIS_HOST = 'localhost'
 # REDIS_HOST = 'redis-local'
-REDIS_PORT = 49153
+REDIS_PORT = 49154
 # REDIS_PORT = 49153
 REDIS_PASSWORD = 'redispw'
 

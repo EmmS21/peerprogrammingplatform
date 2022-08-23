@@ -9,6 +9,7 @@ import AuthContext from '../../context/AuthContext';
 import "../../assets/waitingRoom/app.css";
 import PushNotifications from '../profile_components/PushNotifications'
 import { Button, Modal, notification } from 'antd';
+import WebSocketInstance from '../../websocket/SecondConnection';
 
 
 const WaitingRoom = () =>  {
@@ -46,7 +47,7 @@ const WaitingRoom = () =>  {
 
     useEffect((() => {
         const username = user.username
-        console.log('username is', username)
+        console.log('users from cache:', availableOnlineUsers.current)
         let matchedUser = availableOnlineUsers.current.filter(user =>
                                                                 user !== username && user !== 'null'
                                                                 && user !== 'undefined'
@@ -59,15 +60,6 @@ const WaitingRoom = () =>  {
 //        console.log('matchedUser is', matchedUser)
         handleRoomCreate(username, matchedUser)
     }), [availableOnlineUsers.current])
-
-    function createTwilioConference(){
-        console.log('create twilio conference function triggered')
-        let result = null;
-        axios.post('http://127.0.0.1:8000/voice_chat/rooms')
-            .then(res =>{
-                console.log('response is', res.data)
-            })
-    }
 
     //new createRoomHandler without having to pass in data
     function createRoomHandler(username, matchedUser){
@@ -83,6 +75,9 @@ const WaitingRoom = () =>  {
             .then(res =>{
                 console.log('axios hit', res.data)
             })
+        WebSocketInstance.connect()
+        //deleting users from cache
+//        deleteMatchedUsersRedis(username, matchedUser)
     }
 
     function deleteMatchedUsersRedis(username, matchedUser){
@@ -94,16 +89,6 @@ const WaitingRoom = () =>  {
             .then(res=> {
                 console.log('axios delete response', res)
             })
-//        availableOnlineUsers.current =  availableOnlineUsers.current.filter(user =>
-//                                            user !== username && user !== matchedUser
-//        )
-//        console.log('availableusers now contains', availableOnlineUsers.current)
-    }
-
-
-
-    const generateRandomTopicNum = () => {
-        return Math.random().toString(36).slice(2, 7)
     }
 
     const handleRoomCreate = (username, matchedUser) => {
@@ -112,8 +97,8 @@ const WaitingRoom = () =>  {
         //create room topics for each pair to store in state
         const createdRoomTopic = username+matchedUser
         console.log('createdRoomTopic is', createdRoomTopic)
-        setState({ ...state, createdRoomTopic })
-        console.log('room topic inside state', state.createdRoomTopic)
+//        setState({ ...state, createdRoomTopic })
+//        console.log('room topic inside state', state.createdRoomTopic)
         const selectedRoom = {
             room_name: createdRoomTopic, participants: []
         };
@@ -125,14 +110,10 @@ const WaitingRoom = () =>  {
         console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
         setState({...state, rooms, selectedRoom, roomId});
         createRoomHandler(username, matchedUser)
-
-//        availableOnlineUsers.current =  availableOnlineUsers.current.filter(x => x !== username);
 //        console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)
 //        if(matchedUser !== null){
-//            availableOnlineUsers.current =  availableOnlineUsers.current.filter(x => x !== username);
-//            console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)
+////            console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)
 ////            history.push(`/rooms/${roomId}`);
-//
 //        }
 //        else {
 //            openNotification();
