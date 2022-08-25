@@ -3,10 +3,15 @@ from time import sleep
 import random
 import redis
 from django.conf import settings
+from django.contrib.auth.models import User, AnonymousUser
+from channels.db import database_sync_to_async
+from asgiref.sync import sync_to_async
+
 
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
                                    port=settings.REDIS_PORT_LAYER, db=0
                                    )
+# @database_sync_to_asy
 
 class PracticeConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
@@ -18,48 +23,26 @@ class PracticeConsumer(AsyncConsumer):
         #
 
     async def websocket_receive(self, event):
-        # when messages is received from websocket, ensure there are no duplicates
-        users_list = event['text'].split(',')
-        #randomize tuple order
-        random.shuffle(users_list)
-        #remove possible duplicates
-        elem = iter(set(users_list))
-        #dict with matched users
-        avail_users = dict(zip(elem, elem))
-        print("receiving this:", avail_users)
-        keys = list(avail_users.keys())
-        values = list(avail_users.values())
-        for i in range(0, len(keys)):
-            redis_instance.set(keys[i], values[i])
-        #create conference room names
-        # room_name = []
-        # #list of conf rooms concatenating key, value pairs
-        # for k, v in avail_users.items():
-        #     room_name.append(k+v)
-        #do process, is thing available? wait else send
-        #send and close?
-
-        sleep(1)
+        matched_user = event["text"]
+        print('we are initially getting', matched_user)
+        user_id = str(await self.get_user(matched_user))
+        print('converted user_id', str(user_id))
+        # sleep(1)
         await self.send({
             "type": "websocket.send",
-            "text": "redis set successfully"
-            # "text": json.dumps(avail_users),
+            "text": user_id
         })
 
     async def websocket_disconnect(self, event):
         # when websocket disconnects
         print("disconnected", event)
 
-class UserId(AsyncConsumer):
-    async def second_connection(self, event):
-        print("second connection", event)
-        await self.send({"type": "websocket.accept", })
-
-    async def second_receive(self, event):
-        print("received", event)
-
-    # async def second_receive(self, event):
-
+    @database_sync_to_async
+    def get_user(self, user_id):
+        try:
+            return User.objects.get(username=user_id).pk
+        except User.DoesNotExist:
+            return AnonymousUser()
 
 #if using http request, when a person joins waiting room, they make a request to the backend
 #if no-one return a message indicating this || volume -> backroute job that will run every x minutes => cronjob

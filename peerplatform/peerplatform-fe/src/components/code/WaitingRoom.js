@@ -9,7 +9,7 @@ import AuthContext from '../../context/AuthContext';
 import "../../assets/waitingRoom/app.css";
 import PushNotifications from '../profile_components/PushNotifications'
 import { Button, Modal, notification } from 'antd';
-import WebSocketInstance from '../../websocket/SecondConnection';
+import WebSocketInstance from '../../websocket/Connect';
 
 
 const WaitingRoom = () =>  {
@@ -33,10 +33,6 @@ const WaitingRoom = () =>  {
         notification.open(args);
     };
 
-//    console.log(`what do we have in state twilioToken: ${state.twilioToken}`)
-//    console.log(`debug logs: ${Twilio.Voice.setLogLevel(.debug)}`)
-
-
     const contentStyle = {
         height: '80px',
         color: '#fff',
@@ -52,12 +48,6 @@ const WaitingRoom = () =>  {
                                                                 user !== username && user !== 'null'
                                                                 && user !== 'undefined'
                                                                 ).pop()
-//        availableOnlineUsers.current = availableOnlineUsers.current.filter(user =>
-//                                                                            user !== username
-//                                                                            && user !== matchedUser
-//        )
-//        console.log('available users is now:', availableOnlineUsers.current)
-//        console.log('matchedUser is', matchedUser)
         handleRoomCreate(username, matchedUser)
     }), [availableOnlineUsers.current])
 
@@ -73,13 +63,22 @@ const WaitingRoom = () =>  {
         console.log('username inside roomhandler', pairedUsers)
         axios.post('http://127.0.0.1:8000/voice_chat/rooms',pairedUsers)
             .then(res =>{
-                console.log('axios hit', res.data)
+//                console.log('axios hit', res.data)
             })
         WebSocketInstance.connect()
+//        const userID = WebSocketInstance.sendData(matchedUser)
+        const matched_userId =  receiveWebSocketData(matchedUser)
         //deleting users from cache
 //        deleteMatchedUsersRedis(username, matchedUser)
     }
-
+    function receiveWebSocketData(matchedUser){
+        const userID = WebSocketInstance.sendData(matchedUser)
+        const fulfilled = userID.then((res)=> { return res })
+        const fulfilledPromise = setTimeout(()=>{
+            fulfilled.then((result)=> { return result } )
+         }, 2000)
+        return fulfilledPromise;
+    }
     function deleteMatchedUsersRedis(username, matchedUser){
         console.log('deleteMatched triggered')
         const deletingUsers = {}

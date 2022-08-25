@@ -19,7 +19,7 @@ def manage_items(request, *args, **kwargs):
         items = []
         count = 0
         for elem in redis_instance.smembers("pairs"):
-            print('getting from redis', elem.decode("utf-8"))
+            # print('getting from redis', elem.decode("utf-8"))
             items.append(elem.decode("utf-8"))
             count += 1
         response = {
@@ -28,9 +28,9 @@ def manage_items(request, *args, **kwargs):
         return Response(response, status=200)
     elif request.method == 'POST':
         new_users = request.body.decode("utf-8").split(",")
-        print('users', new_users)
+        # print('users', new_users)
         for i in range(0, len(new_users)):
-            print('each iter', new_users[i])
+            # print('each iter', new_users[i])
             redis_instance.sadd('pairs', re.sub("[\"\']", "", new_users[i]).strip('[]'))
         response = {
             'msg': f'set contains: {new_users}'
