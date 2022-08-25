@@ -8,7 +8,8 @@ import AuthContext from '../../context/AuthContext';
 //import OnlineUsersCarousel from './OnlineUsersCarousel';
 import "../../assets/waitingRoom/app.css";
 import PushNotifications from '../profile_components/PushNotifications'
-import { Button, Modal } from 'antd';
+import { Button, Modal, notification } from 'antd';
+import WebSocketInstance from '../../websocket/Connect';
 
 
 const WaitingRoom = () =>  {
@@ -19,12 +20,18 @@ const WaitingRoom = () =>  {
             updateProfile,
             pairUsers,
             allOnlineUsers,
-            config, availableOnlineUsers } = useContext(AuthContext)
+            availableOnlineUsers,
+            config } = useContext(AuthContext)
     const [usersInState, setUsersInState] = useState('')
 
-//    console.log(`what do we have in state twilioToken: ${state.twilioToken}`)
-//    console.log(`debug logs: ${Twilio.Voice.setLogLevel(.debug)}`)
-
+    const openNotification = () => {
+        const args = {
+            message: 'You have not been matched yet',
+            description: 'Please wait a little longer while we find you a match',
+            duration: 4,
+        };
+        notification.open(args);
+    };
 
     const contentStyle = {
         height: '80px',
@@ -36,28 +43,16 @@ const WaitingRoom = () =>  {
 
     useEffect((() => {
         const username = user.username
-        console.log('username is', username)
-        console.log('available users', availableOnlineUsers.current)
-        let matchedUser = availableOnlineUsers.current.filter(elem =>
-                                                                elem !== username && elem !== 'null'
-                                                                && elem !== 'undefined'
+        console.log('users from cache:', availableOnlineUsers.current)
+        let matchedUser = availableOnlineUsers.current.filter(user =>
+                                                                user !== username && user !== 'null'
+                                                                && user !== 'undefined'
                                                                 ).pop()
-        console.log('matchedUser is', matchedUser)
         handleRoomCreate(username, matchedUser)
     }), [availableOnlineUsers.current])
 
-    function createTwilioConference(){
-        console.log('create twilio conference function triggered')
-        let result = null;
-        axios.post('http://127.0.0.1:8000/voice_chat/rooms')
-            .then(res =>{
-                result = res
-            })
-        return result
-    }
-
     //new createRoomHandler without having to pass in data
-    function createRoomHandler(username, matchedUser){
+    function createRoomHandler(username, matchedUser, roomId){
         console.log('createRoomHandler triggered')
         const pairedUsers ={}
         pairedUsers['roomName'] = username+matchedUser
@@ -70,12 +65,32 @@ const WaitingRoom = () =>  {
             .then(res =>{
                 console.log('axios hit', res.data)
             })
+        WebSocketInstance.connect()
+        const matched_ID =  receiveWebSocketData(matchedUser, roomId)
+        console.log('matched userId', matched_ID)
+        //deleting users from cache
+//        deleteMatchedUsersRedis(username, matchedUser)
     }
-
-
-
-    const generateRandomTopicNum = () => {
-        return Math.random().toString(36).slice(2, 7)
+    function receiveWebSocketData(matchedUser, roomId){
+//        const sendingObject = {}
+//        sendingObject['username'] = matchedUser
+//        sendingObject['roomId'] = roomId
+        const userID = WebSocketInstance.sendData(matchedUser+' '+roomId)
+        const fulfilled = userID.then((res)=> { return res })
+        const fulfilledPromise = setTimeout(()=>{
+            fulfilled.then((result)=> { return result } )
+         }, 2000)
+        return fulfilledPromise;
+    }
+    function deleteMatchedUsersRedis(username, matchedUser){
+        console.log('deleteMatched triggered')
+        const deletingUsers = {}
+        deletingUsers['username'] = username
+        deletingUsers['matched'] = matchedUser
+        axios.delete('http://127.0.0.1:8000/cache/delete', deletingUsers)
+            .then(res=> {
+                console.log('axios delete response', res)
+            })
     }
 
     const handleRoomCreate = (username, matchedUser) => {
@@ -83,17 +98,29 @@ const WaitingRoom = () =>  {
         //get all users from redis cache
         //create room topics for each pair to store in state
         const createdRoomTopic = username+matchedUser
-        setState({ ...state, createdRoomTopic })
+        console.log('createdRoomTopic is', createdRoomTopic)
+//        setState({ ...state, createdRoomTopic })
+//        console.log('room topic inside state', state.createdRoomTopic)
         const selectedRoom = {
-            room_name: state.createdRoomTopic, participants: []
+            room_name: createdRoomTopic, participants: []
         };
+        selectedRoom.participants.push(username)
+        selectedRoom.participants.push(matchedUser)
+        console.log('selectedroom participants', selectedRoom.participants)
         const rooms = state.rooms; //do we need this, rooms is empty after all
-//        console.log(`Rooms currently has, rooms: ${JSON.stringify(rooms)}`)
         const roomId = rooms.push(selectedRoom);
-        console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
+//        console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
         setState({...state, rooms, selectedRoom, roomId});
-        createRoomHandler(username, matchedUser)
-//        history.push(`/rooms/${roomId}`);
+        createRoomHandler(username, matchedUser, roomId)
+//        console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)
+//        if(matchedUser !== null){
+////            console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)
+////            history.push(`/rooms/${roomId}`);
+//        }
+//        else {
+//            openNotification();
+//        }
+//        window.location.replace(`/rooms/${roomId}`);
     }
 
 //    };
@@ -101,7 +128,6 @@ const WaitingRoom = () =>  {
 
     return (
     <>
-        <PushNotifications/>
         <center><h6>How it works</h6></center>
                 <p className='text'>The session will be split into 5 phases:</p>
                 <ul>

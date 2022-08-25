@@ -4,7 +4,7 @@ import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../../context/RoomContextProvider';
 import AuthContext from '../../context/AuthContext';
 import axios from 'axios';
-import WebSocketInstance from '../../websocket/Connect';
+//import WebSocketInstance from '../../websocket/Connect';
 
 const StartCodingComponent = () => {
     const history = useHistory();
@@ -29,7 +29,6 @@ const StartCodingComponent = () => {
         })
     }
 
-//making this code redundant
     const sendWaitingRoomUsersToRedisCache = () => {
         axios.get('http://127.0.0.1:8000/users/')
             .then(res => {
@@ -46,6 +45,7 @@ const StartCodingComponent = () => {
                         .then(res => {
                             console.log('online users', res.data.elements)
                             availableOnlineUsers.current = res.data.elements
+                            console.log('availusers in startcoding is now', availableOnlineUsers.current)
                         })
             })
         }
@@ -60,10 +60,10 @@ const StartCodingComponent = () => {
             return {...state, rooms }
         });
         sendWaitingRoomUsersToRedisCache()
-        WebSocketInstance.connect()
+//        WebSocketInstance.connect()
         let availUsers = null ;
-//        sending data through websocket
-        WebSocketInstance.sendData()
+////        sending data through websocket
+//        WebSocketInstance.sendData()
         history.push('/rooms');
     }
 

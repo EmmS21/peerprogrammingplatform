@@ -33,16 +33,16 @@ class WebSocketService {
             this.socketRef.addEventListener('open', resolve);
         });
     }
-    const sentData = ['testUser','userTwo']
-    this.socketRef.send(sentData)
-    return new Promise((resolve, reject) => {
+    this.socketRef.send(data)
+//    const result  = this.socketRef.onmessage =  e => { return e.data }
+    const result = await new Promise((resolve, reject) => {
         this.socketRef.onmessage = e => {
-            console.log('received in client:', e.data)
-            resolve(e.data);
+            resolve(e.data)
         }
-    })
+    });
+    return result
   };
-  }
+}
 const WebSocketInstance = WebSocketService.getInstance()
 export default WebSocketInstance;
 
