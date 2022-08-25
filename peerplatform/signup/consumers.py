@@ -1,3 +1,5 @@
+import json
+
 from channels.consumer import AsyncConsumer
 from time import sleep
 import random
@@ -19,18 +21,20 @@ class PracticeConsumer(AsyncConsumer):
         print("connected", event)
         # self.accept
         await self.send({"type": "websocket.accept", })
-        # await self.send({"type": "websocket.send", "text": 'websocket is working'})
-        #
-
+        # await self.send({"type": "websocket.send", "text": 'websocket is workingget['username]
     async def websocket_receive(self, event):
-        matched_user = event["text"]
-        print('we are initially getting', matched_user)
-        user_id = str(await self.get_user(matched_user))
-        print('converted user_id', str(user_id))
-        # sleep(1)
+        received = event["text"]
+        user_and_id = received.split()
+        print('we are initially getting', user_and_id)
+        user_id = str(await self.get_user(user_and_id[0]))
+        room_id = str(user_and_id[1])
+        print('user id is', user_id)
+        # sending_dict = {'user_id': user_id, 'room_id': room_id}
+        sleep(1)
         await self.send({
             "type": "websocket.send",
-            "text": user_id
+            "text": user_id,
+                # {"matchedUser": user_id, "roomName": room_id },
         })
 
     async def websocket_disconnect(self, event):

@@ -52,7 +52,7 @@ const WaitingRoom = () =>  {
     }), [availableOnlineUsers.current])
 
     //new createRoomHandler without having to pass in data
-    function createRoomHandler(username, matchedUser){
+    function createRoomHandler(username, matchedUser, roomId){
         console.log('createRoomHandler triggered')
         const pairedUsers ={}
         pairedUsers['roomName'] = username+matchedUser
@@ -63,16 +63,19 @@ const WaitingRoom = () =>  {
         console.log('username inside roomhandler', pairedUsers)
         axios.post('http://127.0.0.1:8000/voice_chat/rooms',pairedUsers)
             .then(res =>{
-//                console.log('axios hit', res.data)
+                console.log('axios hit', res.data)
             })
         WebSocketInstance.connect()
-//        const userID = WebSocketInstance.sendData(matchedUser)
-        const matched_userId =  receiveWebSocketData(matchedUser)
+        const matched_ID =  receiveWebSocketData(matchedUser, roomId)
+        console.log('matched userId', matched_ID)
         //deleting users from cache
 //        deleteMatchedUsersRedis(username, matchedUser)
     }
-    function receiveWebSocketData(matchedUser){
-        const userID = WebSocketInstance.sendData(matchedUser)
+    function receiveWebSocketData(matchedUser, roomId){
+//        const sendingObject = {}
+//        sendingObject['username'] = matchedUser
+//        sendingObject['roomId'] = roomId
+        const userID = WebSocketInstance.sendData(matchedUser+' '+roomId)
         const fulfilled = userID.then((res)=> { return res })
         const fulfilledPromise = setTimeout(()=>{
             fulfilled.then((result)=> { return result } )
@@ -106,9 +109,9 @@ const WaitingRoom = () =>  {
         console.log('selectedroom participants', selectedRoom.participants)
         const rooms = state.rooms; //do we need this, rooms is empty after all
         const roomId = rooms.push(selectedRoom);
-        console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
+//        console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
         setState({...state, rooms, selectedRoom, roomId});
-        createRoomHandler(username, matchedUser)
+        createRoomHandler(username, matchedUser, roomId)
 //        console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)
 //        if(matchedUser !== null){
 ////            console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)
