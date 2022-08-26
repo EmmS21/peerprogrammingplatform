@@ -4,6 +4,8 @@ import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../../context/RoomContextProvider';
 import AuthContext from '../../context/AuthContext';
 import axios from 'axios';
+import SyncLoader from "react-spinners/ClipLoader";
+
 //import WebSocketInstance from '../../websocket/Connect';
 
 const StartCodingComponent = () => {
@@ -19,6 +21,9 @@ const StartCodingComponent = () => {
             allOnlineUsers,
             setAllOnlineUsers,
             config, availableOnlineUsers } = useContext(AuthContext)
+    let [loading, setLoading] = useState(false);
+    const [color, setColor] = useState("#3f37db");
+
 
     const updateWaitingRoomStatus = () => {
         axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
@@ -64,7 +69,16 @@ const StartCodingComponent = () => {
         let availUsers = null ;
 ////        sending data through websocket
 //        WebSocketInstance.sendData()
-        history.push('/rooms');
+        if(availableOnlineUsers.current.length){
+                history.push('/rooms');
+        }
+        else {
+            setLoading(true);
+            setTimeout(()=>{
+                history.push('/rooms');
+            },7000)
+        }
+//        history.push('/rooms');
     }
 
     const setupTwilio = (nickname) => {
@@ -92,9 +106,16 @@ const StartCodingComponent = () => {
     };
 
     return (
-            <button className="button button-primary button-wide-mobile button-sm"
-                onClick={handleSubmit}> Join Waiting Room
-            </button>
+        <div>
+        {
+            loading === true ?
+                <SyncLoader loading={loading} color={color} size={30} />
+                :
+                <button className="button button-primary button-wide-mobile button-sm"
+                    onClick={handleSubmit}> Join Waiting Room
+                </button>
+        }
+        </div>
     );
 };
 

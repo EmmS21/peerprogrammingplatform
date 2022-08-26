@@ -30,17 +30,18 @@ class WebSocketService {
     if(this.socketRef.readyState !== WebSocket.OPEN) {
         console.log('we are still waiting')
         await new Promise((resolve, reject) => {
+            console.log('now opening websocket')
             this.socketRef.addEventListener('open', resolve);
         });
     }
+    console.log('now sending', data)
     this.socketRef.send(data)
-//    const result  = this.socketRef.onmessage =  e => { return e.data }
-    const result = await new Promise((resolve, reject) => {
+    const socketResp = await new Promise((resolve, reject) => {
         this.socketRef.onmessage = e => {
             resolve(e.data)
         }
-    });
-    return result
+    })
+    return socketResp;
   };
 }
 const WebSocketInstance = WebSocketService.getInstance()
