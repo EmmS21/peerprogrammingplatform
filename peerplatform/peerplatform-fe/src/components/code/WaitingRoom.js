@@ -23,6 +23,7 @@ const WaitingRoom = () =>  {
             availableOnlineUsers,
             config } = useContext(AuthContext)
     const [usersInState, setUsersInState] = useState('')
+    const [websocketVal, setWebSocketVal] = useState('')
 
     const openNotification = () => {
         const args = {
@@ -42,14 +43,16 @@ const WaitingRoom = () =>  {
     };
 
     useEffect((() => {
+        console.log('how many times is useEffect running')
+        //connecting websocket
+        WebSocketInstance.connect()
         const username = user.username
-        console.log('users from cache:', availableOnlineUsers.current)
         let matchedUser = availableOnlineUsers.current.filter(user =>
                                                                 user !== username && user !== 'null'
                                                                 && user !== 'undefined'
                                                                 ).pop()
         handleRoomCreate(username, matchedUser)
-    }), [availableOnlineUsers.current])
+    }), [])
 
     //new createRoomHandler without having to pass in data
     function createRoomHandler(username, matchedUser, roomId){
@@ -65,23 +68,30 @@ const WaitingRoom = () =>  {
             .then(res =>{
                 console.log('axios hit', res.data)
             })
-        WebSocketInstance.connect()
-        const matched_ID =  receiveWebSocketData(matchedUser, roomId)
-        console.log('matched userId', matched_ID)
+        receiveWebSocketData(matchedUser, roomId).then( (res) =>
+                                                                { redirectMatchedUser(res.split(' ')[0], res.split(' ')[1])
+                                                                 setWebSocketVal(res)
+                                                                 } )
+        console.log('websocket in state is', websocketVal)
         //deleting users from cache
-//        deleteMatchedUsersRedis(username, matchedUser)
+        deleteMatchedUsersRedis(username, matchedUser)
     }
-    function receiveWebSocketData(matchedUser, roomId){
-//        const sendingObject = {}
-//        sendingObject['username'] = matchedUser
-//        sendingObject['roomId'] = roomId
-        const userID = WebSocketInstance.sendData(matchedUser+' '+roomId)
-        const fulfilled = userID.then((res)=> { return res })
-        const fulfilledPromise = setTimeout(()=>{
-            fulfilled.then((result)=> { return result } )
-         }, 2000)
-        return fulfilledPromise;
+    function redirectMatchedUser(matchedID, roomID){
+        const userid = user.user_id
+        if(userid === matchedID){
+            history.push(`/rooms/${roomID}`)
+        }
     }
+
+    async function receiveWebSocketData(matchedUser, roomId){
+        return await WebSocketInstance.sendData(matchedUser+' '+roomId)
+//        const fulfilled = userID.then((res)=> { return res })
+//        console.log('fulfilled is returning', fulfilled)
+//        const fulfilledPromise = fulfilled.then((result)=> { return result } )
+//        console.log('fulfilled promise is', fulfilledPromise)
+//        return fulfilledPromise;
+    };
+
     function deleteMatchedUsersRedis(username, matchedUser){
         console.log('deleteMatched triggered')
         const deletingUsers = {}
@@ -106,11 +116,12 @@ const WaitingRoom = () =>  {
         };
         selectedRoom.participants.push(username)
         selectedRoom.participants.push(matchedUser)
-        console.log('selectedroom participants', selectedRoom.participants)
         const rooms = state.rooms; //do we need this, rooms is empty after all
         const roomId = rooms.push(selectedRoom);
-//        console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
+        console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
+
         setState({...state, rooms, selectedRoom, roomId});
+
         createRoomHandler(username, matchedUser, roomId)
 //        console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)
 //        if(matchedUser !== null){

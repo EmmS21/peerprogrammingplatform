@@ -28,12 +28,11 @@ class PracticeConsumer(AsyncConsumer):
         print('we are initially getting', user_and_id)
         user_id = str(await self.get_user(user_and_id[0]))
         room_id = str(user_and_id[1])
-        print('user id is', user_id)
-        # sending_dict = {'user_id': user_id, 'room_id': room_id}
+        # print('user id is', user_id)
         sleep(1)
         await self.send({
             "type": "websocket.send",
-            "text": user_id,
+            "text": user_id+' '+room_id,
                 # {"matchedUser": user_id, "roomName": room_id },
         })
 
