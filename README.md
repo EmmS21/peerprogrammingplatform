@@ -147,7 +147,7 @@ With ngrok specifically, you will need to expose the server to ngrok by running 
 
 ```
 pip install -r requirements.txt
-python manaage.py makemigrations
+python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
