@@ -64,9 +64,7 @@ const Login = () => {
         <div className="footer">
           <button type="button"
             className="btn"
-            onClick={ handleSubmit}>
-            Login
-          </button>
+            onClick={ handleSubmit}>Login</button>
         </div>
       </div>
     );
