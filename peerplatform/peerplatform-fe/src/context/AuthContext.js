@@ -7,8 +7,6 @@ import { useHistory } from 'react-router-dom';
 import axiosWithAuth from "../axios"
 import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../context/RoomContextProvider';
-import { onMessageListener } from '../firebase';
-
 
 const AuthContext = createContext()
 
@@ -79,14 +77,6 @@ export const AuthProvider = ({children}) => {
             alert(response.data.user);
         }
     }
-
-    onMessageListener().then(payload => {
-        setNotification({ title: payload.notification.title,
-                          body: payload.notification.body })
-        setShow(true);
-        console.log(payload);
-    }).catch(err => console.log('failed: ', err));
-
     const onShowNotificationClicked = () => {
         setNotification({ title: "Notification",
                           body: "This is a test notification" })
