@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import { Provider } from 'react-redux'
+import { createRoom } from 'react-dom/client';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';

@@ -7,7 +7,7 @@ import axios from 'axios';
 import AuthContext from '../../context/AuthContext';
 //import OnlineUsersCarousel from './OnlineUsersCarousel';
 import "../../assets/waitingRoom/app.css";
-import PushNotifications from '../profile_components/PushNotifications'
+//import PushNotifications from '../profile_components/PushNotifications'
 import { Button, Modal, notification } from 'antd';
 import WebSocketInstance from '../../websocket/Connect';
 
@@ -74,16 +74,18 @@ const WaitingRoom = () =>  {
                                                                  } )
         console.log('websocket in state is', websocketVal)
         //deleting users from cache
-        deleteMatchedUsersRedis(username, matchedUser)
+//        deleteMatchedUsersRedis(username, matchedUser)
     }
     function redirectMatchedUser(matchedID, roomID){
         const userid = user.user_id
+        console.log(`inside redirect function userID in state for userB is ${userid}`)
         if(userid === matchedID){
             history.push(`/rooms/${roomID}`)
         }
     }
 
     async function receiveWebSocketData(matchedUser, roomId){
+        console.log(`we are sending UserBs username: ${matchedUser} and roomID:${roomId}`)
         return await WebSocketInstance.sendData(matchedUser+' '+roomId)
 //        const fulfilled = userID.then((res)=> { return res })
 //        console.log('fulfilled is returning', fulfilled)

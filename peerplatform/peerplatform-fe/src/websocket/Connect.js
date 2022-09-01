@@ -34,10 +34,10 @@ class WebSocketService {
             this.socketRef.addEventListener('open', resolve);
         });
     }
-    console.log('now sending', data)
     this.socketRef.send(data)
     const socketResp = await new Promise((resolve, reject) => {
         this.socketRef.onmessage = e => {
+            console.log(`we are receiving userBs id:${e.data.split(' ')[0]} and roomID:${e.data.split(' ')[1]}`)
             resolve(e.data)
         }
     })
