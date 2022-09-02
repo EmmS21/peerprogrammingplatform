@@ -41,6 +41,7 @@ export const AuthProvider = ({children}) => {
     //store current and matched users in state
     const  [pairUsers, setPairUsers] = useState([])
     const [ allOnlineUsers, setAllOnlineUsers ] = useState([])
+    const [loginError, setLoginError] = useState('');
     const availableOnlineUsers = useRef([])
 
     const history = useHistory();
@@ -74,6 +75,7 @@ export const AuthProvider = ({children}) => {
             history.push('/')
         }
         catch(err) {
+            setLoginError(response.data.user)
             alert(response.data.user);
         }
     }
@@ -329,6 +331,7 @@ export const AuthProvider = ({children}) => {
         allOnlineUsers: allOnlineUsers,
         setAllOnlineUsers: setAllOnlineUsers,
         availableOnlineUsers: availableOnlineUsers,
+        loginError : loginError,
     }
 
 

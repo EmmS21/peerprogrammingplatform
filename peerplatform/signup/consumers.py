@@ -7,8 +7,7 @@ import redis
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from channels.db import database_sync_to_async
-from asgiref.sync import sync_to_async
-
+from asgiref.sync import async_to_sync
 
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
                                    port=settings.REDIS_PORT_LAYER, db=0
@@ -22,12 +21,21 @@ class PracticeConsumer(AsyncConsumer):
         # self.accept
         await self.send({"type": "websocket.accept", })
         # await self.send({"type": "websocket.send", "text": 'websocket is workingget['username]
+
     async def websocket_receive(self, event):
         received = event["text"]
         user_and_id = received.split()
         print('we are initially getting', user_and_id)
         user_id = str(await self.get_user(user_and_id[0]))
         room_id = str(user_and_id[1])
+        username_id = str(await self.get_user(user_and_id[2]))
+        async_to_sync(self.channel_layer.group_add)(
+            self.user_id
+        )
+        async_to_sync(self.channel_layer.group_add)(
+            self.username_id
+        )
+        # print('groups', groups)
         # print('user id is', user_id)
         sleep(1)
         await self.send({

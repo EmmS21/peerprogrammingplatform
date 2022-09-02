@@ -14,8 +14,7 @@ const Login = () => {
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
     //if user login details are incorrect
-    const [loginError, setLoginError] = useState('');
-    let {loginUser} = useContext(AuthContext)
+    let {loginUser, loginError } = useContext(AuthContext)
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -27,6 +26,7 @@ const Login = () => {
         console.log(newLoginData)
         loginUser(newLoginData);
     }
+    console.log(loginError)
 
      return (
       <div className="base-container">
@@ -35,6 +35,7 @@ const Login = () => {
           <div className="image">
             <img src={secure_login} />
           </div>
+          <p id="loginError">{loginError}</p>
           <form className="form">
             <div className="form-group">
               <label htmlFor="username">Username</label>
@@ -58,12 +59,12 @@ const Login = () => {
                 required
               />{' '}
             </div>
-            <p>{loginError}</p>
           </form>
         </div>
         <div className="footer">
           <button type="button"
             className="btn"
+            disabled={!username || !password }
             onClick={ handleSubmit}>Login</button>
         </div>
       </div>

@@ -68,7 +68,7 @@ const WaitingRoom = () =>  {
             .then(res =>{
                 console.log('axios hit', res.data)
             })
-        receiveWebSocketData(matchedUser, roomId).then( (res) =>
+        receiveWebSocketData(matchedUser, roomId, username).then( (res) =>
                                                                 { redirectMatchedUser(res.split(' ')[0], res.split(' ')[1])
                                                                  setWebSocketVal(res)
                                                                  } )
