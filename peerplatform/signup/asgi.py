@@ -15,13 +15,18 @@ from django.urls import re_path, path
 from channels.http import AsgiHandler
 from .routing import websocket_urlpatterns
 from .consumers import *
+from channels.security.websocket import AllowedHostsOriginValidator
+from .middleware import JwtAuthMiddlewareStack
+from channels.auth import AuthMiddlewareStack
+
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'signup.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
-    "websocket": AuthMiddlewareStack(
-        URLRouter(
-            websocket_urlpatterns
-        ))
+    "websocket": AllowedHostsOriginValidator(
+            JwtAuthMiddlewareStack(
+                URLRouter(websocket_urlpatterns)
+            )
+    )
 })

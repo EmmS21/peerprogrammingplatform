@@ -19,16 +19,17 @@ describe('login', () => {
     test('Login page renders with no errors', () => {
         render(login)
     });
-    test('Login form not vulnerable to SQL injection', () => {
-        const loginError = jest.fn;
+    test('Login form not vulnerable to SQL injection', async () => {
+        const errorAlert = jest.spyOn(window, 'alert');
         const username = screen.getByPlaceholderText('username');
         const password = screen.getByPlaceholderText('password');
         const loginButton = screen.getByRole('button');
-        const errorTag = document.getElementById('loginError');
         userEvent.type(username, "'");
         userEvent.type(password, "'");
         userEvent.click(loginButton);
-        expect(errorTag.innerHTML).toBe('Username or password is incorrect');
+        expect(errorAlert).toHaveBeenCalledTimes(1)
+//        const errorTag = await screen.getByTestId('loginError');
+//        await expect(errorTag.textContent).toBe('Username or password is incorrect');
     });
     test('User can enter username', () => {
         const username = screen.getByPlaceholderText('username');

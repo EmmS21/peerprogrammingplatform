@@ -21,7 +21,8 @@ const WaitingRoom = () =>  {
             pairUsers,
             allOnlineUsers,
             availableOnlineUsers,
-            config } = useContext(AuthContext)
+            config,
+            authTokens } = useContext(AuthContext)
     const [usersInState, setUsersInState] = useState('')
     const [websocketVal, setWebSocketVal] = useState('')
 
@@ -45,7 +46,7 @@ const WaitingRoom = () =>  {
     useEffect((() => {
         console.log('how many times is useEffect running')
         //connecting websocket
-        WebSocketInstance.connect()
+        WebSocketInstance.connect(authTokens)
         const username = user.username
         let matchedUser = availableOnlineUsers.current.filter(user =>
                                                                 user !== username && user !== 'null'
