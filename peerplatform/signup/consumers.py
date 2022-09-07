@@ -8,16 +8,24 @@ from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
+from rest_framework.authtoken.models import Token
+from channels.middleware import BaseMiddleware
+
 
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
                                    port=settings.REDIS_PORT_LAYER, db=0
                                    )
-# @database_sync_to_asy
+
+
+users = []
 
 class PracticeConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
         # when websocket connects
-        print("connected", event)
+        # print("websocket connected", event)
+        # print("websocket scope", self.scope)
+        # print('session data', self.scope['user'])
+        # users.append(event)
         # self.accept
         await self.send({"type": "websocket.accept", })
         # await self.send({"type": "websocket.send", "text": 'websocket is workingget['username]
@@ -28,13 +36,13 @@ class PracticeConsumer(AsyncConsumer):
         print('we are initially getting', user_and_id)
         user_id = str(await self.get_user(user_and_id[0]))
         room_id = str(user_and_id[1])
-        username_id = str(await self.get_user(user_and_id[2]))
-        async_to_sync(self.channel_layer.group_add)(
-            self.user_id
-        )
-        async_to_sync(self.channel_layer.group_add)(
-            self.username_id
-        )
+        # username_id = str(await self.get_user(user_and_id[2]))
+        # async_to_sync(self.channel_layer.group_add)(
+        #     self.user_id
+        # )
+        # async_to_sync(self.channel_layer.group_add)(
+        #     self.username_id
+        # )
         # print('groups', groups)
         # print('user id is', user_id)
         sleep(1)

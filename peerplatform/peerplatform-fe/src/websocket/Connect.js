@@ -12,11 +12,13 @@ class WebSocketService {
    constructor() {
     this.socketRef = null;
   }
-    connect() {
-    const path = 'ws://127.0.0.1:8000/connect/testing/';
+    connect(args) {
+    const queryString = args.refresh
+    console.log('queryString', queryString)
+    const path = `ws://127.0.0.1:8000/connect/testing/?${queryString}`;
     this.socketRef = new WebSocket(path);
     this.socketRef.onopen = (data) => {
-      console.log('WebSocket open');
+        console.log('WebSocket open');
       }
     this.socketRef.onerror = e => {
       console.log(e.message);

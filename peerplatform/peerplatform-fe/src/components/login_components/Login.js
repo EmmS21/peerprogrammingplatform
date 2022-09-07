@@ -35,7 +35,7 @@ const Login = () => {
           <div className="image">
             <img src={secure_login} />
           </div>
-          <p id="loginError">{loginError}</p>
+          <p id="loginError" data-testid="loginError">{loginError}</p>
           <form className="form">
             <div className="form-group">
               <label htmlFor="username">Username</label>

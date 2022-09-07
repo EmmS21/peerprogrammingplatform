@@ -292,6 +292,7 @@ export const AuthProvider = ({children}) => {
     //going to be passed down to AuthContext
     let contextData = {
         user:user,
+        authTokens:authTokens,
         loginUser:loginUser,
         logOutUser:logOutUser,
         updateToken: updateToken,
