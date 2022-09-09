@@ -8,19 +8,18 @@ from channels.middleware import BaseMiddleware
 from channels.auth import AuthMiddlewareStack
 from django.db import close_old_connections
 from urllib.parse import parse_qs
-from jwt import decode as jwt_decode
+# from jwt import decode as jwt_decode
+
 from django.conf import settings
+import jwt
+
 @database_sync_to_async
 def get_user(validated_token):
     try:
         user = get_user_model().objects.get(id=validated_token["user_id"])
-        print('what is user now', user)
-        # return get_user_model().objects.get(id=toke_id)
         return user
     except:
-        print('except hit')
         return AnonymousUser()
-
 
 class JwtAuthMiddleware(BaseMiddleware):
     def __init__(self, inner):
@@ -32,17 +31,20 @@ class JwtAuthMiddleware(BaseMiddleware):
        # Close old database connections to prevent usage of timed out connections
         close_old_connections()
         token = scope["query_string"].decode("utf8")
-        # print("token is now", token)
-        token_extracted = jwt_decode(token)
-        print('extracted token is now', token_extracted)
-        # scope["user"] = await get_user(validated_token=token)
-        # decoded_data = jwt_decode(token)
-        # print('decoded_data', decoded_data)
-        # decoded_data = jwt_decode(token, settings.SIMPLE_JWT["SIGNING_KEY"], algorithms=["HS256"])
-        # Get the user using ID
-        # scope["user"] = await get_user(validated_token=decoded_data)
-        # print('scope user', scope['user'])
-        # return await super().__call__(scope, receive, send)
+        jwt_options = {
+            'verify_signature': True,
+            'verify_exp': True,
+            'verify_nbf': False,
+            'verify_iat': True,
+            'verify_aud': False
+        }
+        token_extracted = jwt.decode(jwt=token,
+                                     key=settings.SECRET_KEY,
+                                     algorithms=['HS256'],
+                                     options=jwt_options)
+        scope["user"] = await get_user(validated_token=token_extracted)
+        # print('scope contains', scope["user"])
+        return await super().__call__(scope, receive, send)
 
 
 def JwtAuthMiddlewareStack(inner):

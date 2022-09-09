@@ -22,10 +22,7 @@ users = []
 class PracticeConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
         # when websocket connects
-        # print("websocket connected", event)
-        # print("websocket scope", self.scope)
-        # print('session data', self.scope['user'])
-        # users.append(event)
+        users.append(self.scope['user'])
         # self.accept
         await self.send({"type": "websocket.accept", })
         # await self.send({"type": "websocket.send", "text": 'websocket is workingget['username]
