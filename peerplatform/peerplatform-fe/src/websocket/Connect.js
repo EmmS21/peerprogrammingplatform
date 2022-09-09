@@ -14,7 +14,6 @@ class WebSocketService {
   }
     connect(args) {
     const queryString = args.refresh
-    console.log('queryString', queryString)
     const path = `ws://127.0.0.1:8000/connect/testing/?${queryString}`;
     this.socketRef = new WebSocket(path);
     this.socketRef.onopen = (data) => {
@@ -39,7 +38,8 @@ class WebSocketService {
     this.socketRef.send(data)
     const socketResp = await new Promise((resolve, reject) => {
         this.socketRef.onmessage = e => {
-            console.log(`we are receiving userBs id:${e.data.split(' ')[0]} and roomID:${e.data.split(' ')[1]}`)
+            console.log('we are receiving', e.data)
+//            console.log(`we are receiving userBs id:${e.data.split(' ')[0]} and roomID:${e.data.split(' ')[1]}`)
             resolve(e.data)
         }
     })

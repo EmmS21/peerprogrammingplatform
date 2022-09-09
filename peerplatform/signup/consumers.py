@@ -17,21 +17,24 @@ redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
                                    )
 
 
-users = []
+users = {}
 
 class PracticeConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
         # when websocket connects
-        users.append(self.scope['user'])
-        # self.accept
+        # users.append(self.scope['user'])
+        username = self.scope['user']
+        #subscribe user to group
+        await self.channel_layer.group_add('{}'.format(username), self.channel_name)
         await self.send({"type": "websocket.accept", })
         # await self.send({"type": "websocket.send", "text": 'websocket is workingget['username]
 
     async def websocket_receive(self, event):
         received = event["text"]
         user_and_id = received.split()
-        print('we are initially getting', user_and_id)
-        user_id = str(await self.get_user(user_and_id[0]))
+        username = user_and_id[0]
+        print('username', username)
+        user_id = str(await self.get_user(username))
         room_id = str(user_and_id[1])
         # username_id = str(await self.get_user(user_and_id[2]))
         # async_to_sync(self.channel_layer.group_add)(
@@ -43,11 +46,22 @@ class PracticeConsumer(AsyncConsumer):
         # print('groups', groups)
         # print('user id is', user_id)
         sleep(1)
-        await self.send({
-            "type": "websocket.send",
-            "text": user_id+' '+room_id,
-                # {"matchedUser": user_id, "roomName": room_id },
-        })
+        await self.channel_layer.group_send(
+            '{}'.format(username),
+            {
+                "type": "websocket.send",
+                "text": "checking if this works",
+            },
+        )
+
+
+        # await self.send({
+        #     "type": "websocket.send",
+        #     "text": "testing message",
+        #     # user_id + ' ' + room_id,
+        #     "user": "testingUser"
+        #         # {"matchedUser": user_id, "roomName": room_id },
+        # })
 
     async def websocket_disconnect(self, event):
         # when websocket disconnects
