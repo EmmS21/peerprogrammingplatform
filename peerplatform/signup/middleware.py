@@ -27,7 +27,6 @@ class JwtAuthMiddleware(BaseMiddleware):
 
     async def __call__(self, scope, receive, send):
         print('JWTAUthMiddleware')
-        print('what is token', scope["query_string"].decode("utf8"))
        # Close old database connections to prevent usage of timed out connections
         close_old_connections()
         token = scope["query_string"].decode("utf8")
@@ -43,7 +42,6 @@ class JwtAuthMiddleware(BaseMiddleware):
                                      algorithms=['HS256'],
                                      options=jwt_options)
         scope["user"] = await get_user(validated_token=token_extracted)
-        # print('scope contains', scope["user"])
         return await super().__call__(scope, receive, send)
 
 
