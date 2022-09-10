@@ -86,7 +86,6 @@ const WaitingRoom = () =>  {
     }
 
     async function receiveWebSocketData(matchedUser, roomId){
-        console.log(`we are sending UserBs username: ${matchedUser} and roomID:${roomId}`)
         return await WebSocketInstance.sendData(matchedUser+' '+roomId)
 //        const fulfilled = userID.then((res)=> { return res })
 //        console.log('fulfilled is returning', fulfilled)
