@@ -18,14 +18,23 @@ redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
 
 
 users = {}
+group_name = '';
 
 class PracticeConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
         # when websocket connects
         # users.append(self.scope['user'])
         username = self.scope['user']
+        #get user_id from username connected to websocket
+        username_id = str(await self.get_user(username))
+        group_name = username_id
+        print('username id on connect is', username_id)
         #subscribe user to group
-        await self.channel_layer.group_add('{}'.format(username), self.channel_name)
+        await self.channel_layer.group_add(
+            '{}'.format(username_id),
+            self.channel_name
+        )
+        print('added user to group', username_id)
         await self.send({"type": "websocket.accept", })
         # await self.send({"type": "websocket.send", "text": 'websocket is workingget['username]
 
@@ -33,27 +42,19 @@ class PracticeConsumer(AsyncConsumer):
         received = event["text"]
         user_and_id = received.split()
         username = user_and_id[0]
-        print('username', username)
         user_id = str(await self.get_user(username))
-        room_id = str(user_and_id[1])
-        # username_id = str(await self.get_user(user_and_id[2]))
-        # async_to_sync(self.channel_layer.group_add)(
-        #     self.user_id
-        # )
-        # async_to_sync(self.channel_layer.group_add)(
-        #     self.username_id
-        # )
-        # print('groups', groups)
-        # print('user id is', user_id)
+        my_response = {
+            "message": "!!!!the websocket is sending this back!!!!",
+            "username": username
+        }
         sleep(1)
+        print('in the send function we are sending this to', user_id)
         await self.channel_layer.group_send(
-            '{}'.format(username),
+            '{}'.format(user_id),
             {
-                "type": "websocket.send",
-                "text": "checking if this works",
-            },
-        )
-
+                "type": "send.message",
+                "message": json.dumps(my_response),
+            })
 
         # await self.send({
         #     "type": "websocket.send",
@@ -64,8 +65,18 @@ class PracticeConsumer(AsyncConsumer):
         # })
 
     async def websocket_disconnect(self, event):
-        # when websocket disconnects
         print("disconnected", event)
+        self.channel_layer.group_discard(
+            '{}'.format(group_name),
+            self.channel_name
+        )
+
+    async def send_message(self, event):
+        message = event['message']
+        print('sending message inside presenter:', message)
+        self.send({
+            'message': message
+        })
 
     @database_sync_to_async
     def get_user(self, user_id):
