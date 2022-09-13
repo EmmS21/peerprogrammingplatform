@@ -18,7 +18,7 @@ redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
 
 
 users = {}
-group_name = '';
+group_name = ''
 
 class PracticeConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
@@ -44,8 +44,7 @@ class PracticeConsumer(AsyncConsumer):
         username = user_and_id[0]
         user_id = str(await self.get_user(username))
         my_response = {
-            "message": "!!!!the websocket is sending this back!!!!",
-            "username": username
+            "message": "!!!!the websocket is sending this back!!!!"
         }
         sleep(1)
         print('in the send function we are sending this to', user_id)
@@ -54,6 +53,7 @@ class PracticeConsumer(AsyncConsumer):
             {
                 "type": "send.message",
                 "message": json.dumps(my_response),
+                "username": username
             })
 
         # await self.send({
