@@ -20,6 +20,9 @@ class WebSocketService {
     this.socketRef.onopen = (data) => {
         console.log('WebSocket open');
       }
+//    this.socketRef.onmessage = (event) => {
+//        console.log('received on connect', event)
+//    }
     this.socketRef.onerror = e => {
       console.log(e.message);
     };

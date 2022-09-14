@@ -17,8 +17,8 @@ redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
                                    )
 
 
-users = {}
-group_name = ''
+# users = {}
+# group_name = ''
 
 class PracticeConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
@@ -36,6 +36,8 @@ class PracticeConsumer(AsyncConsumer):
         )
         print('added user to group', username_id)
         await self.send({"type": "websocket.accept", })
+        await self.send({"type": "websocket.send", "text": 'websocket is working.........'})
+
         # await self.send({"type": "websocket.send", "text": 'websocket is workingget['username]
 
     async def websocket_receive(self, event):

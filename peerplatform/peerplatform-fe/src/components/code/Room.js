@@ -15,21 +15,21 @@ const Room = ({room}) => {
 
     console.log(`twilio token in state: ${state.twilioToken} device:${state.device}`)
 
-    useEffect(() => {
-        const params = {
-            roomName: roomName, participantLabel: nickname
-        };
-        console.log('participants are:', state.selectedRoom.participants)
-//        if (!call) {
-//            const callPromise = device.connect({ params });
-//            callPromise.then((call) => {
-//                setCall(call);
-//            });
-//        }
-//        if (!state.selectedRoom.participants.includes(nickname)) {
-//            state.selectedRoom.participants.push(nickname);
-//        }
-    }, [device, roomName, nickname, room, call]);
+//    useEffect(() => {
+//        const params = {
+//            roomName: roomName, participantLabel: nickname
+//        };
+//        console.log('participants are:', state.selectedRoom.participants)
+////        if (!call) {
+////            const callPromise = device.connect({ params });
+////            callPromise.then((call) => {
+////                setCall(call);
+////            });
+////        }
+////        if (!state.selectedRoom.participants.includes(nickname)) {
+////            state.selectedRoom.participants.push(nickname);
+////        }
+//    }, [device, roomName, nickname, room, call]);
     //call doesn't seem to be dropping
     const handleLeaveRoom = () => {
         call.disconnect();

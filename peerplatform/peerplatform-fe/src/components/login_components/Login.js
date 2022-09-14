@@ -9,6 +9,7 @@ import { withRouter } from "react-router-dom";  // new import
 import PropTypes from "prop-types";             // new import
 import axios from 'axios'
 import AuthContext from '../../context/AuthContext'
+import * as yup from 'yup';
 
 const Login = () => {
     const [username, setUserName] = useState('');
@@ -27,6 +28,10 @@ const Login = () => {
         loginUser(newLoginData);
     }
     console.log(loginError)
+
+    let schema = yup.object().shape({
+
+    })
 
      return (
       <div className="base-container">
