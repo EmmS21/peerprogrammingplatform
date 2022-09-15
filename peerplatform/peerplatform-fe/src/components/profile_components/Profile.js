@@ -58,6 +58,10 @@ import { useCookies } from 'react-cookie';
         const [visible, setVisible] = useState(false);
         const [token, setToken] = useState('')
         const [cookies, setCookie] = useCookies();
+        // const imageMimeType = /image\/(png|jpg|jpeg)/i;
+        const [fileDataURL, setFileDataURL] = useState(null);
+        const [profilePic, setProfilePic] = useState(null);
+
 
         //on idle update Profile model activity field
         const handleOnIdle = (event: any) => {
@@ -81,7 +85,6 @@ import { useCookies } from 'react-cookie';
 
         const { getLastActiveTime } = useIdleTimer ({
             timeout: 1000 * 60 * 15,
-//            timeout: 1000 * 10,
             onIdle: handleOnIdle,
             onActive: handleOnActive,
             debounce: 500
@@ -97,7 +100,7 @@ import { useCookies } from 'react-cookie';
                 user_id: profileUser.user.user_id,
                 city: profileUser.city,
                 country: profileUser.country,
-                profile_pic: profileUser.profile_pic,
+                // photo: profileUser.photo,
             }
             updateProfile(updatedProfileInfo);
         }
@@ -125,7 +128,6 @@ import { useCookies } from 'react-cookie';
             in_waiting_room: false
         })
         .then(res => {
-//            console.log('user is in waiting room', res.data)
         })
         }
 
@@ -135,6 +137,35 @@ import { useCookies } from 'react-cookie';
             updateWaitingRoomStatus()
             console.log('pair users', pairUsers)
         },[]);
+
+        useEffect(() => {
+          let fileReader, isCancel = false;
+          if(profilePic){
+            fileReader = new FileReader();
+            fileReader.onload = (e) => {
+              const { result } = e.target;
+              console.log('what is result', isCancel)
+              if(result && isCancel){
+                setFileDataURL(result)
+                console.log('fileDataURL updated', fileDataURL)
+              }
+            }
+            fileReader.readAsDataURL(profilePic)
+        }
+        return () => {
+          isCancel = true;
+          if(fileReader && fileReader.readyState === 1){
+            fileReader.abort();
+          }
+        }
+      }, [profilePic]);
+        function onImageChange(e) {
+          const image = e.target.files[0]
+          console.log('image', image)
+          setProfilePic(image)
+          console.log('in state', profilePic) 
+        }
+
 
         return (
               <>
@@ -151,11 +182,14 @@ import { useCookies } from 'react-cookie';
                       <div className="image">
                         <img
                           alt="..."
-                          src={`http://127.0.0.1:8000/media/${user.photo}`}
+                          src={fileDataURL} 
                         />
                       </div>
                       <CardBody>
-                    <input type="file" onChange={ e => setProfileUser({...profileUser, 'profile_pic': e.target.files[0].name }) }/>
+                    <input type="file" 
+                            onChange={ e => onImageChange(e) }
+                            accept= "image\*"
+                            />
                         <div className="author">
                           <a href="#pablo" onClick={(e) => e.preventDefault()}>
                             <label htmlFor="photo-upload" className="custom-file-upload fas">
@@ -163,7 +197,7 @@ import { useCookies } from 'react-cookie';
                                     <img
                                         alt="..."
                                         className="avatar border-gray"
-                                        src={`http://127.0.0.1:8000/media/${user.photo}`}
+                                        src={`${profilePic}`}
                                     />
                                 </div>
                             </label>

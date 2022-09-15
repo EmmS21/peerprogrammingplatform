@@ -41,10 +41,10 @@ class RoomView(View):
         curr_username = request_body.get('currUser')
         matched_user = request_body.get('matchedUser')
         print('username', curr_username)
-        current_user_id = User.objects.get(
-                                            username=curr_username).pk
-        matched_user_id = User.objects.get(
-                                            username=matched_user).pk
+        # current_user_id = User.objects.get(
+        #                                     username=curr_username).pk
+        # matched_user_id = User.objects.get(
+        #                                     username=matched_user).pk
         response = VoiceResponse()
         dial = Dial()
         dial.conference(
