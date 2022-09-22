@@ -179,6 +179,29 @@ WEBPUSH_SETTINGS = {
    "VAPID_ADMIN_EMAIL": config('VAPID_ADMIN_EMAIL')
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL')
+        }
+    }
+}
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
