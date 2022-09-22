@@ -10,6 +10,9 @@ from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
 from rest_framework.authtoken.models import Token
 from channels.middleware import BaseMiddleware
+import logging
+logger = logging.getLogger('django')
+
 
 
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
@@ -21,6 +24,7 @@ redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
 # group_name = ''
 
 class PracticeConsumer(AsyncConsumer):
+    username_id = None
     async def websocket_connect(self, event):
         # when websocket connects
         # users.append(self.scope['user'])
@@ -42,43 +46,39 @@ class PracticeConsumer(AsyncConsumer):
 
     async def websocket_receive(self, event):
         received = event["text"] 
-        user_and_id = received.split()
-        username = user_and_id[0]
-        user_id = str(await self.get_user(username))
+        invite_data = received.split()
+        matched_user = invite_data[0]
+        username = invite_data[2]
+        user_id = str(await self.get_user(matched_user))
+        print(f"receiving {invite_data}")
         my_response = {
             "message": "!!!!the websocket is sending this back!!!!"
         }
         sleep(1)
         print('we are sending to group {}'. format(user_id))
         await self.channel_layer.group_send(
-            '{}'.format(user_id),
+            '{}'.format(1),
             {
                 "type": "send.message",
                 "message": json.dumps(my_response),
+                "matched_user": matched_user,
                 "username": username
             })
-
-        # await self.send({
-        #     "type": "websocket.send",
-        #     "text": "testing message",
-        #     # user_id + ' ' + room_id,
-        #     "user": "testingUser"
-        #         # {"matchedUser": user_id, "roomName": room_id },
-        # })
 
     async def websocket_disconnect(self, event):
         print("disconnected", event)
         self.channel_layer.group_discard(
-            '{}'.format(group_name),
+            '{}'.format(self.username_id),
             self.channel_name
         )
 
     async def send_message(self, event):
-        message = event['message']
-        print('sending message inside presenter:', message)
-        self.send({
-            'message': message
-        })
+        raise Exception("Just test")
+        # message = event['message']
+        # logger.info(f'sending message inside presenter{message}')
+        # await self.send({
+        #     'message': message
+        # })
 
     @database_sync_to_async
     def get_user(self, user_id):

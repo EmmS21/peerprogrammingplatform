@@ -46,7 +46,7 @@ const WaitingRoom = () =>  {
     useEffect((() => {
         console.log('how many times is useEffect running')
         //connecting websocket
-        WebSocketInstance.connect(authTokens)
+        WebSocketInstance.connect()
         const username = user.username
         let matchedUser = availableOnlineUsers.current.filter(user =>
                                                                 user !== username && user !== 'null'
@@ -69,10 +69,11 @@ const WaitingRoom = () =>  {
             .then(res =>{
                 console.log('axios hit', res.data)
             })
-        receiveWebSocketData(matchedUser, roomId, username).then( (res) =>
-                                                                { redirectMatchedUser(res.split(' ')[0], res.split(' ')[1])
-                                                                 setWebSocketVal(res)
-                                                                 } )
+        receiveWebSocketData(matchedUser, roomId, username)
+//        receiveWebSocketData(matchedUser, roomId, username).then( (res) =>
+//                                                                { redirectMatchedUser(res.split(' ')[0], res.split(' ')[1])
+//                                                                 setWebSocketVal(res)
+//                                                                 } )
         console.log('websocket in state is', websocketVal)
         //deleting users from cache
 //        deleteMatchedUsersRedis(username, matchedUser)
@@ -86,7 +87,8 @@ const WaitingRoom = () =>  {
     }
 
     async function receiveWebSocketData(matchedUser, roomId){
-        return await WebSocketInstance.sendData(matchedUser+' '+roomId)
+        
+        return await WebSocketInstance.sendData(matchedUser+' '+roomId+' '+user.username)
 //        const fulfilled = userID.then((res)=> { return res })
 //        console.log('fulfilled is returning', fulfilled)
 //        const fulfilledPromise = fulfilled.then((result)=> { return result } )
