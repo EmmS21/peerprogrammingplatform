@@ -22,6 +22,8 @@ import axios from 'axios';
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory } from 'react-router-dom';
 import PushNotifications from './PushNotifications.js'
+import "../../assets/dashboard_scss/image-uploader.scss"
+
 
 import {
   Button,
@@ -61,7 +63,6 @@ import { useCookies } from 'react-cookie';
         // const imageMimeType = /image\/(png|jpg|jpeg)/i;
         const [fileDataURL, setFileDataURL] = useState(null);
         const [profilePic, setProfilePic] = useState(null);
-
 
         //on idle update Profile model activity field
         const handleOnIdle = (event: any) => {
@@ -144,10 +145,8 @@ import { useCookies } from 'react-cookie';
             fileReader = new FileReader();
             fileReader.onload = (e) => {
               const { result } = e.target;
-              console.log('what is result', isCancel)
-              if(result && isCancel){
+              if(result){
                 setFileDataURL(result)
-                console.log('fileDataURL updated', fileDataURL)
               }
             }
             fileReader.readAsDataURL(profilePic)
@@ -161,9 +160,7 @@ import { useCookies } from 'react-cookie';
       }, [profilePic]);
         function onImageChange(e) {
           const image = e.target.files[0]
-          console.log('image', image)
           setProfilePic(image)
-          console.log('in state', profilePic) 
         }
 
 
@@ -180,16 +177,9 @@ import { useCookies } from 'react-cookie';
                   <Col md="4">
                     <Card className="card-user">
                       <div className="image">
-                        <img
-                          alt="..."
-                          src={fileDataURL} 
-                        />
+                        <img src={fileDataURL}/>
                       </div>
                       <CardBody>
-                    <input type="file" 
-                            onChange={ e => onImageChange(e) }
-                            accept= "image\*"
-                            />
                         <div className="author">
                           <a href="#pablo" onClick={(e) => e.preventDefault()}>
                             <label htmlFor="photo-upload" className="custom-file-upload fas">
@@ -197,13 +187,22 @@ import { useCookies } from 'react-cookie';
                                     <img
                                         alt="..."
                                         className="avatar border-gray"
-                                        src={`${profilePic}`}
+                                        src={fileDataURL}
                                     />
                                 </div>
                             </label>
+                            </a>
+                            <form class="file-uploader">
+                            <label for="file-input">Select Profile Picture</label>
+                            <input
+                                type="file"
+                                id="file-input"
+                                onChange={ e => onImageChange(e) }
+                                accept= "image/*"
+                            />
+                            </form>
                             <h5 className="title">Hi, { user.username }</h5>
                             <h6> { user.city }, { user.country } </h6>
-                          </a>
                         </div>
                         <p className="description text-center">
                         </p>
