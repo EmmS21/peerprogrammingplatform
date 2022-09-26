@@ -1,0 +1,24 @@
+.file-uploader {
+  flex: 0 1 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  background-color: #fff;
+  border-radius: 5px;
+
+  #file-input {
+    display: none;
+  }
+
+  label[for="file-input"] {
+    padding: 1em 1.5em;
+    flex: 1 1 auto;
+    text-align: center;
+    color: #FFF;
+    background-color: #6668FF;
+    box-shadow: 1px 0 10px rgba(0,0,0,.15);
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}

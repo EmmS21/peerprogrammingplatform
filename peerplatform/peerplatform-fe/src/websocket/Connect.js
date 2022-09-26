@@ -28,16 +28,15 @@ class WebSocketService {
             console.log("WebSocket closed let's reopen");
             this.connect();
         };
+        this.socketRef.onmessage = e => {
+                console.log('in connect, we are receiving', JSON.stringify(e));
+        }
     }
     async sendData(data){
         if(this.socketRef.readyState !== WebSocket.OPEN) {
             console.log('we are still waiting')
-            await new Promise((resolve, reject) => {
-                console.log('now opening websocket')
-                this.socketRef.addEventListener('open', resolve);
-            });
+            this.socketRef.onopen = () => this.socketRef.send(data);
         }
-        this.socketRef.send(data)
         const socketResp = await new Promise((resolve, reject) => {
             this.socketRef.onmessage = e => {
                 console.log('we are receiving', JSON.stringify(e));
@@ -49,6 +48,11 @@ class WebSocketService {
         })
         return socketResp;
     };
+    disconnect(){
+        this.socketRef.onclose = () =>{
+            console.log('disconnecting from websocket')
+        };
+    }
 }
 const WebSocketInstance = WebSocketService.getInstance()
 export default WebSocketInstance;
