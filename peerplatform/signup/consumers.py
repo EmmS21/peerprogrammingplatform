@@ -4,6 +4,7 @@ from channels.consumer import AsyncConsumer
 from time import sleep
 import random
 import redis
+from channels.generic.websocket import AsyncWebsocketConsumer
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from channels.db import database_sync_to_async
@@ -23,7 +24,7 @@ redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
 # users = {}
 # group_name = ''
 
-class PracticeConsumer(AsyncConsumer):
+class PracticeConsumer(AsyncWebsocketConsumer):
     username_id = None
     async def websocket_connect(self, event):
         #this should be named user_id
@@ -37,14 +38,15 @@ class PracticeConsumer(AsyncConsumer):
             '{}'.format(group_name),
             self.channel_name
         )
-        await self.send({
-            "type": "websocket.accept"
-        })
+        await self.accept()
+        # await self.send({
+        #     "type": "websocket.accept"
+        # })
 
         # await self.send({"type": "websocket.send", "text": 'websocket is workingget['username]
 
     async def websocket_receive(self, event):
-        received = event["text"] 
+        received = event["text"]
         invite_data = received.split()
         matched_user = invite_data[0]
         username = invite_data[2]
@@ -56,7 +58,7 @@ class PracticeConsumer(AsyncConsumer):
         sleep(1)
         # print('we are sending to group {}'. format(user_id))
         await self.channel_layer.group_send(
-            '{}'.format(1),
+            '{}'.format(user_id),
             {
                 "type": "send.message",
                 "message": json.dumps(my_response),
@@ -73,9 +75,10 @@ class PracticeConsumer(AsyncConsumer):
     async def send_message(self, event):
         message = event['message']
         logger.info(f'sending message inside presenter{message}')
-        await self.send({
-            'message': message
-        })
+        await self.send(text_data=json.dumps({
+            'type': 'send_message',
+            'text': message
+        }))
 
     @database_sync_to_async
     def get_user(self, user_id):

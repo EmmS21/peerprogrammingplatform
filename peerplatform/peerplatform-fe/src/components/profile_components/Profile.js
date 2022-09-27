@@ -23,6 +23,7 @@ import { useIdleTimer } from 'react-idle-timer'
 import { useHistory } from 'react-router-dom';
 import PushNotifications from './PushNotifications.js'
 import "../../assets/dashboard_scss/image-uploader.scss"
+import FormData from 'form-data'
 
 
 import {
@@ -45,7 +46,9 @@ import { useCookies } from 'react-cookie';
     const Profile = () => {
         let { user, logOutUser,
               updateProfile, retrieveChallenge,
-              getProfileInfo, pairUsers } = useContext(AuthContext)
+              getProfileInfo, pairUsers,
+              updateProfilePic
+            } = useContext(AuthContext)
         //store users in state
         const[profileUser, setProfileUser] = useState({user})
         //modal state
@@ -94,16 +97,19 @@ import { useCookies } from 'react-cookie';
         //handle form submission
         const handleSubmit = e => {
             e.preventDefault();
-            console.log('handle submit',profileUser)
+            // let data = new FormData()
+            // data.append(profilePic, fileDataURL)
+            // console.log('what is in data', ...data)
             const updatedProfileInfo = {
                 first_name: profileUser.first_name,
                 last_name: profileUser.last_name,
                 user_id: profileUser.user.user_id,
                 city: profileUser.city,
                 country: profileUser.country,
-                // photo: profileUser.photo,
-            }
-            updateProfile(updatedProfileInfo);
+                // photo: fileDataURL,
+            } 
+            updateProfilePic(fileDataURL, updatedProfileInfo.user_id)
+            // updateProfile(updatedProfileInfo);
         }
 
         const countDown = () => {
@@ -192,15 +198,17 @@ import { useCookies } from 'react-cookie';
                                 </div>
                             </label>
                             </a>
-                            <form class="file-uploader">
-                            <label for="file-input">Select Profile Picture</label>
-                            <input
-                                type="file"
-                                id="file-input"
-                                onChange={ e => onImageChange(e) }
-                                accept= "image/*"
-                            />
-                            </form>
+                            <div>
+                                <form class="file-uploader">
+                                <label for="file-input">Select Profile Picture</label>
+                                <input
+                                    type="file"
+                                    id="file-input"
+                                    onChange={ e => onImageChange(e) }
+                                    accept= "image/*"
+                                />
+                                </form>
+                            </div>
                             <h5 className="title">Hi, { user.username }</h5>
                             <h6> { user.city }, { user.country } </h6>
                         </div>

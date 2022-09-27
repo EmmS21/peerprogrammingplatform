@@ -22,14 +22,15 @@ class WebSocketService {
             console.log('WebSocket open');
         }
         this.socketRef.onerror = e => {
-            console.log(e.message);
+            console.log(e);
         };
-        this.socketRef.onclose = () => {
-            console.log("WebSocket closed let's reopen");
-            this.connect();
-        };
+//        this.socketRef.onclose = () => {
+//            console.log("WebSocket closed let's reopen");
+//            this.connect();
+//        };
         this.socketRef.onmessage = e => {
-                console.log('in connect, we are receiving', JSON.stringify(e));
+                console.log('onmessage')
+                console.log(JSON.parse(e.data));
         }
     }
     async sendData(data){
@@ -37,16 +38,16 @@ class WebSocketService {
             console.log('we are still waiting')
             this.socketRef.onopen = () => this.socketRef.send(data);
         }
-        const socketResp = await new Promise((resolve, reject) => {
-            this.socketRef.onmessage = e => {
-                console.log('we are receiving', JSON.stringify(e));
-                resolve(e.data)
-            }
-            this.socketRef.onerror = e => {
-                console.log('error', e)
-            }
-        })
-        return socketResp;
+//        const socketResp = await new Promise((resolve, reject) => {
+//            this.socketRef.onmessage = e => {
+//                console.log('we are receiving', JSON.stringify(e));
+//                resolve(e.data)
+//            }
+//            this.socketRef.onerror = e => {
+//                console.log('error', e)
+//            }
+//        })
+//        return socketResp;
     };
     disconnect(){
         this.socketRef.onclose = () =>{

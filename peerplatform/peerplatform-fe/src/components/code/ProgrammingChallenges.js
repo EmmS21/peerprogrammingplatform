@@ -7,6 +7,19 @@ export default function ProgrammingChallenge() {
     const { challengeInState,retrieveChallenge } = useContext(AuthContext);
     const { Panel } = Collapse;
     const challengeName = challengeInState.challenge_name
+    function codeSubStr (str) {
+        const strConv = String(str)
+        return strConv.substring(strConv.indexOf("```") + 1, strConv.lastIndexOf("```") )
+//        return String(str).substring( String(str).indexOf("```") + 1, String(str).lastIndexOf("```")  )
+//        return str.substring( str.indexOf("```") + 1, str.lastIndexOf("```") )
+//        return str.lastIndexOf("```")
+    }
+//    var mySubString = str.substring(
+//    str.indexOf(":") + 1,
+//    str.lastIndexOf(";")
+//);
+
+    console.log('in state', codeSubStr(challengeInState.description))
     return (
         <div>
                 <PageHeader
