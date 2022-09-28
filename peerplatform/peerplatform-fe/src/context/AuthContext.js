@@ -112,18 +112,22 @@ export const AuthProvider = ({children}) => {
 //            })
     }
 
-    const updateProfilePic = (userData, user_id) => {
-        console.log('userData', userData)
+    const updateProfilePic = (profilePicData, user_id) => {
+        console.log('formData contains', ...profilePicData)
         const headers = {
             'accept': 'application/json',
             'Accept-Language': 'en-US,en;q=0.8',
             'Content-Type': `multipart/form-data`,
         }
-        axios.put(`http://127.0.0.1:8000/update_profile/${user_id}/`,{profile_pic: userData}, {
-            headers
+        const base_url = 'http://127.0.0.1:8000/update_profile/' 
+        axios.put(`${base_url}${user_id}/`,profilePicData, {
+            headers,
         })
             .then( res => {
                 console.log('resp', res)
+            })
+            .catch((error) =>{
+                console.log('error',error)
             })
     }
 

@@ -97,8 +97,17 @@ import { useCookies } from 'react-cookie';
         //handle form submission
         const handleSubmit = e => {
             e.preventDefault();
-            // let data = new FormData()
-            // data.append(profilePic, fileDataURL)
+            let profileData = new FormData()
+            // profileData.append(
+            //   'profilePic', fileDataURL)
+
+            // profileData.set('profilePic', {
+            //   uri: fileDataURL,
+            //   type: 'multipart/form-data',
+            //   name: 'profile_pic.png',
+            // });
+            profileData.set('profile_pic', fileDataURL)
+            
             // console.log('what is in data', ...data)
             const updatedProfileInfo = {
                 first_name: profileUser.first_name,
@@ -108,7 +117,7 @@ import { useCookies } from 'react-cookie';
                 country: profileUser.country,
                 // photo: fileDataURL,
             } 
-            updateProfilePic(fileDataURL, updatedProfileInfo.user_id)
+            updateProfilePic(profileData, updatedProfileInfo.user_id)
             // updateProfile(updatedProfileInfo);
         }
 
@@ -164,7 +173,8 @@ import { useCookies } from 'react-cookie';
           }
         }
       }, [profilePic]);
-        function onImageChange(e) {
+        
+      function onImageChange(e) {
           const image = e.target.files[0]
           setProfilePic(image)
         }
