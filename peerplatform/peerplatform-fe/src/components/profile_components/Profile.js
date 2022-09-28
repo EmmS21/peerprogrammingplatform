@@ -99,18 +99,17 @@ import { useCookies } from 'react-cookie';
 
         //handle form submission
         const handleSubmit = e => {
-            e.preventDefault();
+            // e.preventDefault();
             let profileData = new FormData()
             profileData.set('profile_pic', fileDataURL)
             const updatedProfileInfo = {
                 first_name: profileUser.first_name,
                 last_name: profileUser.last_name,
-                user_id: profileUser.user.user_id,
                 city: profileUser.city,
                 country: profileUser.country,
             } 
-            updateProfilePic(profileData, updatedProfileInfo.user_id)
-            // updateProfile(updatedProfileInfo);
+            updateProfilePic(profileData, user.user_id)
+            updateProfile(updatedProfileInfo, user.user_id);
         }
 
         const countDown = () => {
@@ -143,9 +142,6 @@ import { useCookies } from 'react-cookie';
         useEffect(() => {
             getProfileInfo(user.user_id)
             updateWaitingRoomStatus()
-            console.log('pair users', pairUsers)
-            console.log('photoURL is ...', user.photo)
-            console.log('....updated user photo URL is....', `${baseURL}${photoURL}`)
         },[]);
 
         useEffect(() => {
@@ -266,7 +262,6 @@ import { useCookies } from 'react-cookie';
                               <FormGroup>
                                 <label>First Name</label>
                                 <Input
-        //                          value= {user.first_name}
                                   placeholder="Enter your first name"
                                   type="text"
                                   name="first_name"
@@ -278,7 +273,6 @@ import { useCookies } from 'react-cookie';
                               <FormGroup>
                                 <label>Last Name</label>
                                 <Input
-        //                          value= { user.last_name }
                                   placeholder="Enter your last name"
                                   type="text"
                                   name="last_name"
@@ -292,7 +286,6 @@ import { useCookies } from 'react-cookie';
                                 <FormGroup>
                                     <label>City</label>
                                     <Input
-        //                                value = { user.city }
                                         placeholder="Enter your city"
                                         type="text"
                                         name="city"
@@ -304,7 +297,6 @@ import { useCookies } from 'react-cookie';
                                 <FormGroup>
                                     <label>Country</label>
                                     <Input
-        //                                value = { user.country }
                                         placeholder="Enter your country"
                                         type="text"
                                         name="country"
