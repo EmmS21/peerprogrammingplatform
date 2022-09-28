@@ -43,6 +43,8 @@ export const AuthProvider = ({children}) => {
     const [ allOnlineUsers, setAllOnlineUsers ] = useState([])
     const [loginError, setLoginError] = useState('');
     const availableOnlineUsers = useRef([])
+    const profileURL = 'http://127.0.0.1:8000/update_profile/' 
+
 
 
     const history = useHistory();
@@ -103,31 +105,34 @@ export const AuthProvider = ({children}) => {
     }
 
     //update profile information
-    const updateProfile = (userData) => {
-        console.log(userData.profile_pic)
-//        axios.put(`http://127.0.0.1:8000/update_profile/${userData.user_id}/`, userData)
-//            .then(res => {
-//                setUser({ ...user, first_name:res.data.first_name,
-//                          last_name: res.data_last_name,
-//                        username: res.data.username,
-//                        city: res.data.city,
-//                        country: res.data.country })
-//            })
+    const updateProfile = (userData, userID) => {
+        console.log('userData contains', userData)
+        axios.put(`${profileURL}${userID}/`, userData)
+        .then(res => {
+            console.log('profile update', res)
+            setUser({ ...user, 
+                        first_name:res.data.first_name,
+                        last_name: res.data_last_name,
+                        username: res.data.username,
+                        city: res.data.city,
+                        country: res.data.country })
+                    })
+        .catch((error) => {
+            console.log('error from update profile info', error)
+        })
     }
 
     const updateProfilePic = (profilePicData, user_id) => {
-        console.log('formData contains', ...profilePicData)
         const headers = {
             'accept': 'application/json',
             'Accept-Language': 'en-US,en;q=0.8',
             'Content-Type': `multipart/form-data`,
         }
-        const base_url = 'http://127.0.0.1:8000/update_profile/' 
-        axios.put(`${base_url}${user_id}/`,profilePicData, {
+        axios.put(`${profileURL}${user_id}/`,profilePicData, {
             headers,
         })
             .then( res => {
-                console.log('resp', res)
+                console.log('uploadProfilePic', res)
             })
             .catch((error) =>{
                 console.log('error',error)
