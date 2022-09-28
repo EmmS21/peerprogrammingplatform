@@ -66,6 +66,9 @@ import { useCookies } from 'react-cookie';
         // const imageMimeType = /image\/(png|jpg|jpeg)/i;
         const [fileDataURL, setFileDataURL] = useState(null);
         const [profilePic, setProfilePic] = useState(null);
+        const baseURL = "http://127.0.0.1:8000/media/"
+        const photoURL = user.photo.split('"').join('');
+
 
         //on idle update Profile model activity field
         const handleOnIdle = (event: any) => {
@@ -98,24 +101,13 @@ import { useCookies } from 'react-cookie';
         const handleSubmit = e => {
             e.preventDefault();
             let profileData = new FormData()
-            // profileData.append(
-            //   'profilePic', fileDataURL)
-
-            // profileData.set('profilePic', {
-            //   uri: fileDataURL,
-            //   type: 'multipart/form-data',
-            //   name: 'profile_pic.png',
-            // });
             profileData.set('profile_pic', fileDataURL)
-            
-            // console.log('what is in data', ...data)
             const updatedProfileInfo = {
                 first_name: profileUser.first_name,
                 last_name: profileUser.last_name,
                 user_id: profileUser.user.user_id,
                 city: profileUser.city,
                 country: profileUser.country,
-                // photo: fileDataURL,
             } 
             updateProfilePic(profileData, updatedProfileInfo.user_id)
             // updateProfile(updatedProfileInfo);
@@ -152,6 +144,8 @@ import { useCookies } from 'react-cookie';
             getProfileInfo(user.user_id)
             updateWaitingRoomStatus()
             console.log('pair users', pairUsers)
+            console.log('photoURL is ...', user.photo)
+            console.log('....updated user photo URL is....', `${baseURL}${photoURL}`)
         },[]);
 
         useEffect(() => {
@@ -193,7 +187,7 @@ import { useCookies } from 'react-cookie';
                   <Col md="4">
                     <Card className="card-user">
                       <div className="image">
-                        <img src={fileDataURL}/>
+                        <img src={fileDataURL ? fileDataURL : `${baseURL}${photoURL}`}/>
                       </div>
                       <CardBody>
                         <div className="author">
@@ -203,7 +197,7 @@ import { useCookies } from 'react-cookie';
                                     <img
                                         alt="..."
                                         className="avatar border-gray"
-                                        src={fileDataURL}
+                                        src={fileDataURL ? fileDataURL : `${baseURL}${photoURL}`}
                                     />
                                 </div>
                             </label>

@@ -21,7 +21,7 @@ from accounts.models import Profile
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['city', 'country', 'is_online', 'currently_active','in_waiting_room']
+        fields = ['city', 'country', 'is_online', 'currently_active','in_waiting_room','profile_pic']
 
 
 # changed from serializers.HyperLinked to ModelSerializer and then to RegisterSerializer to accurately reflect what this does

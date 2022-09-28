@@ -44,6 +44,7 @@ export const AuthProvider = ({children}) => {
     const [loginError, setLoginError] = useState('');
     const availableOnlineUsers = useRef([])
 
+
     const history = useHistory();
 
     const codeWarsIds = ['523a86aa4230ebb5420001e1','541c8630095125aba6000c00','5266876b8f4bf2da9b000362',
@@ -94,7 +95,9 @@ export const AuthProvider = ({children}) => {
                             last_name: res.data.last_name,
                             username: res.data.username,
                             city: res.data.city,
-                            country: res.data.country })
+                            country: res.data.country,
+                            profile_pic: res.data.profile_pic
+                        })
                 })
                 console.log(`what is inside user ${user.first_name}`)
     }
@@ -131,18 +134,6 @@ export const AuthProvider = ({children}) => {
             })
     }
 
-
-
-
-    //retrieve profile information
-    const retrieveProfileInformation = () => {
-        axios.get('http://127.0.0.1:8000/api/')
-    }
-    //retrieve programming challenge
-    //select random element
-    Array.prototype.random = function() {
-        return this[Math.floor(Math.random()*this.length)]
-    }
 
     //retrieve random programming challenge
     const retrieveChallenge = () => {
