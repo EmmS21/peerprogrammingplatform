@@ -17,7 +17,6 @@ import json
 from accounts.models import ProgrammingChallenge
 from accounts.models import Profile
 
-
 # User = get_user_model()
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:

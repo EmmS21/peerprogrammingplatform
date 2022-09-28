@@ -69,25 +69,27 @@ const WaitingRoom = () =>  {
             .then(res =>{
                 console.log('axios hit', res.data)
             })
-        receiveWebSocketData(matchedUser, roomId, username)
-//        receiveWebSocketData(matchedUser, roomId, username).then( (res) =>
-//                                                                { redirectMatchedUser(res.split(' ')[0], res.split(' ')[1])
-//                                                                 setWebSocketVal(res)
-//                                                                 } )
-        console.log('websocket in state is', websocketVal)
+//        receiveWebSocketData(matchedUser, roomId, username)
+        receiveWebSocketData(matchedUser, roomId, username).then( (res) =>
+                                                                { redirectMatchedUser(JSON.parse(res))
+                                                                 setWebSocketVal(res)
+                                                                 } )
+        console.log('websocket in state is', typeof websocketVal)
         //deleting users from cache
 //        deleteMatchedUsersRedis(username, matchedUser)
     }
-    function redirectMatchedUser(matchedID, roomID){
+    function redirectMatchedUser(matchedID){
+        const splitString = matchedID.text.split(' ')
+        const userID = splitString[6].slice(0, -1)
         const userid = user.user_id
-        console.log(`inside redirect function userID in state for userB is ${userid}`)
-        if(userid === matchedID){
+        const roomID = splitString[8]
+        console.log(`inside redirect userID:${String(userid)} received id:${userID}`)
+        if(String(userid) === matchedID){
             history.push(`/rooms/${roomID}`)
         }
     }
 
     async function receiveWebSocketData(matchedUser, roomId){
-        
         return await WebSocketInstance.sendData(matchedUser+' '+roomId+' '+user.username)
 //        const fulfilled = userID.then((res)=> { return res })
 //        console.log('fulfilled is returning', fulfilled)

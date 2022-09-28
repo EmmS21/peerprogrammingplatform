@@ -12,6 +12,9 @@ from asgiref.sync import async_to_sync
 from rest_framework.authtoken.models import Token
 from channels.middleware import BaseMiddleware
 import logging
+
+from django.shortcuts import redirect
+
 logger = logging.getLogger('django')
 
 
@@ -39,21 +42,21 @@ class PracticeConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
-        # await self.send({
-        #     "type": "websocket.accept"
-        # })
-
-        # await self.send({"type": "websocket.send", "text": 'websocket is workingget['username]
 
     async def websocket_receive(self, event):
         received = event["text"]
         invite_data = received.split()
         matched_user = invite_data[0]
+        room_id = invite_data[1]
         username = invite_data[2]
         user_id = str(await self.get_user(matched_user))
         # print(f"receiving {invite_data}")
         my_response = {
-            "message": "!!!!the websocket is sending this back!!!!"
+            "message": {'matched_user': matched_user,
+                        'username': username,
+                        'user_id': user_id,
+                        'room_id': room_id
+                        }
         }
         sleep(1)
         # print('we are sending to group {}'. format(user_id))
