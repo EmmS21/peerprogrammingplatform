@@ -25,6 +25,7 @@ const WaitingRoom = () =>  {
             authTokens } = useContext(AuthContext)
     const [usersInState, setUsersInState] = useState('')
     const [websocketVal, setWebSocketVal] = useState('')
+    const [counter, setCounter] = useState(0)
 
     const openNotification = () => {
         const args = {
@@ -53,7 +54,7 @@ const WaitingRoom = () =>  {
                                                                 && user !== 'undefined'
                                                                 ).pop()
         handleRoomCreate(username, matchedUser)
-    }), [])
+    }), [websocketVal]) //added websocketVal to update State
 
     //new createRoomHandler without having to pass in data
     function createRoomHandler(username, matchedUser, roomId){
@@ -63,39 +64,32 @@ const WaitingRoom = () =>  {
         pairedUsers['participantLabel'] = username+matchedUser
         pairedUsers['currUser'] = username
         pairedUsers['matchedUser'] = matchedUser
-        console.log('what are we sending', pairedUsers)
-        console.log('username inside roomhandler', pairedUsers)
+        // console.log('what are we sending', pairedUsers)
+        // console.log('username inside roomhandler', pairedUsers)
         axios.post('http://127.0.0.1:8000/voice_chat/rooms',pairedUsers)
             .then(res =>{
                 console.log('axios hit', res.data)
             })
-//        receiveWebSocketData(matchedUser, roomId, username)
         receiveWebSocketData(matchedUser, roomId, username).then( (res) =>
-                                                                { redirectMatchedUser(JSON.parse(res))
-                                                                 setWebSocketVal(res)
-                                                                 } )
-        console.log('websocket in state is', typeof websocketVal)
-        //deleting users from cache
-//        deleteMatchedUsersRedis(username, matchedUser)
+                                                    { redirectMatchedUser(JSON.parse(res))
+                                                        setWebSocketVal(res)
+                                                    } )
     }
     function redirectMatchedUser(matchedID){
         const splitString = matchedID.text.split(' ')
-        const userID = splitString[6].slice(0, -1)
-        const userid = user.user_id
-        const roomID = splitString[8]
-        console.log(`inside redirect userID:${String(userid)} received id:${userID}`)
-        if(String(userid) === matchedID){
-            history.push(`/rooms/${roomID}`)
+        const userID = splitString[6].slice(0, -1).split('"').join('')
+        const userid = String(user.user_id)
+        const roomId = splitString[8].slice(0,-2)
+        setState({...state, roomId});
+        console.log(`...inside redirect userID:${userid} received id:${userID} roomID:${roomId}...equality check:${userid === userID}`)
+        if(userid === userID){
+            // console.log('this if condition has been triggered')
+            setTimeout(history.push(`/rooms/${roomId}`), 10000)
         }
     }
 
     async function receiveWebSocketData(matchedUser, roomId){
         return await WebSocketInstance.sendData(matchedUser+' '+roomId+' '+user.username)
-//        const fulfilled = userID.then((res)=> { return res })
-//        console.log('fulfilled is returning', fulfilled)
-//        const fulfilledPromise = fulfilled.then((result)=> { return result } )
-//        console.log('fulfilled promise is', fulfilledPromise)
-//        return fulfilledPromise;
     };
 
     function deleteMatchedUsersRedis(username, matchedUser){
@@ -122,11 +116,13 @@ const WaitingRoom = () =>  {
         };
         selectedRoom.participants.push(username)
         selectedRoom.participants.push(matchedUser)
-        const rooms = state.rooms; //do we need this, rooms is empty after all
-        const roomId = rooms.push(selectedRoom);
-        console.log(`room id is, roomId: ${JSON.stringify(roomId)}`)
+        const rooms = state.rooms; 
+        // console.log(`rooms:${JSON.stringify(rooms)}, selectedRoom:${selectedRoom}`)
+        // const roomId = rooms.push(selectedRoom);
+        const roomId = [username,matchedUser] 
+        // console.log(`??roomId: ${JSON.stringify(roomId)}??`)
 
-        setState({...state, rooms, selectedRoom, roomId});
+        setState({...state, rooms, selectedRoom});
 
         createRoomHandler(username, matchedUser, roomId)
 //        console.log('after availOnlineUsers is filtered', availableOnlineUsers.current)
