@@ -34,6 +34,7 @@ class WebSocketService {
 //        }
     }
     async sendData(data){
+        // console.log('!!!we are sending this data!!!', data)
         if(this.socketRef.readyState !== WebSocket.OPEN) {
             console.log('we are still waiting')
             this.socketRef.onopen = () => this.socketRef.send(data);
