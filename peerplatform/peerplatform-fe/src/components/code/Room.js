@@ -10,10 +10,9 @@ const Room = ({room}) => {
     const [state, setState] = useGlobalState();
     const [call, setCall] = useState();
     const {device, nickname} = state;
-//    const roomName = state.selectedRoom.roomName;
-//    const fetchRooms = useFetchRooms('http://127.0.0.1:8000/voice_chat/rooms');
+    const roomName = state.selectedRoom;
 
-    console.log(`twilio token in state: ${state.twilioToken} device:${state.device}`)
+    console.log(`...device:${state.device}, roomName:${typeof roomName}, nick:${nickname}, roomProp:${room}...`)
 
 //    useEffect(() => {
 //        const params = {
@@ -30,7 +29,6 @@ const Room = ({room}) => {
 ////            state.selectedRoom.participants.push(nickname);
 ////        }
 //    }, [device, roomName, nickname, room, call]);
-    //call doesn't seem to be dropping
     const handleLeaveRoom = () => {
         call.disconnect();
         history.push('/rooms');
@@ -39,17 +37,6 @@ const Room = ({room}) => {
         handleLeaveRoom();
         setState({...state, createdRoomTopic: null}); // clear created room.
     };
-//    const refreshRooms  = () => {
-//        fetchRooms()
-//            .then(rooms => {
-//                const selectedRoom = rooms.find((room) => {
-//                    return room.room_name = roomName
-//                });
-//                if(selectedRoom){
-//                    setState({ ...state, selectedRoom});
-//                }
-//            });
-//    }
 
     return (
     <>
