@@ -65,10 +65,7 @@ const StartCodingComponent = () => {
             return {...state, rooms }
         });
         sendWaitingRoomUsersToRedisCache()
-//        WebSocketInstance.connect()
         let availUsers = null ;
-////        sending data through websocket
-//        WebSocketInstance.sendData()
         if(availableOnlineUsers.current.length){
                 history.push('/rooms');
         }
@@ -78,7 +75,6 @@ const StartCodingComponent = () => {
                 history.push('/rooms');
             },7000)
         }
-//        history.push('/rooms');
     }
 
     const setupTwilio = (nickname) => {
@@ -98,7 +94,6 @@ const StartCodingComponent = () => {
                 console.log("error: ", device)
             });
             setState({... state, device, twilioToken, nickname})
-//            console.log(`setupTwilio has been hit, device: ${device}, twilioToken: ${twilioToken}`)
         })
         .catch((error) => {
             console.log(error)

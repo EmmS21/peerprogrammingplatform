@@ -15,7 +15,7 @@ class WebSocketService {
     connect() {
         const args = JSON.parse(localStorage.getItem('authTokens'))
         const queryString = args.refresh
-        console.log('what is in querystring', queryString)
+        // console.log('what is in querystring', queryString)
         const path = `ws://127.0.0.1:8000/connect/testing/?${queryString}`;
         this.socketRef = new WebSocket(path);
         this.socketRef.onopen = (data) => {
@@ -24,14 +24,6 @@ class WebSocketService {
         this.socketRef.onerror = e => {
             console.log(e);
         };
-//        this.socketRef.onclose = () => {
-//            console.log("WebSocket closed let's reopen");
-//            this.connect();
-//        };
-//        this.socketRef.onmessage = e => {
-//                console.log('onmessage')
-//                console.log(JSON.parse(e.data));
-//        }
     }
     async sendData(data){
         // console.log('!!!we are sending this data!!!', data)

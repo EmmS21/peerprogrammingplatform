@@ -27,14 +27,14 @@ const WaitingRoom = () =>  {
     const [websocketVal, setWebSocketVal] = useState('')
     const [counter, setCounter] = useState(0)
 
-    const openNotification = () => {
-        const args = {
-            message: 'You have not been matched yet',
-            description: 'Please wait a little longer while we find you a match',
-            duration: 4,
-        };
-        notification.open(args);
-    };
+    // const openNotification = () => {
+    //     const args = {
+    //         message: 'You have not been matched yet',
+    //         description: 'Please wait a little longer while we find you a match',
+    //         duration: 4,
+    //     };
+    //     notification.open(args);
+    // };
 
     const contentStyle = {
         height: '80px',
@@ -81,10 +81,12 @@ const WaitingRoom = () =>  {
         const userid = String(user.user_id)
         const roomId = splitString[8].slice(0,-2)
         setState({...state, roomId});
+        setCounter(counter+1)
+        console.log('counter is now', counter)
         console.log(`...inside redirect userID:${userid} received id:${userID} roomID:${roomId}...equality check:${userid === userID}`)
-        if(userid === userID){
-            // console.log('this if condition has been triggered')
-            setTimeout(history.push(`/rooms/${roomId}`), 10000)
+        if(userid === userID && counter > 1){
+            console.log('this if condition has been triggered')
+            history.push(`/rooms/${roomId}`)
         }
     }
 
