@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useRef } from 'react';
 import NewRoom from './NewRoom';
 import { Link, useHistory } from 'react-router-dom';
 import { useGlobalState } from '../../context/RoomContextProvider';
@@ -11,7 +11,7 @@ import "../../assets/waitingRoom/app.css";
 import { Button, Modal, notification } from 'antd';
 import WebSocketInstance from '../../websocket/Connect';
 
-
+let secondCounter = 0
 const WaitingRoom = () =>  {
     const [state, setState] = useGlobalState();
     const history = useHistory();
@@ -25,7 +25,7 @@ const WaitingRoom = () =>  {
             authTokens } = useContext(AuthContext)
     const [usersInState, setUsersInState] = useState('')
     const [websocketVal, setWebSocketVal] = useState('')
-    const [counter, setCounter] = useState(0)
+    const counter = useRef(0)
 
     // const openNotification = () => {
     //     const args = {
@@ -71,20 +71,23 @@ const WaitingRoom = () =>  {
                 console.log('axios hit', res.data)
             })
         receiveWebSocketData(matchedUser, roomId, username).then( (res) =>
-                                                    { redirectMatchedUser(JSON.parse(res))
-                                                        setWebSocketVal(res)
-                                                    } )
+                                                    {redirectMatchedUser(JSON.parse(res)) 
+                                                     setWebSocketVal(res)
+                                                    })
     }
     function redirectMatchedUser(matchedID){
+        console.log(`...!received:${matchedID}!...`)
+        if(matchedID) secondCounter ++
+        console.log(`****secondCounter ${secondCounter}****`)
         const splitString = matchedID.text.split(' ')
         const userID = splitString[6].slice(0, -1).split('"').join('')
         const userid = String(user.user_id)
         const roomId = splitString[8].slice(0,-2)
         setState({...state, roomId});
-        setCounter(counter+1)
-        console.log('counter is now', counter)
-        console.log(`...inside redirect userID:${userid} received id:${userID} roomID:${roomId}...equality check:${userid === userID}`)
-        if(userid === userID && counter > 1){
+        console.log('current counter is', counter.current)
+        console.log(`...equality check:${userid === userID}, counter:${counter.current}, counterTrue:${counter.current > 1}...`)
+        if(userid === userID && secondCounter >= 2){
+
             console.log('this if condition has been triggered')
             history.push(`/rooms/${roomId}`)
         }

@@ -32,6 +32,7 @@ class PracticeConsumer(AsyncWebsocketConsumer):
     async def websocket_connect(self, event):
         #this should be named user_id
         username = self.scope['user']
+        print('what is in scope', self.scope)
         username_id = str(await self.get_user(username))
         print('username in scope is', username)
         group_name = username_id
