@@ -5,8 +5,8 @@ import { useGlobalState } from '../../context/RoomContextProvider';
 import AuthContext from '../../context/AuthContext';
 import axios from 'axios';
 import SyncLoader from "react-spinners/ClipLoader";
+import WebSocketInstance from '../../websocket/Connect';
 
-//import WebSocketInstance from '../../websocket/Connect';
 
 const StartCodingComponent = () => {
     const history = useHistory();

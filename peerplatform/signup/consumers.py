@@ -32,11 +32,9 @@ class PracticeConsumer(AsyncWebsocketConsumer):
     async def websocket_connect(self, event):
         #this should be named user_id
         username = self.scope['user']
-        print('what is in scope', self.scope)
         username_id = str(await self.get_user(username))
-        print('username in scope is', username)
+        print('username is connected: ', username)
         group_name = username_id
-        print('group name on connect is', group_name)
         #subscribe user to group
         await self.channel_layer.group_add(
             '{}'.format(group_name),

@@ -67,7 +67,7 @@ const Hero = ({
               <p className="m-0 mb-32 reveal-from-bottom" data-reveal-delay="400">
               </p>
               <div className="reveal-from-bottom" data-reveal-delay="600">
-                  <Button tag="a" color="primary" wideMobile href="https://thegradientboost.com">
+                  <Button tag="a" color="primary" wideMobile href="https://thegradientboost.com" id="get-started">
                     Get started
                     </Button>
               </div>

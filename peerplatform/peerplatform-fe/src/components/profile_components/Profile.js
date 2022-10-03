@@ -42,6 +42,8 @@ import {
 import { Button as AntButton, Modal } from 'antd';
 import StripeElementsProvider from '../payments/StripeElementsProvider';
 import { useCookies } from 'react-cookie';
+import WebSocketInstance from '../../websocket/Connect';
+
 
     const Profile = () => {
         let { user, logOutUser,
