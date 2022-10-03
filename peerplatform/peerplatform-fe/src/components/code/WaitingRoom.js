@@ -26,6 +26,7 @@ const WaitingRoom = () =>  {
     const [usersInState, setUsersInState] = useState('')
     const [websocketVal, setWebSocketVal] = useState('')
     const counter = useRef(0)
+    console.log('what is global var', secondCounter)
 
     // const openNotification = () => {
     //     const args = {
@@ -76,7 +77,6 @@ const WaitingRoom = () =>  {
                                                     })
     }
     function redirectMatchedUser(matchedID){
-        console.log(`...!received:${matchedID}!...`)
         if(matchedID) secondCounter ++
         console.log(`****secondCounter ${secondCounter}****`)
         const splitString = matchedID.text.split(' ')
@@ -86,9 +86,7 @@ const WaitingRoom = () =>  {
         setState({...state, roomId});
         console.log('current counter is', counter.current)
         console.log(`...equality check:${userid === userID}, counter:${counter.current}, counterTrue:${counter.current > 1}...`)
-        if(userid === userID && secondCounter >= 2){
-
-            console.log('this if condition has been triggered')
+        if(secondCounter >= 2){
             history.push(`/rooms/${roomId}`)
         }
     }
