@@ -37,6 +37,7 @@ const Header = ({
   let { user,logOutUser } = useContext(AuthContext)
 
 
+
   const nav = useRef(null);
   const hamburger = useRef(null);
 
@@ -125,13 +126,13 @@ const Header = ({
                         { user ? (
                                     <div className="parentButtons">
                                         {user && <p>Welcome back {user.username}</p>}
-                                        <Link to={"/profile"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Dashboard</Link>
+                                        <Link id="dashboard-button" to={"/profile"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Dashboard</Link>
                                         <button className="button button-primary button-wide-mobile button-sm" onClick={logOutUser}>Logout</button>
                                     </div>
                         ): (
                             <div className="parentButtons">
-                                <Link to={"/login"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Login</Link>
-                                <Link to={"/signup"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Sign up</Link>
+                                <Link id="login" to={"/login"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Login</Link>
+                                <Link id="signup" to={"/signup"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Sign up</Link>
                             </div>
                             )
                         }

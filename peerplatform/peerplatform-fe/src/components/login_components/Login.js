@@ -1,4 +1,4 @@
-import React, { Component,useState,useEffect,useContext } from "react";
+import React, { Component,useState,useEffect,useContext, useRef } from "react";
 import secure_login from "../../assets/images/secure_login.svg"
 import "../../assets/scss/core/signup_components/_signup.scss"
 import AxiosInstance from "../../AxiosApi.js";
@@ -11,12 +11,23 @@ import axios from 'axios'
 import AuthContext from '../../context/AuthContext'
 import loginSchema from './validation/loginSchema';
 
+
 const Login = () => {
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     //if user login details are incorrect
     let {loginUser, loginError } = useContext(AuthContext)
+
+    //temp
+    const loginRef =  useRef();
+
+    //temp
+    useEffect(() => {
+      window.onclick = (event) => {
+        console.log("You clicked the login div")
+      } 
+    })
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -35,7 +46,7 @@ const Login = () => {
 
 
      return (
-      <div className="base-container">
+      <div id="login-loaded" className="base-container">
         <div className="header">Login</div>
         <div className="content">
           <div className="image">
@@ -44,8 +55,9 @@ const Login = () => {
           <p id="loginError" data-testid="loginError">{ loginError }</p>
           <form className="form">
             <div className="form-group">
-              <label htmlFor="username">Username</label>
+              <label  htmlFor="username">Username</label>
               <input
+                id="name-field"
                 type="text"
                 name="username"
                 placeholder="username"
@@ -57,6 +69,7 @@ const Login = () => {
             <div className="form-group">
               <label htmlFor="password">Password</label>
               <input
+                id="password-field"
                 type="password"
                 name="password"
                 placeholder="password"
@@ -67,10 +80,10 @@ const Login = () => {
             </div>
           </form>
         </div>
-        <div className="footer">
+        <div ref={loginRef} className="footer" id="login-div">
           <button type="button"
+            id="login-button"
             className="btn"
-            disabled={!username || !password }
             onClick={ handleSubmit }>Login</button>
         </div>
       </div>

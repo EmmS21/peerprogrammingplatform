@@ -60,7 +60,7 @@ const Hero = ({
       <div className="container-sm">
         <div className={innerClasses}>
           <div className="hero-content">
-            <h1 className="mt-0 mb-16 reveal-from-bottom" data-reveal-delay="200">
+            <h1 id="header" className="mt-0 mb-16 reveal-from-bottom" data-reveal-delay="200">
               Learn through <span className="text-color-primary">Peer to Peer programming</span>
             </h1>
             <div className="container-xs">
@@ -75,6 +75,7 @@ const Hero = ({
           </div>
           <div className="hero-figure reveal-from-bottom illustration-element-01" data-reveal-value="20px" data-reveal-delay="800">
             <a
+              id="video-icon"
               data-video="https://youtu.be/n_OT7bHZ-ls"
               href="#0"
               aria-controls="video-modal"
@@ -104,14 +105,3 @@ Hero.propTypes = propTypes;
 Hero.defaultProps = defaultProps;
 
 export default Hero;
-
-//
-//            <iframe
-//                width="560"
-//                height="315"
-//                src={"https://www.youtube.com/embed/n_OT7bHZ-ls"}
-//                title="YouTube video player"
-//                frameBorder="0"
-//                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-//                allowFullScreen
-//            />

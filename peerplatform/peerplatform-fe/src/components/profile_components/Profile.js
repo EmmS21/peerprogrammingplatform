@@ -211,7 +211,7 @@ import WebSocketInstance from '../../websocket/Connect';
                                 />
                                 </form>
                             </div>
-                            <h5 className="title">Hi, { user.username }</h5>
+                            <h5 id="username-returned" className="title">Hi, { user.username }</h5>
                             <h6> { user.city }, { user.country } </h6>
                         </div>
                         <p className="description text-center">
