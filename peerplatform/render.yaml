@@ -1,0 +1,10 @@
+services:
+- type: web
+  name: codesquad
+  env: python
+  buildCommand: "./build.sh"        # ensure it's a string
+  startCommand: cd gunicorn peerplatform.wsgi:application
+  healthCheckPath: /
+  envVars:
+  - key: DJANGO_SECRET_KEY
+    generateValue: true       # will generate a base64-encoded 256-bit secret

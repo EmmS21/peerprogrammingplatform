@@ -19,4 +19,6 @@ redis==4.3.3
 django-redis==5.2.0
 daphne==3.0.2
 djangorestframework-api-key==2.2.0
+gunicorn==20.0.4
+
 
