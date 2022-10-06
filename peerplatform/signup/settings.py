@@ -167,9 +167,12 @@ CACHES = {
 }
 
 WEBPUSH_SETTINGS = {
-   "VAPID_PUBLIC_KEY": config('VAPID_PUBLIC_KEY'),
-   "VAPID_PRIVATE_KEY": config('VAPID_PRIVATE_KEY'),
-   "VAPID_ADMIN_EMAIL": config('VAPID_ADMIN_EMAIL')
+   # "VAPID_PUBLIC_KEY": config('VAPID_PUBLIC_KEY'),
+   "VAPID_PUBLIC_KEY": os.environ.get('VAPID_PUBLIC_KEY'),
+   # "VAPID_PRIVATE_KEY": config('VAPID_PRIVATE_KEY'),
+   "VAPID_PRIVATE_KEY": os.environ.get('VAPID_PRIVATE_KEY'),
+   # "VAPID_ADMIN_EMAIL": config('VAPID_ADMIN_EMAIL')
+   "VAPID_ADMIN_EMAIL": os.environ.get('VAPID_ADMIN_EMAIL')
 }
 
 LOGGING = {
@@ -247,23 +250,19 @@ REST_FRAMEWORK = {
         # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
 }
-
-# AUTH_USER_MODEL = 'accounts.CustomerUser'
-# SIMPLE_JWT = {
-#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-# }
-#
-# CORS_ORIGIN_WHITELIST = (
-#     'localhost:3000',
-# )
-
+# import os
+# os.environ.get('KEY')
 #Twilio Account details
-TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
-TWIML_APPLICATION_SID = config('TWIML_APPLICATION_SID')
-TWILIO_API_KEY = config('TWILIO_API_KEY')
-TWILIO_API_SECRET = config('TWILIO_API_SECRET')
-
+# TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
+# TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
+# TWIML_APPLICATION_SID = config('TWIML_APPLICATION_SID')
+TWIML_APPLICATION_SID = os.environ.get('TWIML_APPLICATION_SID')
+# TWILIO_API_KEY = config('TWILIO_API_KEY')
+TWILIO_API_KEY = os.environ.get('TWILIO_API_KEY')
+# TWILIO_API_SECRET = config('TWILIO_API_SECRET')
+TWILIO_API_SECRET = os.environ.get('TWILIO_API_SECRET')
 
 ALLOWED_HOSTS = [
     ".ngrok.io",
@@ -277,9 +276,7 @@ SIMPLE_JWT = {
 }
 
 REDIS_HOST = 'localhost'
-# REDIS_HOST = 'redis-local'
 REDIS_PORT = 49153
-# REDIS_PORT = 49153
 REDIS_PASSWORD = 'redispw'
 
 REDIS_HOST_LAYER = 'localhost'
