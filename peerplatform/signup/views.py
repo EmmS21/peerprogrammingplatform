@@ -30,7 +30,6 @@ import random
 
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
                                    port=settings.REDIS_PORT, db=0,
-                                   password=settings.REDIS_PASSWORD
                                    )
 
 # if request.method == 'GET':
