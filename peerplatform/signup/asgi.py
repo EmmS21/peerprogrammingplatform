@@ -22,6 +22,7 @@ import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'signup.settings')
 django.setup()
+settings.configure()
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AllowedHostsOriginValidator(
