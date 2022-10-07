@@ -134,11 +134,6 @@ CHANNEL_LAYERS = {
     },
 }
 
-# default:redispw@127.0.0.1", 49155
-# redis://default:redispw@localhost:49153
-# Password validation
-# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -266,7 +261,8 @@ ALLOWED_HOSTS = [
     ".ngrok.io",
     "127.0.0.1",
     "localhost",
-    "0.0.0.0"
+    "0.0.0.0",
+    "codesquad.onrender.com"
 ]
 
 SIMPLE_JWT = {
