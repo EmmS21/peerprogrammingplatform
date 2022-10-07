@@ -129,7 +129,8 @@ DATABASES = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": "redis://channellayer@redis-local:6379/0",
+        "LOCATION": "redis-kufk:10000",
+#         "LOCATION": "redis://channellayer@redis-local:6379/0",
     },
 }
 
@@ -156,7 +157,8 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://default:redispw@localhost:49153",
+        "LOCATION": "redis-kufk:10000",
+#         "LOCATION": "redis://default:redispw@localhost:49153",
         # "LOCATION": "redis://redis-local:6379/0",
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
@@ -165,6 +167,9 @@ CACHES = {
         "KEY_PREFIX": "pairprogramming"
     }
 }
+
+REDIS_HOST_LAYER = 'redis-kufk'
+REDIS_PORT = 10000
 
 WEBPUSH_SETTINGS = {
    "VAPID_PUBLIC_KEY": os.getenv('VAPID_PUBLIC_KEY'),
@@ -275,5 +280,8 @@ SIMPLE_JWT = {
 REDIS_HOST = 'redis-kufk'
 REDIS_PORT = 10000
 
-REDIS_HOST_LAYER = 'localhost'
-REDIS_PORT_LAYER = 6379
+# REDIS_HOST_LAYER = 'localhost'
+# REDIS_PORT_LAYER = 6379
+
+REDIS_HOST_LAYER = 'redis-kufk'
+REDIS_PORT = 10000
