@@ -268,9 +268,12 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
 
-REDIS_HOST = 'localhost'
-REDIS_PORT = 49153
-REDIS_PASSWORD = 'redispw'
+# REDIS_HOST = 'localhost'
+# REDIS_PORT = 49153
+# REDIS_PASSWORD = 'redispw'
+
+REDIS_HOST = 'redis-kufk'
+REDIS_PORT = 10000
 
 REDIS_HOST_LAYER = 'localhost'
 REDIS_PORT_LAYER = 6379
