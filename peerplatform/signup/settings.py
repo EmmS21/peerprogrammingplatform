@@ -257,13 +257,13 @@ TWILIO_API_KEY = os.getenv('TWILIO_API_KEY')
 TWILIO_API_SECRET = os.getenv('TWILIO_API_SECRET')
 
 
-ALLOWED_HOSTS = [
-    ".ngrok.io",
-    "127.0.0.1",
-    "localhost",
-    "0.0.0.0",
-    "codesquad.onrender.com"
-]
+# ALLOWED_HOSTS = [
+#     ".ngrok.io",
+#     "127.0.0.1",
+#     "localhost",
+#     "0.0.0.0",
+#     "codesquad.onrender.com"
+# ]
 
 SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
