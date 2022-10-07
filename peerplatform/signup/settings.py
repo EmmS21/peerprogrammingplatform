@@ -27,7 +27,7 @@ SECRET_KEY = '7v2g512#_rcafql%j3-8kd--2y&tjtfrybi4e#36^2+x2-2t8w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
 
 
 INSTALLED_APPS = [
@@ -257,13 +257,13 @@ TWILIO_API_KEY = os.getenv('TWILIO_API_KEY')
 TWILIO_API_SECRET = os.getenv('TWILIO_API_SECRET')
 
 
-# ALLOWED_HOSTS = [
-#     ".ngrok.io",
-#     "127.0.0.1",
-#     "localhost",
-#     "0.0.0.0",
-#     "codesquad.onrender.com"
-# ]
+ALLOWED_HOSTS = [
+    ".ngrok.io",
+    "127.0.0.1",
+    "localhost",
+    "0.0.0.0",
+    "codesquad.onrender.com"
+]
 
 SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
