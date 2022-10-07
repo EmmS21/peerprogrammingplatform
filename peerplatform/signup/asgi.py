@@ -18,10 +18,10 @@ from .consumers import *
 from channels.security.websocket import AllowedHostsOriginValidator
 from .middleware import JwtAuthMiddlewareStack
 from channels.auth import AuthMiddlewareStack
-
+import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'signup.settings')
-
+django.setup()
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AllowedHostsOriginValidator(
