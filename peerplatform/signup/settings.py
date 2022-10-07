@@ -129,7 +129,7 @@ DATABASES = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": "redis-kufk:10000",
+        "LOCATION": "redis://redis-kufk:10000",
 #         "LOCATION": "redis://channellayer@redis-local:6379/0",
     },
 }
@@ -152,7 +152,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis-kufk:10000",
+        "LOCATION": "redis://redis-kufk:10000",
 #         "LOCATION": "redis://default:redispw@localhost:49153",
         # "LOCATION": "redis://redis-local:6379/0",
         "TIMEOUT": 5 * 60,
