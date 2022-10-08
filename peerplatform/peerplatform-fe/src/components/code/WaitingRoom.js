@@ -67,7 +67,7 @@ const WaitingRoom = () =>  {
         pairedUsers['matchedUser'] = matchedUser
         // console.log('what are we sending', pairedUsers)
         // console.log('username inside roomhandler', pairedUsers)
-        axios.post('http://127.0.0.1:8000/voice_chat/rooms',pairedUsers)
+        axios.post('https://codesquad.onrender.com/voice_chat/rooms',pairedUsers)
             .then(res =>{
                 console.log('axios hit', res.data)
             })
@@ -100,7 +100,7 @@ const WaitingRoom = () =>  {
         const deletingUsers = {}
         deletingUsers['username'] = username
         deletingUsers['matched'] = matchedUser
-        axios.delete('http://127.0.0.1:8000/cache/delete', deletingUsers)
+        axios.delete('https://codesquad.onrender.com/cache/delete', deletingUsers)
             .then(res=> {
                 console.log('axios delete response', res)
             })

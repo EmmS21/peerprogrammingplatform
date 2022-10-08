@@ -26,7 +26,7 @@ const StartCodingComponent = () => {
 
 
     const updateWaitingRoomStatus = () => {
-        axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
+        axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
             in_waiting_room: true
         })
         .then(res => {
@@ -35,13 +35,13 @@ const StartCodingComponent = () => {
     }
 
     const sendWaitingRoomUsersToRedisCache = () => {
-        axios.get('http://127.0.0.1:8000/users/')
+        axios.get('https://codesquad.onrender.com/users/')
             .then(res => {
                     const filteredUsers = res.data.filter(filtered => filtered.profile.in_waiting_room === true)
                     const allUserNames  = filteredUsers.map(arr => arr.username)
                     //specifying key we will be using to retrieve these users in Redis with pre-defined pattern to clearly identify key in server
                     //write users to Redis set
-                    axios.post('http://127.0.0.1:8000/cache/', allUserNames)
+                    axios.post('https://codesquad.onrender.com/cache/', allUserNames)
                         .then(res => {
 //                            console.log('into redis', res.data)
                         })
@@ -78,7 +78,7 @@ const StartCodingComponent = () => {
     }
 
     const setupTwilio = (nickname) => {
-        fetch(`http://127.0.0.1:8000/voice_chat/token/${nickname}`)
+        fetch(`https://codesquad.onrender.com/voice_chat/token/${nickname}`)
         .then(response => response.json())
         .then(data => {
             // setup device

@@ -25,6 +25,7 @@ from .consumers import *
 from channels.security.websocket import AllowedHostsOriginValidator
 from .middleware import JwtAuthMiddlewareStack
 from channels.auth import AuthMiddlewareStack
+
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AllowedHostsOriginValidator(
