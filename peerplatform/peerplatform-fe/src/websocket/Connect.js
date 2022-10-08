@@ -16,7 +16,7 @@ class WebSocketService {
         const args = JSON.parse(localStorage.getItem('authTokens'))
         const queryString = args.refresh
         // console.log('what is in querystring', queryString)
-        const path = `ws://127.0.0.1:8000/connect/testing/?${queryString}`;
+        const path = `ws://codesquad.onrender.com/connect/testing/?${queryString}`;
         this.socketRef = new WebSocket(path);
         this.socketRef.onopen = (data) => {
             console.log('WebSocket open');

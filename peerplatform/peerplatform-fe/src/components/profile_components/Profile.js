@@ -68,13 +68,13 @@ import WebSocketInstance from '../../websocket/Connect';
         // const imageMimeType = /image\/(png|jpg|jpeg)/i;
         const [fileDataURL, setFileDataURL] = useState(null);
         const [profilePic, setProfilePic] = useState(null);
-        const baseURL = "http://127.0.0.1:8000/media/"
+        const baseURL = "https://codesquad.onrender.com/media/"
         const photoURL = user.photo.split('"').join('');
 
 
         //on idle update Profile model activity field
         const handleOnIdle = (event: any) => {
-            axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
+            axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
                 currently_active: false
             })
             .then(res => {
@@ -84,7 +84,7 @@ import WebSocketInstance from '../../websocket/Connect';
 
         //on active update profile model activity field
         const handleOnActive = (event: any) => {
-            axios.patch(`http://127.0.0.1:8000/update_active/${user.user_id}/`, {
+            axios.patch(`https://codesquad.onrender.com/update_active/${user.user_id}/`, {
                 currently_active: true
             })
             .then(res => {
@@ -133,7 +133,7 @@ import WebSocketInstance from '../../websocket/Connect';
         };
 
         const updateWaitingRoomStatus = () => {
-        axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
+        axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
             in_waiting_room: false
         })
         .then(res => {

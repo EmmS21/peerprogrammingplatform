@@ -43,7 +43,7 @@ export const AuthProvider = ({children}) => {
     const [ allOnlineUsers, setAllOnlineUsers ] = useState([])
     const [loginError, setLoginError] = useState('');
     const availableOnlineUsers = useRef([])
-    const profileURL = 'http://127.0.0.1:8000/update_profile/' 
+    const profileURL = 'https://codesquad.onrender.com/update_profile/' 
 
 
 
@@ -60,10 +60,8 @@ export const AuthProvider = ({children}) => {
     //we are going to pass this information down to login page
     //async function because we must wait for something to happen first
     const loginUser = async (tokens) => {
-        let response = await axios.post('http://127.0.0.1:8000/api/token/',tokens)
+        let response = await axios.post('https://codesquad.onrender.com/api/token/',tokens)
         try {
-//            let response = await axios.post('http://127.0.0.1:8000/api/token/',tokens)
-            //we are going to set our tokens in state so we can easily access it
             setAuthTokens(authTokens => ({
                 ...response.data
             }))
@@ -90,7 +88,7 @@ export const AuthProvider = ({children}) => {
 
     //get profile information
     const getProfileInfo = (userId) => {
-        axios.get(`http://127.0.0.1:8000/users/${userId}`)
+        axios.get(`https://codesquad.onrender.com/users/${userId}`)
                 .then(res => {
                     setUser({ ...user,
                             first_name: res.data.first_name,
@@ -163,7 +161,7 @@ export const AuthProvider = ({children}) => {
 
     //turn is_online off
     let handleServerLogout = () => {
-        axios.patch(`http://127.0.0.1:8000/update_profile/${user.user_id}/`, {
+        axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
             is_online: 'False'
         })
         .then(res => {
@@ -178,7 +176,7 @@ export const AuthProvider = ({children}) => {
         }
         console.log('Update token function has been triggered')
         try {
-            let response = await axios.post('http://127.0.0.1:8000/api/token/refresh/',refreshToken)
+            let response = await axios.post('https://codesquad.onrender.com/api/token/refresh/',refreshToken)
             //update state with token
             setAuthTokens({'access': response.data.access,
                             'refresh': refreshToken.refresh})
@@ -197,22 +195,6 @@ export const AuthProvider = ({children}) => {
             logOutUser()
         }
     }
-    //get all users
-//    let getAllUsers = () => {
-//        axios.get('http://127.0.0.1:8000/users/')
-//                .then(res =>{
-//                    const filteredUsers = res.data.filter(filtered =>
-//                                                                filtered.profile.is_online === true)
-//                    setOnlineUsers([ ...filteredUsers])
-//                    const usernameEmailKeyPair =  filteredUsers.reduce((obj, item) => ({...obj, [item.username]: item.email}) ,{});
-//                    console.log('inside getAllUsers state:', usernameEmailKeyPair)
-////                    axios.post('http://127.0.0.1:8000/cache/', usernameEmailKeyPair)
-////                        .then(res => {
-////                            console.log('inside post', res.data)
-////                        })
-//                })
-//    }
-    //code editor functionality - wait three seconds before getting input
     const threeSecondWait = () => {
             return new Promise(resolve => setTimeout(() => resolve("result"),3000));
     };
@@ -251,7 +233,7 @@ export const AuthProvider = ({children}) => {
     //redis get request
     const config = {
         method: 'GET',
-        url: 'http://127.0.0.1:8000/cache/',
+        url: 'https://codesquad.onrender.com/cache/',
         headers: {
             "accept": "*/*",
         }
@@ -269,7 +251,7 @@ export const AuthProvider = ({children}) => {
                         country: data.country,
             }
         };
-        fetch('http://127.0.0.1:8000/api/register', {
+        fetch('https://codesquad.onrender.com/api/register', {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json'
@@ -288,20 +270,6 @@ export const AuthProvider = ({children}) => {
                     return res.json()
                             .then(data=> {
                                     setSuccessSignup(true)
-                              //we no longer need to store the token in local storage
-//                            if(data.token) {
-//                                const tokensAuth = {
-//                                    'authTokens': {
-//                                        'refresh': data.token.refresh_token,
-//                                        'access': data.token.access_token,
-//                                    }
-//                                }
-//                                localStorage.clear();
-//
-//                                localStorage.setItem('authTokens',tokensAuth);
-//                                history.push('/profile')
-//                            }
-
                             });
                     }
             })
@@ -320,7 +288,6 @@ export const AuthProvider = ({children}) => {
         retrieveChallenge: retrieveChallenge,
         challengeInState: challengeInState,
         config: config,
-//        getAllUsers: getAllUsers,
         onlineUsers: onlineUsers,
         availableUsers: availableUsers,
         sendCodeJudge0: sendCodeJudge0,

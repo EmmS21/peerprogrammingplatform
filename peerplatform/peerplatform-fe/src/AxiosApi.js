@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const AxiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api/',
+    baseURL: 'https://codesquad.onrender.com/api/',
     timeout: 5000,
     headers: {
         'Authorization': "JWT" + localStorage.getItem('access_token'),
