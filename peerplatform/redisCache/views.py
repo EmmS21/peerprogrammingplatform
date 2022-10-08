@@ -9,8 +9,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 import re
 
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
-                                   port=settings.REDIS_PORT, db=0,
-                                   password=settings.REDIS_PASSWORD
+                                   port=settings.REDIS_PORT, db=0
                                    )
 
 @api_view(['GET', 'POST'])

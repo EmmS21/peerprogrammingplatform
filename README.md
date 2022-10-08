@@ -147,7 +147,7 @@ With ngrok specifically, you will need to expose the server to ngrok by running 
 
 ```
 pip install -r requirements.txt
-python manaage.py makemigrations
+python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
@@ -156,6 +156,9 @@ python manage.py runserver
 # For Collaborators
 Project roadmap is contained in peerplatform/ProjectRoadMap.md
 
+Here are a few links on blogs I published detailing the process and rationale behind some of the decisions made in building features in this platform
+- https://medium.com/codingsquad/a-pair-programming-platform-to-help-you-get-better-at-technical-interviews-building-out-the-14c03762ebf4
+- https://medium.com/codingsquad/pair-programming-platform-redirecting-matched-pairs-of-users-7517add184d3
 
 # Built by: Emmanuel Sibanda
 
