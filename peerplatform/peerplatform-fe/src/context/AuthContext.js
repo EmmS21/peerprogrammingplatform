@@ -62,6 +62,11 @@ export const AuthProvider = ({children}) => {
     const loginUser = async (tokens) => {
         let response = await axios.post('https://codesquad.onrender.com/api/token/',tokens)
         try {
+<<<<<<< HEAD
+=======
+//            let response = await axios.post('https://codesquad.onrender.com/api/token/',tokens)
+            //we are going to set our tokens in state so we can easily access it
+>>>>>>> 6472896d82c1056dfb02f08b97e55beb42753c6b
             setAuthTokens(authTokens => ({
                 ...response.data
             }))
@@ -276,7 +281,6 @@ export const AuthProvider = ({children}) => {
         };
 
 
-    //going to be passed down to AuthContext
     let contextData = {
         user:user,
         authTokens:authTokens,

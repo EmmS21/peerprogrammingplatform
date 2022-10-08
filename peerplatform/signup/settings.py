@@ -27,7 +27,7 @@ SECRET_KEY = '7v2g512#_rcafql%j3-8kd--2y&tjtfrybi4e#36^2+x2-2t8w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
 
 
 INSTALLED_APPS = [
@@ -129,14 +129,10 @@ DATABASES = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": "redis://channellayer@redis-local:6379/0",
+        "LOCATION": "redis://redis-kufk:10000",
+#         "LOCATION": "redis://channellayer@redis-local:6379/0",
     },
 }
-
-# default:redispw@127.0.0.1", 49155
-# redis://default:redispw@localhost:49153
-# Password validation
-# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -156,7 +152,8 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://default:redispw@localhost:49153",
+        "LOCATION": "redis://redis-kufk:10000",
+#         "LOCATION": "redis://default:redispw@localhost:49153",
         # "LOCATION": "redis://redis-local:6379/0",
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
@@ -165,6 +162,9 @@ CACHES = {
         "KEY_PREFIX": "pairprogramming"
     }
 }
+
+REDIS_HOST_LAYER = 'redis-kufk'
+REDIS_PORT = 10000
 
 WEBPUSH_SETTINGS = {
    "VAPID_PUBLIC_KEY": os.getenv('VAPID_PUBLIC_KEY'),
@@ -261,16 +261,23 @@ ALLOWED_HOSTS = [
     ".ngrok.io",
     "127.0.0.1",
     "localhost",
-    "0.0.0.0"
+    "0.0.0.0",
+    "codesquad.onrender.com"
 ]
 
 SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
 
-REDIS_HOST = 'localhost'
-REDIS_PORT = 49153
-REDIS_PASSWORD = 'redispw'
+# REDIS_HOST = 'localhost'
+# REDIS_PORT = 49153
+# REDIS_PASSWORD = 'redispw'
 
-REDIS_HOST_LAYER = 'localhost'
-REDIS_PORT_LAYER = 6379
+REDIS_HOST = 'redis-kufk'
+REDIS_PORT = 10000
+
+# REDIS_HOST_LAYER = 'localhost'
+# REDIS_PORT_LAYER = 6379
+
+REDIS_HOST_LAYER = 'redis-kufk'
+REDIS_PORT_LAYER = 10000
