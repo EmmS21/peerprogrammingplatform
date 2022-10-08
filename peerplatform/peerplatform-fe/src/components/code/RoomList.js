@@ -7,7 +7,7 @@ import { useFetchRooms } from '../../hooks/useFetchRooms';
 
 const RoomList = () =>  {
     const [state, setState] = useGlobalState();
-    const fetchRooms = useFetchRooms('http://127.0.0.1:8000/voice_chat/rooms');
+    const fetchRooms = useFetchRooms('https://codesquad.onrender.com/voice_chat/rooms');
     console.log(`state in RoomList, device: ${state.device}`)
 
     useEffect(() => {
