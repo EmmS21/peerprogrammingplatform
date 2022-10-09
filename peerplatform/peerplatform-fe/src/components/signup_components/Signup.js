@@ -25,7 +25,7 @@ const Signup = () => {
 
     useEffect(() => {
         if(localStorage.getItem('token') !== null) {
-            window.location.replace('http://localhost:3000/profile');
+            window.location.replace('https://peerprogrammingplatform.vercel.app/profile');
         } else {
             setLoading(false);
         }
