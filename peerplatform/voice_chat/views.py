@@ -73,6 +73,5 @@ class TokenView(View):
         )
         access_token.add_grant(voice_grant)
         jwt_token = access_token.to_jwt()
-        full_data = { 'token': jwt_token.decode()}
-        # print(type(jwt_token))
+        full_data = { 'token': jwt_token}
         return JsonResponse(json.dumps(full_data), content_type="application/json", safe=False)
