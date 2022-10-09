@@ -15,7 +15,6 @@ class WebSocketService {
     connect() {
         const args = JSON.parse(localStorage.getItem('authTokens'))
         const queryString = args.refresh
-        // console.log('what is in querystring', queryString)
         const path = `wss://codesquad.onrender.com/connect/testing/?${queryString}`;
         this.socketRef = new WebSocket(path);
         this.socketRef.onopen = (data) => {
@@ -26,7 +25,6 @@ class WebSocketService {
         };
     }
     async sendData(data){
-        // console.log('!!!we are sending this data!!!', data)
         if(this.socketRef.readyState !== WebSocket.OPEN) {
             console.log('we are still waiting')
             this.socketRef.onopen = () => this.socketRef.send(data);
