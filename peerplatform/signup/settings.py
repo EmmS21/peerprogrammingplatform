@@ -73,6 +73,10 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ORIGIN_WHITELIST = (
+    "localhost","codesquad.onrender.com", "peerprogrammingplatform.vercel.app"
+)
+
 CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
@@ -262,7 +266,8 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "0.0.0.0",
-    "codesquad.onrender.com"
+    "codesquad.onrender.com",
+    "peerprogrammingplatform.vercel.app"
 ]
 
 SIMPLE_JWT = {
