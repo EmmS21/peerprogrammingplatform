@@ -133,7 +133,7 @@ DATABASES = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": "redis://redis-kufk:10000",
+        "LOCATION": "rediss://redis-kufk:10000",
     },
 }
 
