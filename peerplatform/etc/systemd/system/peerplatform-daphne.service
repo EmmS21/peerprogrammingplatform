@@ -1,0 +1,9 @@
+[Unit]
+Description=PeerPlatform Daphne Service
+After=network.target
+[Service]
+Type=simple
+WorkingDirectory=/peerplatform
+ExecStart=daphne -p 8000 signup.asgi:application
+[Install]
+WantedBy=multi-user.target

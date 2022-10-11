@@ -133,8 +133,11 @@ DATABASES = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": "redis://redis-kufk:10000",
-c    },
+        "CONFIG": {
+            "hosts": [("redis-kufk", 10000)],
+        },
+        # "LOCATION": "redis://redis-kufk:10000",
+    },
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -271,15 +274,8 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
 
-# REDIS_HOST = 'localhost'
-# REDIS_PORT = 49153
-# REDIS_PASSWORD = 'redispw'
-
 REDIS_HOST = 'redis-kufk'
 REDIS_PORT = 10000
-
-# REDIS_HOST_LAYER = 'localhost'
-# REDIS_PORT_LAYER = 6379
 
 REDIS_HOST_LAYER = 'redis-kufk'
 REDIS_PORT_LAYER = 10000
