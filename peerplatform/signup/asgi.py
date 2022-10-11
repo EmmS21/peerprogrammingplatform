@@ -27,18 +27,10 @@ from .middleware import JwtAuthMiddlewareStack
 from channels.auth import AuthMiddlewareStack
 
 application = ProtocolTypeRouter({
-    'websocket': AllowedHostsOriginValidator(
-        AuthMiddlewareStack(
-            URLRouter(websocket_urlpatterns)
-        )
+    "http": get_asgi_application(),
+    "websocket": AllowedHostsOriginValidator(
+            JwtAuthMiddlewareStack(
+                URLRouter(websocket_urlpatterns)
+            )
     )
 })
-
-# application = ProtocolTypeRouter({
-#     "http": get_asgi_application(),
-#     "websocket": AllowedHostsOriginValidator(
-#             JwtAuthMiddlewareStack(
-#                 URLRouter(websocket_urlpatterns)
-#             )
-#     )
-# })
