@@ -15,7 +15,7 @@ import { setAxiosAuthToken, toastOnError } from "../../utils/Utils";
 
 export const login = (userData, redirectTo) => dispatch => {
   axios
-    .post("http://127.0.0.1:8000/api/token/", userData)
+    .post("https://codesquad.onrender.com/api/token/", userData)
     .then(response => {
       const { auth_token } = response.data;
       setAxiosAuthToken(auth_token);
@@ -30,7 +30,7 @@ export const login = (userData, redirectTo) => dispatch => {
 
 export const getCurrentUser = redirectTo => dispatch => {
   axios
-    .get("http://127.0.0.1:8000/users/")
+    .get("https://codesquad.onrender.com/users/")
     .then(response => {
       const user = {
         username: response.data.username,

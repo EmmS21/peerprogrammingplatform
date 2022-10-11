@@ -38,7 +38,7 @@ const saveSubscription = async (subscription) => {
     };
     console.log('data is', data)
     console.log('we are posting to save_information')
-    const res = await fetch('http://127.0.0.1:8000/webpush/save_information', {
+    const res = await fetch('https://codesquad.onrender.com/webpush/save_information', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
