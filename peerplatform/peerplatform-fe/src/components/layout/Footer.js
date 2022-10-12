@@ -41,11 +41,9 @@ const Footer = ({
           )}>
           <div className="footer-top space-between text-xxs">
             <Logo />
-            <FooterSocial />
           </div>
           <div className="footer-bottom space-between text-xxs invert-order-desktop">
-            <FooterNav />
-            <div className="footer-copyright"><a>The Gradient Boost</a>. All right reserved</div>
+            <div className="footer-copyright"><a>Pair Programming</a>. All right reserved</div>
           </div>
         </div>
       </div>

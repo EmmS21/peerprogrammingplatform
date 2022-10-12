@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { SectionProps } from '../../utils/SectionProps';
 import Input from '../elements/Input';
 import MailchimpSubscribe from "react-mailchimp-subscribe";
-import CustomForm from "./CustomForm";
+import { Button } from "antd";
 
 const propTypes = {
   ...SectionProps.types,
@@ -16,7 +16,7 @@ const defaultProps = {
   split: false
 }
 
-const Cta = ({
+const CustomForm = ({
   className,
   topOuterDivider,
   bottomOuterDivider,
@@ -42,30 +42,23 @@ const Cta = ({
     topDivider && 'has-top-divider',
     bottomDivider && 'has-bottom-divider',
     split && 'cta-split'
-  );  
+  );
+
 
   return (
     <section
       {...props}
       className={outerClasses}
     >
-      <div className="container">
-        <div
-          className={innerClasses}
-        >
-          <div className="cta-slogan">
-            <h3 className="m-0">
-              Want to join our mailing list?
-              </h3>
-          </div>
-          <CustomForm />
-        </div>
-      </div>
+        <div className="cta-action">
+            <Button onClick={ () => window.location.replace('http://eepurl.com/iba1Yn') }>Subscribe to Mailing List</Button>
+         </div>
     </section>
   );
 }
 
-Cta.propTypes = propTypes;
-Cta.defaultProps = defaultProps;
+CustomForm.propTypes = propTypes;
+CustomForm.defaultProps = defaultProps;
 
-export default Cta;
+export default CustomForm;
+

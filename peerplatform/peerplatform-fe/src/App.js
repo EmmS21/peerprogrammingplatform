@@ -60,7 +60,6 @@ const App = () => {
                 <Header/>
                 <AppRoute exact path="/" component={Home} layout={LayoutDefault} />
                 <AppRoute exact path="/login" component={Login} />
-                <AppRoute exact path="/signup" component={Signup} />
                 <AppRoute exact path="/code_editor" component={CodeEditor} />
                 <AppRoute exact path="/timer" component={Timer} />
                 <Elements stripe={stripePromise}>

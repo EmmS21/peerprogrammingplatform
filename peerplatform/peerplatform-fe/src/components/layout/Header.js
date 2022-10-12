@@ -37,7 +37,6 @@ const Header = ({
   let { user,logOutUser } = useContext(AuthContext)
 
 
-
   const nav = useRef(null);
   const hamburger = useRef(null);
 
@@ -132,7 +131,6 @@ const Header = ({
                         ): (
                             <div className="parentButtons">
                                 <Link id="login" to={"/login"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Login</Link>
-                                <Link id="signup" to={"/signup"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Sign up</Link>
                             </div>
                             )
                         }

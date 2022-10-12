@@ -5,6 +5,7 @@ import ButtonGroup from '../elements/ButtonGroup';
 import Button from '../elements/Button';
 import Image from '../elements/Image';
 import Modal from '../elements/Modal';
+import {Alert} from 'antd';
 
 const propTypes = {
   ...SectionProps.types
@@ -26,6 +27,7 @@ const Hero = ({
 }) => {
 
   const [videoModalActive, setVideomodalactive] = useState(false);
+  const [visible, setVisible] = useState(false)
 
   const openModal = (e) => {
     e.preventDefault();
@@ -45,6 +47,8 @@ const Hero = ({
     invertColor && 'invert-color',
     className
   );
+
+
 
   const innerClasses = classNames(
     'hero-inner section-inner',
@@ -67,7 +71,12 @@ const Hero = ({
               <p className="m-0 mb-32 reveal-from-bottom" data-reveal-delay="400">
               </p>
               <div className="reveal-from-bottom" data-reveal-delay="600">
-                  <Button tag="a" color="primary" wideMobile href="https://thegradientboost.com" id="get-started">
+                  { visible ?
+                    (
+                        <Alert message="This platform is currently invite only, please subscribe to the mailing list and you will be notified when you can create a profile" type="error" showIcon closable />
+                    ): null
+                  }
+                  <Button tag="a" color="primary" wideMobile onClick={ () => setVisible(true)} id="get-started">
                     Get started
                     </Button>
               </div>
