@@ -19,11 +19,20 @@ import 'brace/theme/monokai';
 import ProfileTabs from '../profile_tabs/ProfileTab';
 import "antd/dist/antd.css";
 import { Steps, Result, Button, Spin } from 'antd'
-import { AudioOutlined, MessageOutlined, CloseOutlined, MinusSquareOutlined, PlusSquareOutlined } from '@ant-design/icons';
+import { AudioOutlined, MessageOutlined, 
+        CloseOutlined, MinusSquareOutlined, 
+        PlusSquareOutlined, CodeOutlined,
+        SolutionOutlined } from '@ant-design/icons';
 import ClockCounter from '../profile_tabs/ClockCounter';
 import { Tabs } from 'antd';
 import ProgrammingChallenge from './ProgrammingChallenges';
 import AuthContext from '../../context/AuthContext';
+import 'semantic-ui-css/semantic.min.css'
+import { Card, Icon, Image } from 'semantic-ui-react';
+import { Header } from 'semantic-ui-react'
+
+
+
 
 //change language based on map
 const CodeEditor = () => {
@@ -37,6 +46,9 @@ const CodeEditor = () => {
     const [visible, setVisible] = useState(false);
     const selectLang = useRef(0);
     const [sidebar, setSidebar] = useState(true)
+    let { user, logOutUser } = useContext(AuthContext)
+    let photoURL = user.photo.split('"').join('');
+    let baseURL = "https://codesquad.onrender.com/media/";
 
  
     //change language in select options
@@ -75,7 +87,6 @@ const CodeEditor = () => {
         e.preventDefault();
         requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
         requestBody.language_id = selectLang.current
-        console.log(`what is being sent, language:${requestBody.language_id}, everything: ${requestBody}`)
         setSpinnerOn(true)
         setResp('')
         setVisible(true)
@@ -97,8 +108,21 @@ const CodeEditor = () => {
 
         return (
         <>
-        <div className='h-1/5 '>
-            <ClockCounter timer={timer} key={key} handleComplete={handleComplete} index={index} Result={Result} Button={Button} />
+        <div className='h-1/5 container'>
+            <Card style={{ width: '75px', height: '75px'}}>
+                <Image src={`${baseURL}${photoURL}`} wrapped ui={false}/>
+            </Card>
+            <div className='clockItem'>
+                <ClockCounter timer={timer} key={key} handleComplete={handleComplete} index={index} Result={Result} Button={Button} />
+            </div>
+            <div>{
+                index === 1 ? <Header as='h2' color='blue' fontSize='5px' icon={<AudioOutlined/>} content='Time for introductions' />
+                : index === 2 ? <Header as='h2' color='orange' icon={<MessageOutlined/>} content='Time to pseudocode potential solutions' />
+                : index === 3 ? <Header as='h2' color='blue' icon={<CodeOutlined/>} content='Time to Code' />
+                : index === 4 ? <Header as='h2' color='green' icon={<SolutionOutlined/>} content="If you don't already have a working solution, time to find one and rebuild it" />:
+                null
+                } 
+            </div>
         </div>
         <div className="fixed top-0 left-10 right-20"  onClick={()=> setSidebar(!sidebar)}>{ sidebar ? <MinusSquareOutlined/> : <PlusSquareOutlined/> }</div>
         <div className="row">
@@ -121,21 +145,23 @@ const CodeEditor = () => {
                     aria-label="Default select example"
                     onChange={changeLanguageHandler}
                  >
-                    <option selected>Select your language</option>
+                    <option selected>Select language</option>
                     <option value="70">Python</option>
                     <option value="63">Javascript</option>
                     <option value="62">Java</option>
                 </select>
             </div>
+            <div style={{ marginLeft: !visible && !sidebar ? -200 : -140 }}>
                 <AceEditor
                     mode={currentLanguage}
                     theme="monokai"
                     name="code_editor"
                     editorProps={{ $blockScrolling: true }}
                     enableLiveAutocompletion={true}
-                    width={!visible && !sidebar ? 1000 : visible && !sidebar ? 700 : sidebar && !visible ? 700 : 500}
+                    width={!visible && !sidebar ? 1200 : visible && !sidebar ? 700 : sidebar && !visible ? 700 : 500}
                 />
                 <button className="btn btn-primary" onClick={makeSubmission}> Run</button>
+            </div>
            </div>
            {
             visible ? (

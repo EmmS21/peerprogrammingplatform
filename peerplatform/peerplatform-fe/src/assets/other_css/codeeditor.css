@@ -68,6 +68,13 @@ p {
     display: flex;
 }
 
+.container {
+  display: flex
+}
+
+.clockItem {
+  flex-grow: 4; 
+}
 
 @-webkit-keyframes blink {
   0% {
