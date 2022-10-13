@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { render } from 'react-dom';
 import brace from 'brace';
 import Split from 'react-split';
@@ -19,11 +19,10 @@ import 'brace/theme/monokai';
 import ProfileTabs from '../profile_tabs/ProfileTab';
 import "antd/dist/antd.css";
 import { Steps, Result, Button, Spin } from 'antd'
-import { AudioOutlined, MessageOutlined } from '@ant-design/icons';
+import { AudioOutlined, MessageOutlined, CloseOutlined, MinusSquareOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import ClockCounter from '../profile_tabs/ClockCounter';
 import { Tabs } from 'antd';
 import ProgrammingChallenge from './ProgrammingChallenges';
-
 import AuthContext from '../../context/AuthContext';
 
 //change language based on map
@@ -34,22 +33,22 @@ const CodeEditor = () => {
     const output = null;
     const { Step } = Steps;
     const { TabPane } = Tabs;
-    const { retrieveChallenge,challengeInState,sendCodeJudge0, spinnerOn, setSpinnerOn, resp, setResp } = useContext(AuthContext)
+    const { retrieveChallenge, challengeInState, sendCodeJudge0, spinnerOn, setSpinnerOn, resp, setResp } = useContext(AuthContext)
+    const [visible, setVisible] = useState(false);
+    const selectLang = useRef(0);
+    const [sidebar, setSidebar] = useState(true)
 
+ 
     //change language in select options
-    const changeLanguageHandler = (e) => {
-        const value = e.target.value
-        console.log('You have selected', languageMap[value])
-        setCurrentLanguage(languageMap[value])
-    }
     //map language id to language
     const languageMap = {
         70: "python",
-        63: "javascript"
+        63: "javascript",
+        62: "java"
     }
-
-    const requestBody = {
-        "source_code": "print('testing')",
+    
+    let requestBody = {
+        "source_code": "",
         "language_id": "70",
         "number_of_runs": null,
         "stdin": "Judge0",
@@ -65,18 +64,21 @@ const CodeEditor = () => {
         "max_file_size": null,
         "enable_network": null
     }
-    //onchange handler
-    const onChange = (newVal) => {
-        console.log(newVal)
+    
+    const changeLanguageHandler = (e) => {
+        selectLang.current = e.target.value
+        setCurrentLanguage(languageMap[selectLang.current])
+        
     }
-
     //handle submission
     const makeSubmission = (e) => {
         e.preventDefault();
         requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
-        console.log('source_code',requestBody.source_code)
+        requestBody.language_id = selectLang.current
+        console.log(`what is being sent, language:${requestBody.language_id}, everything: ${requestBody}`)
         setSpinnerOn(true)
         setResp('')
+        setVisible(true)
         sendCodeJudge0(requestBody)
     }
 
@@ -95,9 +97,13 @@ const CodeEditor = () => {
 
         return (
         <>
-        <div className="row">
+        <div className='h-1/5 '>
             <ClockCounter timer={timer} key={key} handleComplete={handleComplete} index={index} Result={Result} Button={Button} />
-           <div className="col-4 whiteCol">
+        </div>
+        <div className="fixed top-0 left-10 right-20"  onClick={()=> setSidebar(!sidebar)}>{ sidebar ? <MinusSquareOutlined/> : <PlusSquareOutlined/> }</div>
+        <div className="row">
+        { sidebar ? (
+            <div className="col-4 whiteCol">
                 <Tabs type="card">
                     <TabPane tab="Stages" key="1">
                         <ProfileTabs index={index}/>
@@ -106,8 +112,10 @@ const CodeEditor = () => {
                         <ProgrammingChallenge/>
                     </TabPane>
                 </Tabs>
-           </div>
-           <div className="col-6">
+            </div>
+            ): null
+        }
+           <div className="col-4">
             <div className="select-dropdown">
                 <select
                     aria-label="Default select example"
@@ -116,23 +124,29 @@ const CodeEditor = () => {
                     <option selected>Select your language</option>
                     <option value="70">Python</option>
                     <option value="63">Javascript</option>
-                    <option value="82">SQL</option>
+                    <option value="62">Java</option>
                 </select>
             </div>
                 <AceEditor
                     mode={currentLanguage}
                     theme="monokai"
-                    onChange={onChange}
                     name="code_editor"
                     editorProps={{ $blockScrolling: true }}
+                    enableLiveAutocompletion={true}
+                    width={!visible && !sidebar ? 1000 : visible && !sidebar ? 700 : sidebar && !visible ? 700 : 500}
                 />
                 <button className="btn btn-primary" onClick={makeSubmission}> Run</button>
            </div>
+           {
+            visible ? (
            <div className="col-2">
+                <CloseOutlined onClick={()=> setVisible(false)}/>
                 <h4>Output</h4>
                 <Spinner on={spinnerOn} Spin={Spin}/>
                 <p className="line1"> { resp } </p>
            </div>
+            ) : null
+           }
         </div>
         </>
         )

@@ -38,8 +38,6 @@ const ClockCounter = ({ key, index, timer, handleComplete, Result, Button }) => 
         :
         <Result
             status="success"
-//            title="Session Completed!"
-//            subTitle="Great job everyone! time to rate your peers"
             extra={[
                 <Ratings/>
             ]}

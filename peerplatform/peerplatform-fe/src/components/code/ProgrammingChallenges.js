@@ -19,7 +19,34 @@ export default function ProgrammingChallenge() {
 //    str.lastIndexOf(";")
 //);
 
+
+
     console.log('in state', codeSubStr(challengeInState.description))
+
+    let firstQuote = String(challengeInState.description).search(/``/)
+    let lastQuote = String(challengeInState.description).lastIndexOf(/``/)
+
+    // Function to find the indices of every instance of ``` to mark code snippets
+// function getAllQuotes(description, sub) {
+//     var quotes = [],
+//       i = 0,
+//       n = 0;
+  
+//     do {
+//       n = description.indexOf(" ");
+//       if (n > -1) {
+//         i += n;
+//         quotes.push(i);
+//         description = description.slice(n + 1);
+//         i++;
+//       }
+//     }
+//     while (n > -1);
+//     return quotes;
+//   }
+  
+//   let allQuotes = getAllQuotes(str, ' ')
+
     return (
         <div>
                 <PageHeader
@@ -28,12 +55,14 @@ export default function ProgrammingChallenge() {
                     title=  { challengeInState.slug }
                 />
                 <Collapse accordion>
-                    <Panel header="Description" key="1">
-                        <a>{challengeInState.description}</a>
-                    </Panel>
+                    <div>
+                        <p>Description</p>
+                        <code>{String(challengeInState.description).substring(firstQuote, lastQuote)}</code>
+                    </div>
                     <Panel header="Link to Question" key="2">
                         <a href={challengeInState.url} target="_blank">{challengeInState.url}</a>
                     </Panel>
+
                 </Collapse>
                 <Button type="primary" ghost onClick={retrieveChallenge}>
                     Skip

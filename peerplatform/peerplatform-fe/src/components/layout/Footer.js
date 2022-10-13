@@ -51,6 +51,7 @@ const Footer = ({
   );
 }
 
+
 Footer.propTypes = propTypes;
 Footer.defaultProps = defaultProps;
 
