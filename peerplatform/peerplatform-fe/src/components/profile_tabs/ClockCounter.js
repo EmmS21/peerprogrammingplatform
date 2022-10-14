@@ -12,14 +12,13 @@ import Ratings from './Ratings';
 
   return (
     <div className="timer">
-      { /* <div className="text">Remaining</div> */}
       <div className="value">{remainingTime}</div>
       { /* <div className="text">seconds</div> */}
     </div>
   );
 };
 
-const ClockCounter = ({ key, index, timer, handleComplete, Result, Button }) => {
+const ClockCounter = ({ index, timer, handleComplete }) => {
   return (
     <div className="App">
       <div className="timer-wrapper">
@@ -36,12 +35,7 @@ const ClockCounter = ({ key, index, timer, handleComplete, Result, Button }) => 
           {renderTime}
         </CountdownCircleTimer>
         :
-        <Result
-            status="success"
-            extra={[
-                <Ratings/>
-            ]}
-        />
+        <Ratings/>
         }
       </div>
     </div>

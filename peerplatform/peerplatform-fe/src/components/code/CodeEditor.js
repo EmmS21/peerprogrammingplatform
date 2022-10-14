@@ -20,16 +20,14 @@ import ProfileTabs from '../profile_tabs/ProfileTab';
 import "antd/dist/antd.css";
 import { Steps, Result, Button, Spin } from 'antd'
 import { AudioOutlined, MessageOutlined, 
-        CloseOutlined, MinusSquareOutlined, 
-        PlusSquareOutlined, CodeOutlined,
+        CloseOutlined, CodeOutlined,
         SolutionOutlined } from '@ant-design/icons';
 import ClockCounter from '../profile_tabs/ClockCounter';
 import { Tabs } from 'antd';
 import ProgrammingChallenge from './ProgrammingChallenges';
 import AuthContext from '../../context/AuthContext';
 import 'semantic-ui-css/semantic.min.css'
-import { Card, Icon, Image } from 'semantic-ui-react';
-import { Header } from 'semantic-ui-react'
+import { Card, Icon, Image, Header, Menu } from 'semantic-ui-react';
 
 
 
@@ -108,26 +106,48 @@ const CodeEditor = () => {
 
         return (
         <>
-        <div className='h-1/5 container'>
-            <Card style={{ width: '75px', height: '75px'}}>
-                <Image src={`${baseURL}${photoURL}`} wrapped ui={false}/>
-            </Card>
-            <div className='clockItem'>
-                <ClockCounter timer={timer} key={key} handleComplete={handleComplete} index={index} Result={Result} Button={Button} />
-            </div>
-            <div>{
-                index === 1 ? <Header as='h2' color='blue' fontSize='5px' icon={<AudioOutlined/>} content='Time for introductions' />
-                : index === 2 ? <Header as='h2' color='orange' icon={<MessageOutlined/>} content='Time to pseudocode potential solutions' />
-                : index === 3 ? <Header as='h2' color='blue' icon={<CodeOutlined/>} content='Time to Code' />
-                : index === 4 ? <Header as='h2' color='green' icon={<SolutionOutlined/>} content="If you don't already have a working solution, time to find one and rebuild it" />:
-                null
-                } 
-            </div>
-        </div>
-        <div className="fixed top-0 left-10 right-20"  onClick={()=> setSidebar(!sidebar)}>{ sidebar ? <MinusSquareOutlined/> : <PlusSquareOutlined/> }</div>
-        <div className="row">
+        <Menu pointing widths={ 10 } size={"tiny"} style={{ marginTop:0 }}>
+            <Menu.Item>
+                {
+                    index < 4 ?
+                        <div>Call connected
+                            <Icon name="microphone"/>
+                        </div> :
+                        <div>Call Terminated
+                            <Icon name="microphone slash"/>
+                        </div>
+                }
+            </Menu.Item>
+            <Menu.Item>
+                {
+                    <Button onClick={()=> setSidebar(!sidebar)}>{ sidebar ? "Hide Sidebar" : "Show Sidebar" }</Button>
+                }
+            </Menu.Item>
+            {
+                !sidebar ?
+                <Menu.Item>
+                    <div>{
+                        index === 1 ? <Header as='h2' color='blue' style={{ fontSize: '15px' }} icon={<AudioOutlined/>} content='Time for introductions' />
+                        : index === 2 ? <Header as='h2' color='orange' style={{ fontSize: '15px' }} icon={<MessageOutlined/>} content='Time to pseudocode potential solutions' />
+                        : index === 3 ? <Header as='h2' color='blue' style={{ fontSize: '15px' }} icon={<CodeOutlined/>} content='Time to Code' />
+                        : index === 4 ? <Header as='h2' color='green' style={{ fontSize: '15px' }} icon={<SolutionOutlined/>} content="If you don't already have a working solution, time to find one and rebuild it" />:
+                        null    
+                    } 
+                    </div>
+                </Menu.Item> : null
+            } 
+            <Menu.Item> 
+                <div className='clockItem'>
+                    <ClockCounter timer={timer} key={key} handleComplete={handleComplete} index={index} Result={Result} Button={Button} />
+                </div>
+            </Menu.Item>
+            <Menu.Item>
+                <Button className="btn btn-primary" onClick={makeSubmission}> Run Code</Button>
+            </Menu.Item>
+        </Menu>
+        <div className="row"style={{height:'75vh'}}>
         { sidebar ? (
-            <div className="col-4 whiteCol">
+            <div className={ visible ? "col-2 whiteCol my-0" : "col-3 whiteCol my-0" } style={{  marginLeft: !visible ? -60 : -20 }}>
                 <Tabs type="card">
                     <TabPane tab="Stages" key="1">
                         <ProfileTabs index={index}/>
@@ -139,7 +159,7 @@ const CodeEditor = () => {
             </div>
             ): null
         }
-           <div className="col-4">
+           <div className="col-4" style={{ marginTop: -20 }}>
             <div className="select-dropdown">
                 <select
                     aria-label="Default select example"
@@ -151,23 +171,21 @@ const CodeEditor = () => {
                     <option value="62">Java</option>
                 </select>
             </div>
-            <div style={{ marginLeft: !visible && !sidebar ? -200 : -140 }}>
+            <div className="my-0" style={{ marginLeft: !visible && !sidebar ? -200 : visible && !sidebar ? -100 : sidebar && !visible ? -200 : -100 }}>
                 <AceEditor
                     mode={currentLanguage}
                     theme="monokai"
                     name="code_editor"
                     editorProps={{ $blockScrolling: true }}
                     enableLiveAutocompletion={true}
-                    width={!visible && !sidebar ? 1200 : visible && !sidebar ? 700 : sidebar && !visible ? 700 : 500}
+                    width={!visible && !sidebar ? 1200 : visible && !sidebar ? 700 : sidebar && !visible ? 900 : 600}
                 />
-                <button className="btn btn-primary" onClick={makeSubmission}> Run</button>
             </div>
            </div>
            {
             visible ? (
-           <div className="col-2">
+           <div className ="col-2">
                 <CloseOutlined onClick={()=> setVisible(false)}/>
-                <h4>Output</h4>
                 <Spinner on={spinnerOn} Spin={Spin}/>
                 <p className="line1"> { resp } </p>
            </div>
