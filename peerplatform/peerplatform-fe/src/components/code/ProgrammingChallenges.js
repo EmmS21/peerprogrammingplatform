@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import AuthContext from '../../context/AuthContext';
 import { PageHeader, Collapse, Button } from 'antd';
 import "../../assets/other_css/programmingChallenges.css";
@@ -6,7 +6,19 @@ import "../../assets/other_css/programmingChallenges.css";
 export default function ProgrammingChallenge() {
     const { challengeInState,retrieveChallenge } = useContext(AuthContext);
     const { Panel } = Collapse;
-    const challengeName = challengeInState.challenge_name
+    const challengeName = challengeInState.challenge_name;
+    const codeExamplesMatch = challengeInState.description?.match('Example(?=s| |$)(.*)```(.*)```');
+    const challengeExamples =codeExamplesMatch?.length ? codeExamplesMatch[1] : null;
+    const challengeDescription = challengeInState.description?.replace(challengeExamples, '');
+    // const challengeDescription = challengeMatch?.length ? challengeMatch[1] : challengeInState.description
+    
+    useEffect(() => {
+      retrieveChallenge()
+    }, [])
+
+    console.log('challenge descr', challengeDescription)
+    console.log('examples', challengeExamples)
+
     function codeSubStr (str) {
         const strConv = String(str)
         return strConv.substring(strConv.indexOf("```") + 1, strConv.lastIndexOf("```") )
@@ -18,7 +30,8 @@ export default function ProgrammingChallenge() {
 //    str.indexOf(":") + 1,
 //    str.lastIndexOf(";")
 //);
-console.log('in state', codeSubStr(challengeInState.description))
+    console.log('in state', challengeDescription)
+    // console.log('extracted code text', challengeDescription ? challengeDescription.match('```(.*)```') : null)
 
   function formatCode() {
     let description = String(challengeInState.description)
@@ -30,9 +43,6 @@ console.log('in state', codeSubStr(challengeInState.description))
     //return the formatted description
    }
 
-
-
-  
     return (
         <div>
                 <PageHeader
@@ -44,6 +54,11 @@ console.log('in state', codeSubStr(challengeInState.description))
                     <div>
                         <p>Description</p>
                         {formatCode()}
+                    </div>
+                    <div>
+                        { challengeDescription }
+                        <h4>Example(s)</h4>
+                        { codeExamplesMatch }
                     </div>
                     <Panel header="Link to Question" key="2">
                         <a href={challengeInState.url} target="_blank">{challengeInState.url}</a>
