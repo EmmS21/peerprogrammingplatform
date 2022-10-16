@@ -13,9 +13,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
-                                   port=settings.REDIS_PORT_LAYER, db=0
-                                   )
 
 @method_decorator(csrf_exempt, name="dispatch")
 class RoomView(View):
