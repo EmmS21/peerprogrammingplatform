@@ -22,7 +22,7 @@ from rest_framework import generics
 from rest_framework.decorators import action
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from accounts.models import models
-from accounts.models import ProgrammingChallenge, Profile
+from accounts.models import Profile
 from webpush.utils import send_to_subscription, _process_subscription_info
 from django.core.cache import cache
 import redis
