@@ -19,14 +19,6 @@ logger = logging.getLogger('django')
 
 
 
-redis_instance = redis.StrictRedis(host=settings.REDIS_HOST_LAYER,
-                                   port=settings.REDIS_PORT_LAYER, db=0
-                                   )
-
-
-# users = {}
-# group_name = ''
-
 class PracticeConsumer(AsyncWebsocketConsumer):
     username_id = None
     async def websocket_connect(self, event):
