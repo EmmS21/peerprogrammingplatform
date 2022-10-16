@@ -121,7 +121,7 @@ DATABASES = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": "redis://127.0.0.1:6379",
+        "LOCATION": "redis://redis-kufk:10000",
     },
 }
 
@@ -258,8 +258,8 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
 
-REDIS_HOST = '127.0.0.1'
-REDIS_PORT = 6379
+REDIS_HOST = 'redis-kufk'
+REDIS_PORT = 10000
 
-REDIS_HOST_LAYER = '127.0.0.1'
-REDIS_PORT_LAYER = 6379
+REDIS_HOST_LAYER = 'redis-kufk'
+REDIS_PORT_LAYER = 10000
