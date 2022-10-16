@@ -23,8 +23,15 @@ class PracticeConsumer(AsyncWebsocketConsumer):
     username_id = None
     async def websocket_connect(self, event):
         #this should be named user_id
+        print('websocket function triggered')
         username = self.scope['user']
-        username_id = str(await self.get_user(username))
+        print('username in scope', username)
+        try:
+            username_id = str(await self.get_user(username))
+            print('we are getting user id')
+        except Exception:
+            username_id = 1
+            print('exception triggered')
         print('username is connected: ', username)
         print('channel name', self.channel_name)
         group_name = username_id
