@@ -32,7 +32,7 @@ class PracticeConsumer(AsyncWebsocketConsumer):
     async def websocket_connect(self, event):
         #this should be named user_id
         username = self.scope['user']
-        username_id = str(self.get_user(username))
+        username_id = str(await self.get_user(username))
         print('username is connected: ', username)
         print('channel name', self.channel_name)
         group_name = username_id
@@ -89,7 +89,7 @@ class PracticeConsumer(AsyncWebsocketConsumer):
             'text': message
         }))
 
-    # @database_sync_to_async
+    @database_sync_to_async
     def get_user(self, user_id):
         try:
             return User.objects.get(username=user_id).pk
