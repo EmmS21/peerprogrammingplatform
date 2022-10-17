@@ -46,10 +46,11 @@ class PracticeConsumer(AsyncWebsocketConsumer):
         invite_data = received.split()
         matched_user = invite_data[0]
         room_id_string = invite_data[1].split(',')
-        queried_id_username = (await self.get_user_id(room_id_string[0]))
-        queried_id_matcheduser = (await self.get_user_id(room_id_string[1])) 
-        min_id = min(queried_id_username,queried_id_matcheduser)
-        max_id = max(queried_id_matcheduser,queried_id_username)
+        queried_id_username = int((await self.get_user_id(room_id_string[0])))
+        queried_id_matched = int((await self.get_user_id(room_id_string[1])))
+        min_id = min(queried_id_username, queried_id_matched)
+        max_id = max(queried_id_matched, queried_id_username)
+        print('min {} max {}'.format(min_id, max_id))
         room_id = int('{}{}'.format(min_id, max_id))
         username = invite_data[2]
         user_id = str(await self.get_user(matched_user))
