@@ -17,8 +17,6 @@ from django.shortcuts import redirect
 
 logger = logging.getLogger('django')
 
-
-
 class PracticeConsumer(AsyncWebsocketConsumer):
     username_id = None
     async def websocket_connect(self, event):

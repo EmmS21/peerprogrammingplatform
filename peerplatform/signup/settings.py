@@ -120,8 +120,8 @@ DATABASES = {
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": "redis://red-cd6pfnqen0hqlocnc4og:6379",
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        # "LOCATION": "redis://red-cd6pfnqen0hqlocnc4og:6379",
     },
 }
 
