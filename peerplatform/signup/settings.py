@@ -153,7 +153,7 @@ CACHES = {
     }
 }
 
-REDIS_HOST_LAYER = "redis://newredis"
+REDIS_HOST_LAYER = "newredis"
 REDIS_PORT = 10000
 
 WEBPUSH_SETTINGS = {
@@ -259,5 +259,5 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
 
-REDIS_HOST = "redis://newredis"
+REDIS_HOST = "newredis"
 REDIS_PORT = 10000
