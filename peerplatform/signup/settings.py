@@ -121,7 +121,10 @@ DATABASES = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": "redis://newredis:10000",
+        "CONFIG": {
+            "hosts": [(os.getenv('REDIS_IP'), 10000)]
+        },
+        # "LOCATION": "redis://newredis:10000",
     },
 }
 
@@ -143,7 +146,9 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://newredis:10000",
+        "CONFIG": {
+            "hosts": [(os.getenv('REDIS_IP'), 10000)]
+        },
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
@@ -152,7 +157,7 @@ CACHES = {
     }
 }
 
-REDIS_HOST_LAYER = 'newredis'
+REDIS_HOST_LAYER = os.getenv('REDIS_IP')
 REDIS_PORT = 10000
 
 WEBPUSH_SETTINGS = {
@@ -258,5 +263,5 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
 
-REDIS_HOST = 'newredis'
+REDIS_HOST = os.getenv('REDIS_IP')
 REDIS_PORT = 10000
