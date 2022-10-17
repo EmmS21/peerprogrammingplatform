@@ -35,10 +35,10 @@ class PracticeConsumer(AsyncWebsocketConsumer):
         group_name = username_id
         print('group name', group_name)
         #subscribe user to group
-        await self.channel_layer.group_add(
-            '{}'.format(group_name),
-            self.channel_name
-        )
+        # await self.channel_layer.group_add(
+        #     '{}'.format(group_name),
+        #     self.channel_name
+        # )
         await self.accept()
 
     async def websocket_receive(self, event):
