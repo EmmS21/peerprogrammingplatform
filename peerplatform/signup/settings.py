@@ -122,7 +122,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("newredis", 6379)]
+            "hosts": [("redis://newredis", 6379)]
         },
         # "LOCATION": "redis://newredis:6379",
     },
@@ -145,7 +145,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
+        # "BACKEND": "django_redis.cache.RedisCache",
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": 'redis://newredis:6379',
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
