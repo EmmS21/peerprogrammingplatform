@@ -121,7 +121,10 @@ DATABASES = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": "redis://newredis:6379",
+        "CONFIG": {
+            "hosts": [("newredis", 6379)]
+        },
+        # "LOCATION": "redis://newredis:6379",
     },
 }
 

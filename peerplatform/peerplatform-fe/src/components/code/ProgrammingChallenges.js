@@ -2,6 +2,8 @@ import React, { useContext, useEffect } from 'react';
 import AuthContext from '../../context/AuthContext';
 import { PageHeader, Collapse, Button } from 'antd';
 import "../../assets/other_css/programmingChallenges.css";
+import "../../assets/other_css/codeeditor.css";
+
 
 export default function ProgrammingChallenge() {
     const { challengeInState,retrieveChallenge } = useContext(AuthContext);
@@ -19,6 +21,15 @@ export default function ProgrammingChallenge() {
     console.log('challenge descr', challengeDescription)
     console.log('examples', challengeExamples)
 
+    //show url text as URL
+    function urlLink(str){
+      const textRegex = /(?<=\[).*?(?=\])/g
+      const urlText = str.match(textRegex)
+      const urlRegex = /(?<=\().*?(?=\))/g 
+      const urlLink = str.match(urlRegex)
+      return <a href={urlLink}>urlText</a>
+    }
+
     function codeSubStr (str) {
         const strConv = String(str)
         return strConv.substring(strConv.indexOf("```") + 1, strConv.lastIndexOf("```") )
@@ -33,15 +44,12 @@ export default function ProgrammingChallenge() {
     console.log('in state', challengeDescription)
     // console.log('extracted code text', challengeDescription ? challengeDescription.match('```(.*)```') : null)
 
-  function formatCode() {
-    let description = String(challengeInState.description)
-    let codeSnip = '```(.*)```'
-    console.log('originalDescription', description, 'edited', description.match(codeSnip))
-    //find all matches
-    //display text between quotes as code snippets
-    //display the rest of the description as normal text
-    //return the formatted description
+  function formatCode(description) {
+      //     const matched = test.match('Example(?=s| |$)(.*)```(.*)```')
+   
    }
+
+
 
     return (
         <div>
@@ -57,7 +65,7 @@ export default function ProgrammingChallenge() {
                     </div>
                     <div>
                         { challengeDescription }
-                        <h4>Example(s)</h4>
+                        <h6 style={{color: 'black'}}>Example(s)</h6>
                         { codeExamplesMatch }
                     </div>
                     <Panel header="Link to Question" key="2">

@@ -76,6 +76,10 @@ p {
   flex-grow: 4; 
 }
 
+#wrapped {
+  overflow-y: scroll;
+}
+
 @-webkit-keyframes blink {
   0% {
     opacity: 0;

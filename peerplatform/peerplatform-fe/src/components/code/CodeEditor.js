@@ -31,12 +31,10 @@ import { Card, Icon, Image, Header, Menu } from 'semantic-ui-react';
 
 
 
-
 //change language based on map
 const CodeEditor = () => {
     const [currentLanguage, setCurrentLanguage] = useState("");
     const [token, setToken] = useState("");
-    const [error, setError] = useState("");
     const output = null;
     const { Step } = Steps;
     const { TabPane } = Tabs;
@@ -48,7 +46,6 @@ const CodeEditor = () => {
     let photoURL = user.photo.split('"').join('');
     let baseURL = "https://codesquad.onrender.com/media/";
 
- 
     //change language in select options
     //map language id to language
     const languageMap = {
@@ -96,6 +93,7 @@ const CodeEditor = () => {
     const [key, setKey] = useState(1);
     const [index, setIndex] = useState(1);
     const [timer, setTimer] = useState(array[0]);
+
 
     //event handler to change clock timer based on index
     const handleComplete = () => {
@@ -145,15 +143,15 @@ const CodeEditor = () => {
                 <Button className="btn btn-primary" onClick={makeSubmission}> Run Code</Button>
             </Menu.Item>
         </Menu>
-        <div className="row"style={{height:'75vh'}}>
+        <div className="row">
         { sidebar ? (
-            <div className={ visible ? "col-2 whiteCol my-0" : "col-3 whiteCol my-0" } style={{  marginLeft: !visible ? -60 : -20 }}>
+            <div className={ visible ? "col-2 whiteCol my-0" : "col-3 whiteCol my-0" } style={{  marginLeft: !visible ? -60 : -20}}>
                 <Tabs type="card">
                     <TabPane tab="Stages" key="1">
                         <ProfileTabs index={index}/>
                     </TabPane>
                     <TabPane tab="Coding Challenge" key="2">
-                        <ProgrammingChallenge/>
+                            <ProgrammingChallenge/>
                     </TabPane>
                 </Tabs>
             </div>
