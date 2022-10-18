@@ -124,11 +124,10 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis://default:P@ssword21@redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com:19576")],
+            "hosts": [("redis://newredis:10000")],
         },
     },
 }
-
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -149,7 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://default:redispw@localhost:49153",
+        "LOCATION": "redis://default:P@ssword21@redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com:19576",
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
@@ -262,11 +261,10 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
 
-REDIS_HOST = 'localhost'
-# REDIS_HOST = 'redis-local'
-REDIS_PORT = 49153
-# REDIS_PORT = 49153
-REDIS_PASSWORD = 'redispw'
+REDIS_HOST = 'redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com'
+REDIS_PORT = 19576
+REDIS_PASSWORD = 'P@ssword21'
+
 
 # REDIS_HOST_LAYER = 'localhost'
 # REDIS_PORT_LAYER = 49153
