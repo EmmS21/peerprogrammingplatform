@@ -121,7 +121,7 @@ DATABASES = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "LOCATION": "redis://redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com:19576",
+        "LOCATION": "redis://newredis:6379",
     },
 }
 
@@ -143,7 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": 'redis://redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com:19576',
+        "LOCATION": 'redis://newredis:6379',
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
@@ -152,8 +152,8 @@ CACHES = {
     }
 }
 
-REDIS_HOST_LAYER = "redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com"
-REDIS_PORT = 19576
+REDIS_HOST_LAYER = "newredis"
+REDIS_PORT = 6379
 
 WEBPUSH_SETTINGS = {
    "VAPID_PUBLIC_KEY": os.getenv('VAPID_PUBLIC_KEY'),
@@ -258,5 +258,5 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
 
-REDIS_HOST = "redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com"
-REDIS_PORT = 19576
+REDIS_HOST = "newredis"
+REDIS_PORT = 6379
