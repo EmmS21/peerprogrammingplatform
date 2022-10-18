@@ -142,6 +142,7 @@ import WebSocketInstance from '../../websocket/Connect';
 
         //get profile information
         useEffect(() => {
+            console.log('can I console log inside useEffect?!!!')
             getProfileInfo(user.user_id)
             updateWaitingRoomStatus()
         },[]);
