@@ -145,8 +145,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CACHES = {
     "default": {
-        # "BACKEND": "django_redis.cache.RedisCache",
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": 'redis://newredis:6379',
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
