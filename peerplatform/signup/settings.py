@@ -61,9 +61,11 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_WHITELIST = (
-    "localhost","codesquad.onrender.com", "peerprogrammingplatform.vercel.app"
-)
+# CORS_ORIGIN_WHITELIST = (
+#     "localhost",
+#     "https://codesquad.onrender.com",
+#     "https://peerprogrammingplatform.vercel.app"
+# )
 
 CORS_ALLOW_METHODS = [
     "DELETE",
@@ -121,12 +123,13 @@ DATABASES = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        # "CONFIG": {
-        #     "hosts": [("redis://newredis", 10000)]
-        # },
-        "LOCATION": "redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com:19576",
+        "CONFIG": {
+            "hosts": [("redis://default:P@ssword21@redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com:19576")],
+        },
     },
 }
+
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -146,7 +149,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": 'redis://redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com:19576',
+        "LOCATION": "redis://default:redispw@localhost:49153",
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
@@ -154,9 +157,6 @@ CACHES = {
         "KEY_PREFIX": "pairprogramming"
     }
 }
-
-REDIS_HOST_LAYER = "redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com"
-REDIS_PORT = 19576
 
 WEBPUSH_SETTINGS = {
    "VAPID_PUBLIC_KEY": os.getenv('VAPID_PUBLIC_KEY'),
@@ -241,11 +241,12 @@ REST_FRAMEWORK = {
 }
 
 #Twilio Account details
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
-TWIML_APPLICATION_SID = os.getenv('TWIML_APPLICATION_SID')
-TWILIO_API_KEY = os.getenv('TWILIO_API_KEY')
-TWILIO_API_SECRET = os.getenv('TWILIO_API_SECRET')
+TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
+TWIML_APPLICATION_SID = config('TWIML_APPLICATION_SID')
+TWILIO_API_KEY = config('TWILIO_API_KEY')
+TWILIO_API_SECRET = config('TWILIO_API_SECRET')
+
 
 
 ALLOWED_HOSTS = [
@@ -261,5 +262,11 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
 
-REDIS_HOST = "redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com"
-REDIS_PORT = 19576
+REDIS_HOST = 'localhost'
+# REDIS_HOST = 'redis-local'
+REDIS_PORT = 49153
+# REDIS_PORT = 49153
+REDIS_PASSWORD = 'redispw'
+
+# REDIS_HOST_LAYER = 'localhost'
+# REDIS_PORT_LAYER = 49153
