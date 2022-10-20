@@ -14,6 +14,11 @@ from channels.middleware import BaseMiddleware
 import logging
 
 from django.shortcuts import redirect
+from django.utils import timezone
+
+from signup.serializers import UpdateUserSerializer
+from signup.views import UpdateProfileView
+
 
 logger = logging.getLogger('django')
 
@@ -21,19 +26,11 @@ class PracticeConsumer(AsyncWebsocketConsumer):
     username_id = None
     async def websocket_connect(self, event):
         #this should be named user_id
-        print('websocket function triggered')
         username = self.scope['user']
-        print('username in scope', username)
-        try:
-            username_id = str(await self.get_user(username))
-            print('we are getting user id')
-        except Exception:
-            username_id = 1
-            print('exception triggered')
+        username_id = str(await self.get_user(username))
         print('username is connected: ', username)
-        print('channel name', self.channel_name)
         group_name = username_id
-        print('group name', group_name)
+        print("user's group name", group_name)
         #subscribe user to group
         await self.channel_layer.group_add(
             '{}'.format(group_name),
@@ -46,15 +43,16 @@ class PracticeConsumer(AsyncWebsocketConsumer):
         invite_data = received.split()
         matched_user = invite_data[0]
         room_id_string = invite_data[1].split(',')
+        print('what is room_id_string', room_id_string)
+        print('what is matched user', matched_user)
         queried_id_username = int((await self.get_user_id(room_id_string[0])))
         queried_id_matched = int((await self.get_user_id(room_id_string[1])))
+        print('who is sending data', room_id_string[0])
         min_id = min(queried_id_username, queried_id_matched)
         max_id = max(queried_id_matched, queried_id_username)
-        print('min {} max {}'.format(min_id, max_id))
         room_id = int('{}{}'.format(min_id, max_id))
         username = invite_data[2]
         user_id = str(await self.get_user(matched_user))
-        # print(f"receiving {invite_data}")
         my_response = {
             "message": {'matched_user': matched_user,
                         'username': username,
@@ -63,7 +61,6 @@ class PracticeConsumer(AsyncWebsocketConsumer):
                         }
         }
         sleep(1)
-        # print('we are sending to group {}'. format(user_id))
         await self.channel_layer.group_send(
             '{}'.format(user_id),
             {
@@ -74,14 +71,14 @@ class PracticeConsumer(AsyncWebsocketConsumer):
             })
 
     async def websocket_disconnect(self, event):
-        print("disconnected", event)
+        print("who is disconnecting", self.scope['user'])
         self.channel_layer.group_discard(
             '{}'.format(self.username_id),
             self.channel_name
         )
     async def send_message(self, event):
         message = event['message']
-        logger.info(f'sending message inside presenter{message}')
+        # logger.info(f'sending message inside presenter{message}')
         await self.send(text_data=json.dumps({
             'type': 'send_message',
             'text': message
@@ -97,10 +94,7 @@ class PracticeConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_user_id(self, username):
         try:
-            print('username received in get_user_id', username)
             return User.objects.get(username=username).pk
         except User.DoesNotExist:
             return 'User does not exist'
-#if using http request, when a person joins waiting room, they make a request to the backend
-#if no-one return a message indicating this || volume -> backroute job that will run every x minutes => cronjob
-#redirecting pairs to their appropriate rooms -> window.location.href //from the frontend //react router
+    

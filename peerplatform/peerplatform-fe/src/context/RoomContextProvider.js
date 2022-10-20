@@ -9,6 +9,8 @@ const initialState = {
     device: null,
     roomId: '',
     onlineUsers: [],
+    username: '',
+    matchedUser: '',
 };
 
 const RoomContext = createContext(null);

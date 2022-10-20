@@ -12,6 +12,7 @@ from urllib.parse import parse_qs
 
 from django.conf import settings
 import jwt
+from django.utils import timezone
 
 @database_sync_to_async
 def get_user(validated_token):
@@ -42,6 +43,7 @@ class JwtAuthMiddleware(BaseMiddleware):
                                      algorithms=['HS256'],
                                      options=jwt_options)
         scope["user"] = await get_user(validated_token=token_extracted)
+        scope["timestamp"] = timezone.now().isoformat()
         return await super().__call__(scope, receive, send)
 
 

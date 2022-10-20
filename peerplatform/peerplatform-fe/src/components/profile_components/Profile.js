@@ -84,7 +84,7 @@ import WebSocketInstance from '../../websocket/Connect';
 
         //on active update profile model activity field
         const handleOnActive = (event: any) => {
-            axios.patch(`https://codesquad.onrender.comupdate_active/${user.user_id}/`, {
+            axios.patch(`https://codesquad.onrender.com/update_active/${user.user_id}/`, {
                 currently_active: true
             })
             .then(res => {

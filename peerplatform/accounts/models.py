@@ -17,6 +17,7 @@ class Profile(models.Model):
     currently_active = models.BooleanField(default=False)
     is_in_session = models.BooleanField(default=False)
     in_waiting_room = models.BooleanField(default=False)
+    connected_timestamp = models.DateTimeField()
 
     @receiver(user_logged_in)
     def got_online(sender, user, request, **kwargs):

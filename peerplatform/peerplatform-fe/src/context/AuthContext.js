@@ -7,6 +7,8 @@ import { useHistory } from 'react-router-dom';
 import axiosWithAuth from "../axios"
 import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../context/RoomContextProvider';
+import WebSocketInstance from '../websocket/Connect';
+
 
 const AuthContext = createContext()
 
@@ -276,6 +278,11 @@ export const AuthProvider = ({children}) => {
                     }
             })
         };
+    
+    async function receiveWebSocketData(matchedUser, roomId){
+        console.log(`sending data ${matchedUser}, ${roomId}`)
+        return await WebSocketInstance.sendData(matchedUser+' '+roomId+' '+user.username)
+    };
 
 
     let contextData = {
@@ -321,6 +328,7 @@ export const AuthProvider = ({children}) => {
         availableOnlineUsers: availableOnlineUsers,
         loginError : loginError,
         updateProfilePic: updateProfilePic,
+        receiveWebSocketData: receiveWebSocketData,
     }
 
 
