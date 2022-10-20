@@ -50,8 +50,11 @@ const WaitingRoom = () =>  {
     function createRoomHandler(username, matchedUser, roomId){
         console.log('createRoomHandler triggered')
         const pairedUsers ={}
-        pairedUsers['roomName'] = username+matchedUser
-        pairedUsers['participantLabel'] = username+matchedUser
+        function sortUsersAlphabetically(str) {
+            return [...str].sort((a, b) => a.localeCompare(b)).join("");
+          }
+        pairedUsers['roomName'] = sortUsersAlphabetically([username,matchedUser])
+        pairedUsers['participantLabel'] = sortUsersAlphabetically([username,matchedUser])
         pairedUsers['currUser'] = username
         pairedUsers['matchedUser'] = matchedUser
         axios.post('https://codesquad.onrender.com/voice_chat/rooms',pairedUsers)
