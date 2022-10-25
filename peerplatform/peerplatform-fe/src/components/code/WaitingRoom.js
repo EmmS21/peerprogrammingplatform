@@ -46,13 +46,14 @@ const WaitingRoom = () =>  {
         handleRoomCreate(username, matchedUser)
     }), [websocketVal])
 
+    function sortUsersAlphabetically(str) {
+        return [...str].sort((a, b) => a.localeCompare(b)).join("");
+      }
+
     //new createRoomHandler without having to pass in data
     function createRoomHandler(username, matchedUser, roomId){
         console.log('createRoomHandler triggered')
         const pairedUsers ={}
-        function sortUsersAlphabetically(str) {
-            return [...str].sort((a, b) => a.localeCompare(b)).join("");
-          }
         pairedUsers['roomName'] = sortUsersAlphabetically([username,matchedUser])
         pairedUsers['participantLabel'] = sortUsersAlphabetically([username,matchedUser])
         pairedUsers['currUser'] = username
@@ -100,7 +101,7 @@ const WaitingRoom = () =>  {
 
     const handleRoomCreate = (username, matchedUser) => {
         console.log('handleRoomCreate is running')
-        const createdRoomTopic = username+matchedUser
+        const createdRoomTopic = sortUsersAlphabetically([username,matchedUser])
         console.log('createdRoomTopic is', createdRoomTopic)
         const selectedRoom = {
             room_name: createdRoomTopic, participants: []
