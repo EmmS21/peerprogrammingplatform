@@ -22,6 +22,7 @@ const WaitingRoom = () =>  {
     const [usersInState, setUsersInState] = useState('')
     const [websocketVal, setWebSocketVal] = useState('')
     const [matchedInState, setMatchedInState] = useState('')
+    // const [timeoutModal, setTimeoutModal] = useState(false)
     console.log('what is global var', secondCounter)
 
     const contentStyle = {
@@ -79,6 +80,7 @@ const WaitingRoom = () =>  {
         const roomId = splitString[8].slice(0, -2)
         console.log('what is roomId', roomId)
         setState({...state, roomId});
+        // setTimeoutModal(true)
         setTimeout(() => {
             history.push(`/rooms/${roomId}`)
         }, "10000")
@@ -100,9 +102,8 @@ const WaitingRoom = () =>  {
     }
 
     const handleRoomCreate = (username, matchedUser) => {
-        console.log('handleRoomCreate is running')
         const createdRoomTopic = sortUsersAlphabetically([username,matchedUser])
-        console.log('createdRoomTopic is', createdRoomTopic)
+        console.log('createdRoomTopic inside handleRoomCreate', createdRoomTopic)
         const selectedRoom = {
             room_name: createdRoomTopic, participants: []
         };

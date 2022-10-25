@@ -25,33 +25,37 @@ const StartCodingComponent = () => {
     const [color, setColor] = useState("#3f37db");
 
 
-    const updateWaitingRoomStatus = () => {
-        axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
+    const updateWaitingRoomStatus = async () => {
+        await axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
             in_waiting_room: true
         })
         .then(res => {
-//            console.log('user is in waiting room', res.data)
+           console.log('user updated waiting room status', res.data)
         })
     }
 
     const sendWaitingRoomUsersToRedisCache = () => {
-        axios.get('https://codesquad.onrender.com/users/')
-            .then(res => {
-                    const filteredUsers = res.data.filter(filtered => filtered.profile.in_waiting_room === true)
-                    const allUserNames  = filteredUsers.map(arr => arr.username)
-                    //specifying key we will be using to retrieve these users in Redis with pre-defined pattern to clearly identify key in server
-                    //write users to Redis set
-                    axios.post('https://codesquad.onrender.com/cache/', allUserNames)
-                        .then(res => {
-//                            console.log('into redis', res.data)
-                        })
-                        //get all users who aren't the current user
-                        axios(config)
-                        .then(res => {
-                            console.log('online users', res.data.elements)
-                            availableOnlineUsers.current = res.data.elements
-                            console.log('availusers in startcoding is now', availableOnlineUsers.current)
-                        })
+        axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
+            in_waiting_room: true
+        })
+        .then(res => {
+            console.log('Updated user', res.data)
+            axios.get('https://codesquad.onrender.com/users/')
+                .then(res => {
+                        const filteredUsers = res.data.filter(filtered => filtered.profile.in_waiting_room === true)
+                        const allUserNames  = filteredUsers.map(arr => arr.username)
+                        //specifying key we will be using to retrieve these users in Redis with pre-defined pattern to clearly identify key in server
+                        //write users to Redis set
+                        axios.post('https://codesquad.onrender.com/cache/', allUserNames)
+                            .then(res => {
+                            })
+                            axios(config)
+                            .then(res => {
+                                console.log('online users', res.data.elements)
+                                availableOnlineUsers.current = res.data.elements
+                                console.log('availusers in startcoding is now', availableOnlineUsers.current)
+                            })
+                })
             })
         }
     //handle submission
@@ -60,7 +64,7 @@ const StartCodingComponent = () => {
         const nickname = user.username;
         setupTwilio(nickname);
         const rooms = state.rooms;
-        updateWaitingRoomStatus()
+        // updateWaitingRoomStatus()
         setState((state) => {
             return {...state, rooms }
         });
