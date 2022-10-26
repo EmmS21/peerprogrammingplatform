@@ -2,26 +2,26 @@
 # Project Description
 Pair programming platform randomly matching similarly skilled users to solve timed randomly generated programming challenges
 
-# How it works
-Users can signup creating a profile click on a button immediately matching them to another user. This action redirects the user to a code-editor and initiates an audio voice chat between both matched users. These users are then given a predefined period of time to solve randomly retrieved programming challenges.
+# How It Works
+Users can sign up by creating a profile then clicking on a button which immediately matches them to another user. This action redirects the user to a code editor and initiates an audio voice chat between both matched users. These users are then given a predefined period of time to solve randomly retrieved programming challenges.
 
 ### Purpose
-This platform is designed to enable bootcamp students and other learners better prepare for technical interviews through pair programming. The process helps users get more comfortable communicating their logic to other stakeholders while simultaneously improving their problem-solving skills.
+This platform is designed to enable bootcamp students and other learners to better prepare for technical interviews through pair programming. The process helps users get more comfortable communicating their logic to other stakeholders while simultaneously improving their problem-solving skills.
 
 ## Backend
-The backend is built on Django and comprises three apps; accounts, signup and voice_chat
+The backend is built on Django and comprises three apps: accounts, signup, and voice_chat.
 
 ### Accounts: 
-The accounts folder/app comprises of two models; 1 being an extension of the custom Django user model enabling us to store additional information about a user namely their city, country, bio and profile picture. The accounts model also comprises of a model enabling us to create and store programming challenges. These models are registered in admin.py in order for us to interact with these data-tables in the admin panel.
+The accounts folder/app comprises two models: 1 being an extension of the custom Django user model, enabling us to store additional information about a user, namely their city, country, bio and profile picture. The accounts model also comprises a model enabling us to create and store programming challenges. These models are registered in admin.py in order for us to interact with these data tables in the admin panel.
 
 #### Signup: 
-Signup primarily houses the code creating an API to be consumed by our React frontend app. Our API enables us to create a user and edit their profile information. `urls.py` contains all API endpoints related to our API
+Signup primarily houses the code creating an API to be consumed by our React front-end app. Our API enables us to create a user and edit their profile information. `urls.py` contains all API endpoints related to our API.
 
 #### Voice Chat: 
-Voice chat contains all backend code pertaining to our drop in audio chat. The file `urls.py` contains all API end points related to this API.
+Voice chat contains all backend code pertaining to our drop-in audio chat. The file `urls.py` contains all API end points related to this API.
 
 ## FrontEnd
-The front end is built purely on React. All code related to the frontend is contained in the folder; `peerplatform-fe`.
+The front-end is built purely on React. All code related to the front-end is contained in the folder `peerplatform-fe`.
 
 Inside `src` you will find these folders:
 
@@ -35,7 +35,7 @@ This folder currently contains code related to making an axios call to our Djang
 Contains all components created. Components are mostly grouped by their functional purpose on the platform. 
 
 ##### Code: 
-All components related to the coding_editor. Specifically;
+All components related to the coding_editor. Specifically:
 
 `CodeEditor`: A code-editor built using the brace package (Ace Editor). Code written is sent to Judge0, an online code execution system, returning a token which is then resent to Judge0 in order to receive our code's output.
 
@@ -59,15 +59,15 @@ Elements used in some components (Profile and Home Page in particular). (Will be
 Similar to elements, but specifically related to our Headers and Footers
 
 ##### Login_components:
-`Login`: Renders our login page. (Not Yet Done: front end validation)
+`Login`: Renders our login page. (Not yet done: front-end validation)
 
-`LoginActions`: All axios functions pertaining to our login functionality; ie. sending login details to Django, receiving tokens and redirecting users to appropriate point (name should probably be changed)
+`LoginActions`: All Axios functions pertaining to our login functionality, i.e., sending login details to Django, receiving tokens, and redirecting users to appropriate point (name should probably be changed).
 
-`LoginReducer`: Actions to be carried out when user attempts to login ie. set token and set current user
+`LoginReducer`: Actions to be carried out when user attempts to login, i.e., set token and set current user.
 
-`LoginTypes`: Types of actions that are carried out when a user attempts to login
+`LoginTypes`: Types of actions that are carried out when a user attempts to login.
 
-`Logout`: Clearing tokens from localStorage and redirecting user to home page
+`Logout`: Clearing tokens from localStorage and redirecting user to home page.
 
 ##### Navbars
 Navigation bar on profile page (needs to be refactored)
@@ -82,40 +82,40 @@ Components relevant to profile page
 `useModalCustomHook`: Related to the above code
 
 ##### Profile Tabs
-A clockcounter counting down from when users start off the pair programming session. The clock counter. This clock counter runs through 4 phases, controlling the tab selected based
+A clockcounter counting down from when users start off the pair programming session. The clock counter. This clock counter runs through 4 phases, controlling the tab selected.
 
 `ClockCounter`: The clockcounter itself
-`ProfileTab`: The tab showing user what phase of the pair programming session they are in, based on the ClockCounter
+`ProfileTab`: The tab showing the user what phase of the pair programming session they are in, based on the ClockCounter.
 
 ##### Sections
-Includes sections relevant to the home page; ie. Testimonials, Pricing Table sections etc
+Includes sections relevant to the home page, i.e., Testimonials, Pricing Table sections, etc.
 
 ##### SideBar
 SideBar shown on home page
 
 ##### Signup Components
-Components relevant to rendering signup page (CountryList is not currently in use - this was supposed to enable users to select their country from a list of countries- this might not be useful for the platform overall)
+Components relevant to rendering the signup page (CountryList is not currently in use - this was supposed to enable users to select their country from a list of countries - this might not be useful for the platform overall.)
 
 ### Context:
 
 ##### AuthContext:
 - Passes down props to multiple components
-- Axios function to login user, Axios function to refresh tokens, Axios function to carry out `PUT` request to update user profile (need to look at this again), axios function to log user off and Axios function to make a `GET` request to retrieve a random programming challenge from database
+- Axios function to login user, Axios function to refresh tokens, Axios function to carry out `PUT` request to update user profile (need to look at this again), Axios function to log user off and Axios function to make a `GET` request to retrieve a random programming challenge from the database.
 
 ##### RoomContextProvider:
 - Initializing states related to audio drop in chat (work in progress).
 
 ### Hooks:
-- (Work in Progress- related to audio drop in chat)
+- (Work in Progress - related to audio drop in chat)
 
 ### Layouts:
 More layouts related to Home page
 
 ### Routes:
-Defining protected routes for Profile page (should include code-editor)
+Defining protected routes for Profile page (should include code editor)
 
 ### Utils:
-Defining private routes and other routes (ie. AppRoute). Also other files related to access tokens and scroll effects
+Defining private routes and other routes (i.e. AppRoute). Also other files related to access tokens and scroll effects.
 
 ### Views
 `Home`: renders home page
@@ -135,13 +135,13 @@ Defining private routes and other routes (ie. AppRoute). Also other files relate
 # Technologies/Frameworks
 Built using: Django and React
 
-Django Dependencies: `requirements.txt` (Let me know if there are packages not included in requirements.txt)
+Django Dependencies: `requirements.txt` (Let me know if there are packages not included in requirements.txt.)
 
 # How to run
-clone and run the following commands. You will need to install ngrok to interact with Twilio Programming Voice API
+Clone and run the following commands. You will need to install ngrok to interact with Twilio Programming Voice API.
 With ngrok specifically, you will need to expose the server to ngrok by running ngrok http <portName>. 
 
-- project is contained inside folder peerplatform (remember to cd into peerplatform - will rectify this issue)
+- project is contained inside folder peerplatform (remember to cd into peerplatform - will rectify this issue.)
 - https://ngrok.com/
 - What is ngrok? -> 'Ngrok is a cross-platform application that exposes local server ports to the Internet.'
 
