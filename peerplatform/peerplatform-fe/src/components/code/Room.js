@@ -14,26 +14,26 @@ const Room = ({room}) => {
     const [call, setCall] = useState();
     const {device, nickname} = state;
     const { user, logOutUser} = useContext(AuthContext)
-    const roomName = state.selectedRoom.room_name;
+    // const roomName = state.selectedRoom.room_name;
 
     // console.log(`...device:${state.device}, roomName:${roomName}, nick:${nickname}...`)
 
 
-   useEffect(() => {
-       const params = {
-           roomName: roomName, participantLabel: nickname
-       };
-       console.log('participants are:', state.selectedRoom.participants)
-       if (!call) {
-           const callPromise = device.connect({ params });
-           callPromise.then((call) => {
-               setCall(call);
-           });
-       }
-       if (!state.selectedRoom.participants.includes(nickname)) {
-           state.selectedRoom.participants.push(nickname);
-       }
-   }, [device, roomName, nickname, room, call]);
+//    useEffect(() => {
+// //        const params = {
+// //            roomName: roomName, participantLabel: nickname
+// //        };
+// //        console.log('participants are:', state.selectedRoom.participants)
+// //        if (!call) {
+// //            const callPromise = device.connect({ params });
+// //            callPromise.then((call) => {
+// //                setCall(call);
+// //            });
+// //        }
+// //        if (!state.selectedRoom.participants.includes(nickname)) {
+// //            state.selectedRoom.participants.push(nickname);
+// //        }
+//    }, [device, roomName, nickname, room, call]);
     const handleLeaveRoom = () => {
         call.disconnect();
         history.push('/rooms');

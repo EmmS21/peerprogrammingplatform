@@ -19,23 +19,16 @@ const WaitingRoom = () =>  {
             config, authTokens,
             receiveWebSocketData
         } = useContext(AuthContext)
-    const [usersInState, setUsersInState] = useState('')
     const [websocketVal, setWebSocketVal] = useState('')
     const [matchedInState, setMatchedInState] = useState('')
     // const [timeoutModal, setTimeoutModal] = useState(false)
-    console.log('what is global var', secondCounter)
 
-    const contentStyle = {
-        height: '80px',
-        color: '#fff',
-        lineHeight: '80px',
-        textAlign: 'center',
-        background: '#364d79',
-    };
+    useEffect(() => {
+        createTwilioConference(user.username, matchedInState)
+    },[])
 
     useEffect((() => {
         console.log('how many times is useEffect running')
-        //connecting websocket
         WebSocketInstance.connect()
         const username = user.username
         const matchedUser = availableOnlineUsers.current.filter(user =>
@@ -51,9 +44,7 @@ const WaitingRoom = () =>  {
         return [...str].sort((a, b) => a.localeCompare(b)).join("");
       }
 
-    //new createRoomHandler without having to pass in data
-    function createRoomHandler(username, matchedUser, roomId){
-        console.log('createRoomHandler triggered')
+    function createTwilioConference(username, matchedUser){
         const pairedUsers ={}
         pairedUsers['roomName'] = sortUsersAlphabetically([username,matchedUser])
         pairedUsers['participantLabel'] = sortUsersAlphabetically([username,matchedUser])
@@ -61,13 +52,10 @@ const WaitingRoom = () =>  {
         pairedUsers['matchedUser'] = matchedUser
         axios.post('https://codesquad.onrender.com/voice_chat/rooms',pairedUsers)
             .then(res =>{
-                console.log('axios hit', res.data)
+                console.log('twilio call created', res.data)
             })
-        receiveWebSocketData(matchedUser, roomId).then( (res) =>
-                                                    { redirectMatchedUser(JSON.parse(res))
-                                                      setWebSocketVal(res)
-                                                    })
     }
+
     function redirectMatchedUser(matchedID){
         if(matchedID) {
             console.log('incrementing secondCounter')
@@ -75,19 +63,11 @@ const WaitingRoom = () =>  {
         console.log(`****secondCounter ${secondCounter}****`)
         console.log('received', matchedID)
         const splitString = matchedID.text.split(' ')
-        const userID = splitString[6].slice(0, -1).split('"').join('')
-        const userid = String(user.user_id)
         const roomId = splitString[8].slice(0, -2)
-        console.log('what is roomId', roomId)
         setState({...state, roomId});
-        // setTimeoutModal(true)
         setTimeout(() => {
             history.push(`/rooms/${roomId}`)
         }, "10000")
-        // history.push(`/rooms/${roomId}`)
-        // if(secondCounter >= 1){
-        //     //resend before redirecting
-        // }
     }
 
     function deleteMatchedUsersRedis(username, matchedUser){
@@ -112,9 +92,10 @@ const WaitingRoom = () =>  {
         const rooms = state.rooms; 
         const roomId = [username,matchedUser] 
         setState({...state, rooms, selectedRoom});
-
-
-        createRoomHandler(username, matchedUser, roomId)
+        receiveWebSocketData(matchedUser, roomId).then( (res) =>
+                                                    { redirectMatchedUser(JSON.parse(res))
+                                                      setWebSocketVal(res)
+                                                    })
     }
 
 

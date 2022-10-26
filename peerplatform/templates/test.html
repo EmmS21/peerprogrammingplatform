@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <title>Test</title>
+  </head>
+  <body>
+    <h2>Twilio Test</h2>
+    <br />
+  </body>
+  <script>
+    const setupTwilio = (nickname) => {
+        fetch(`https://codesquad.onrender.com/voice_chat/token/${nickname}`)
+        .then(response => response.json())
+        .then(data => {
+            // setup device
+            const twilioToken = JSON.parse(data).token;
+            const device = new Device(twilioToken);
+            device.updateOptions(twilioToken, {
+                codecPreferences: ['opus', 'pcmu'],
+                fakeLocalDTMF: true,
+                maxAverageBitrate: 16000,
+                maxCallSignalingTimeoutMs: 30000
+            });
+            device.on('error', (device) => {
+                console.log("error: ", device)
+            });
+            setState({...state, device, twilioToken, nickname})
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+    };
+  </script>
+</html>
