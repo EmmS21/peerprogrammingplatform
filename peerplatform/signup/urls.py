@@ -4,7 +4,7 @@ from rest_framework import routers
 from . import views
 from rest_framework_simplejwt.views import (TokenRefreshView, TokenVerifyView)
 from .serializers import CustomTokenObtainPairView
-from .views import ProgrammingChallengeView, send_push, CacheView
+from .views import ProgrammingChallengeView, send_push, CacheView, usernames_to_room_id
 from django.conf import settings
 from django.conf.urls.static import static
 from .api import RegisterApi
@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/register', RegisterApi.as_view()),
     path('update_profile/<int:pk>/', views.UpdateProfileView.as_view(), name='update_profile'),
     path('update_active/<int:pk>/', views.UpdateProfileActive.as_view(), name='update_activity'),
+    path('get_room/', usernames_to_room_id, name='get room id'),
     path('voice_chat/', include('voice_chat.urls')),
     path('payments/', include('payments.urls')),
     path('cache/', include('redisCache.urls')),

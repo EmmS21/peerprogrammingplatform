@@ -39,7 +39,7 @@ const StartCodingComponent = () => {
             in_waiting_room: true
         })
         .then(res => {
-            console.log('Updated user', res.data)
+            // console.log('Updated user', res.data)
             axios.get('https://codesquad.onrender.com/users/')
                 .then(res => {
                         const filteredUsers = res.data.filter(filtered => filtered.profile.in_waiting_room === true)
@@ -51,9 +51,9 @@ const StartCodingComponent = () => {
                             })
                             axios(config)
                             .then(res => {
-                                console.log('online users', res.data.elements)
+                                // console.log('online users', res.data.elements)
                                 availableOnlineUsers.current = res.data.elements
-                                console.log('availusers in startcoding is now', availableOnlineUsers.current)
+                                // console.log('availusers in startcoding is now', availableOnlineUsers.current)
                             })
                 })
             })
@@ -97,7 +97,7 @@ const StartCodingComponent = () => {
             device.on('error', (device) => {
                 console.log("error: ", device)
             });
-            setState({... state, device, twilioToken, nickname})
+            setState({...state, device, twilioToken, nickname})
         })
         .catch((error) => {
             console.log(error)

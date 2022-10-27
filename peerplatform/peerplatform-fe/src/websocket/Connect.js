@@ -15,8 +15,8 @@ class WebSocketService {
     connect() {
         const args = JSON.parse(localStorage.getItem('authTokens'))
         const queryString = args.refresh
-        const path = `wss://codesquad.onrender.com/connect/testing/?${queryString}`;
-        // const path = `ws://127.0.0.1:8000/connect/testing/?${queryString}`;
+        // const path = `wss://codesquad.onrender.com/connect/testing/?${queryString}`;
+        const path = `ws://127.0.0.1:8000/connect/testing/?${queryString}`;
         this.socketRef = new WebSocket(path);
         this.socketRef.onopen = (data) => {
             console.log('WebSocket open');
@@ -26,12 +26,13 @@ class WebSocketService {
         };
     }
     async sendData(data){
+        console.log('what is in data', data)
         if(this.socketRef.readyState !== WebSocket.OPEN) {
             console.log('we are still waiting')
             this.socketRef.onopen = () => this.socketRef.send(data);
             const socketResp = await new Promise((resolve, reject) => {
                 this.socketRef.onmessage = e => {
-                console.log('***********receiving data*************')
+                console.log('***********receiving data*************', e.data)
                 resolve(e.data)
                 }
             })

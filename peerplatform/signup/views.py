@@ -134,13 +134,18 @@ class ProgrammingChallengeView(ReadOnlyModelViewSet):
     def get_list(self, request):
         pass
 
-# class GroupViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows groups to be viewed or edited.
-#     """
-#     queryset = Group.objects.all()
-#     serializer_class = GroupSerializer
-#     # permission_classes = [permissions.IsAuthenticated]
+@csrf_exempt
+@api_view(('POST',))
+def usernames_to_room_id(request):
+    received = request.data['data'].split(",")
+    user_one = received[0]
+    user_two =  received[1]
+    queried_id_user_one = int((get_user_id(user_one)))
+    queried_id_user_two = int((get_user_id(user_two)))
+    min_id = min(queried_id_user_one, queried_id_user_two)
+    max_id = max(queried_id_user_one, queried_id_user_two)
+    room_id = int('{}{}'.format(min_id, max_id))
+    return Response(room_id)
 
 @require_POST
 @csrf_exempt
@@ -162,13 +167,8 @@ def send_push(request):
     except TypeError:
         return JsonResponse(status=500, data={"message": "An error occurred"})
 
-# @require_POST
-# @csrf_exempt
-# def send_push_to_two_users(firstUser, secondUserID, title, body, url):
-#     secondUser = User.objects.get(id=secondUserID)
-#     payload = {"head": title, "body": body, "url": url}
-#     send_user_notification(user=firstUser, payload=payload, ttl=1000)
-#     send_user_notification(user=secondUser, payload=payload, ttl=1000)
-
-# def testing(request):
-#     return render(request, 'index.html', {'user': request.user.get_username()})
+def get_user_id(username):
+    try:
+        return User.objects.get(username=username).pk
+    except User.DoesNotExist:
+        return 'User does not exist'

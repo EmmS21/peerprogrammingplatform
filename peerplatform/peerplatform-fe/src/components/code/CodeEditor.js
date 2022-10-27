@@ -18,34 +18,41 @@ import 'brace/theme/monokai';
 //import tabs components
 import ProfileTabs from '../profile_tabs/ProfileTab';
 import "antd/dist/antd.css";
-import { Steps, Result, Button, Spin } from 'antd'
+import { Steps, Result, 
+         Button, Spin, 
+         Tabs } from 'antd'
 import { AudioOutlined, MessageOutlined, 
         CloseOutlined, CodeOutlined,
         SolutionOutlined } from '@ant-design/icons';
 import ClockCounter from '../profile_tabs/ClockCounter';
-import { Tabs } from 'antd';
 import ProgrammingChallenge from './ProgrammingChallenges';
 import AuthContext from '../../context/AuthContext';
 import 'semantic-ui-css/semantic.min.css'
-import { Card, Icon, Image, Header, Menu } from 'semantic-ui-react';
-
+import { Icon, Header, 
+         Menu, Button as button,
+         Modal, Label} from 'semantic-ui-react';
+import { useGlobalState } from '../../context/RoomContextProvider';
 
 
 //change language based on map
-const CodeEditor = () => {
+const CodeEditor = (props) => {
     const [currentLanguage, setCurrentLanguage] = useState("");
     const [token, setToken] = useState("");
     const output = null;
     const { Step } = Steps;
     const { TabPane } = Tabs;
-    const { retrieveChallenge, challengeInState, sendCodeJudge0, spinnerOn, setSpinnerOn, resp, setResp } = useContext(AuthContext)
+    const { sendCodeJudge0, spinnerOn, 
+            setSpinnerOn, resp, setResp } = useContext(AuthContext)
     const [visible, setVisible] = useState(false);
     const selectLang = useRef(0);
     const [sidebar, setSidebar] = useState(true)
     let { user, logOutUser } = useContext(AuthContext)
     let photoURL = user.photo.split('"').join('');
     let baseURL = "https://codesquad.onrender.com/media/";
-
+    const [open, setOpen] = useState(true)
+    const [state] = useGlobalState();
+    const matchedUser = state.matchedUser
+    
     //change language in select options
     //map language id to language
     const languageMap = {
@@ -94,18 +101,22 @@ const CodeEditor = () => {
     const [index, setIndex] = useState(1);
     const [timer, setTimer] = useState(array[0]);
 
-
+    
     //event handler to change clock timer based on index
     const handleComplete = () => {
         setIndex(index + 1);
         setTimer(array[index]);
         setKey(key+1)
     }
+    
 
         return (
         <>
         <Menu pointing widths={ 10 } size={"tiny"} style={{ marginTop:0 }}>
             <Menu.Item>
+                <Label image>
+                    Driver: 
+                </Label>
                 {
                     index < 4 ?
                         <div>Call connected

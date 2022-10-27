@@ -39,36 +39,31 @@ class PracticeConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def websocket_receive(self, event):
+        print('what is event', event)
         received = event["text"]
-        invite_data = received.split()
-        matched_user = invite_data[0]
-        room_id_string = invite_data[1].split(',')
-        print('what is room_id_string', room_id_string)
-        print('what is matched user', matched_user)
-        queried_id_username = int((await self.get_user_id(room_id_string[0])))
-        queried_id_matched = int((await self.get_user_id(room_id_string[1])))
-        print('who is sending data', room_id_string[0])
-        min_id = min(queried_id_username, queried_id_matched)
-        max_id = max(queried_id_matched, queried_id_username)
-        room_id = int('{}{}'.format(min_id, max_id))
-        username = invite_data[2]
-        user_id = str(await self.get_user(matched_user))
-        my_response = {
-            "message": {'matched_user': matched_user,
-                        'username': username,
-                        'user_id': user_id,
-                        'room_id': room_id
-                        }
+        split_event = received.split(",")
+        selection = split_event[0]
+        print('selection', selection)
+        if selection == 'selection':
+            queried_id = int((await self.get_user_id(split_event[1])))
+            current_user_id = int((await self.get_user_id(split_event[2])))
+            list_to_send = [queried_id, current_user_id]
+            sending = random.choice([split_event[1], split_event[2]])
+        else:
+            list_to_send = [1]
+            sending = 'placeholder'
+        message = {
+            "data": sending
         }
         sleep(1)
-        await self.channel_layer.group_send(
-            '{}'.format(user_id),
-            {
-                "type": "send.message",
-                "message": json.dumps(my_response),
-                # "matched_user": matched_user,
-                "username": username
-            })
+        for user_id in list_to_send:
+            await self.channel_layer.group_send(
+                '{}'.format(user_id),
+                {
+                    "type": "send.message",
+                    "message": json.dumps(message),
+                    "username": received[2]
+                })
 
     async def websocket_disconnect(self, event):
         print("who is disconnecting", self.scope['user'])

@@ -16,29 +16,29 @@ const WaitingRoom = () =>  {
     const { user, logOutUser,
             updateProfile, pairUsers,
             allOnlineUsers, availableOnlineUsers,
-            config, authTokens,
-            receiveWebSocketData
+            config, authTokens
         } = useContext(AuthContext)
     const [websocketVal, setWebSocketVal] = useState('')
     const [matchedInState, setMatchedInState] = useState('')
-    // const [timeoutModal, setTimeoutModal] = useState(false)
-
-    useEffect(() => {
-        createTwilioConference(user.username, matchedInState)
-    },[])
 
     useEffect((() => {
-        console.log('how many times is useEffect running')
-        WebSocketInstance.connect()
+        // WebSocketInstance.connect()
         const username = user.username
         const matchedUser = availableOnlineUsers.current.filter(user =>
                                                                 user !== username && user !== 'null'
                                                                 && user !== 'undefined'
                                                                 ).pop()
+        let sending = {}
+        sending.data = username+','+matchedUser
+        createTwilioConference(user.username, matchedUser)
+
+        axios.post('http://127.0.0.1:8000/get_room/', sending).then((res =>{
+            redirectMatchedUser(res.data)
+        }))
+        //don't need this in state
         setMatchedInState(matchedUser)
-        setState({...state, username, matchedUser});        
         handleRoomCreate(username, matchedUser)
-    }), [websocketVal])
+    }), [])
 
     function sortUsersAlphabetically(str) {
         return [...str].sort((a, b) => a.localeCompare(b)).join("");
@@ -56,14 +56,7 @@ const WaitingRoom = () =>  {
             })
     }
 
-    function redirectMatchedUser(matchedID){
-        if(matchedID) {
-            console.log('incrementing secondCounter')
-            secondCounter ++ }
-        console.log(`****secondCounter ${secondCounter}****`)
-        console.log('received', matchedID)
-        const splitString = matchedID.text.split(' ')
-        const roomId = splitString[8].slice(0, -2)
+    function redirectMatchedUser(roomId){
         setState({...state, roomId});
         setTimeout(() => {
             history.push(`/rooms/${roomId}`)
@@ -83,22 +76,16 @@ const WaitingRoom = () =>  {
 
     const handleRoomCreate = (username, matchedUser) => {
         const createdRoomTopic = sortUsersAlphabetically([username,matchedUser])
-        console.log('createdRoomTopic inside handleRoomCreate', createdRoomTopic)
         const selectedRoom = {
             room_name: createdRoomTopic, participants: []
         };
         selectedRoom.participants.push(username)
         selectedRoom.participants.push(matchedUser)
         const rooms = state.rooms; 
-        const roomId = [username,matchedUser] 
         setState({...state, rooms, selectedRoom});
-        receiveWebSocketData(matchedUser, roomId).then( (res) =>
-                                                    { redirectMatchedUser(JSON.parse(res))
-                                                      setWebSocketVal(res)
-                                                    })
+        setState({...state, username, 'matchedUser': matchedUser});
+        console.log(`!!!!global state: ${state.matchedUser}`)
     }
-
-
 
     return (
     <>

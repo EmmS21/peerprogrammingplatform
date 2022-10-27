@@ -279,9 +279,12 @@ export const AuthProvider = ({children}) => {
             })
         };
     
-    async function receiveWebSocketData(matchedUser, roomId){
-        console.log(`sending data ${matchedUser}, ${roomId}`)
-        return await WebSocketInstance.sendData(matchedUser+' '+roomId+' '+user.username)
+    async function receiveWebSocketData(data){
+        return await WebSocketInstance.sendData(data)
+        // console.log(`data: ${data}`)
+        // return !selectDriver ? 
+        //     await WebSocketInstance.sendData(matchedUser+' '+roomId+' '+user.username)
+        //     : await WebSocketInstance.sendData(selectDriver)
     };
 
 
