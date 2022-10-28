@@ -25,21 +25,23 @@ class WebSocketService {
             console.log(e);
         };
     }
-    async sendData(data){
+    sendData(data){
         console.log(`^^^^what are we sending: ${data}^^^^`)
         if(this.socketRef.readyState !== WebSocket.OPEN) {
             console.log('we are still waiting')
-            this.socketRef.onopen = () => this.socketRef.send(data);
-            const socketResp = await new Promise((resolve, reject) => {
-                this.socketRef.onmessage = e => {
-                // console.log('***********receiving data*************', e.data)
-                resolve(e.data)
-                }
-            })
-            return socketResp;
-        }
-//        return socketResp;
+            return this.socketRef.onopen = () => this.socketRef.send(data);
+        } 
+        return this.socketRef.send(data);
     };
+    async response(){
+        const socketResp = await new Promise((resolve, reject) => {
+            this.socketRef.onmessage = e => {
+            console.log('receiving this', e.data)
+            resolve(e.data)
+            }
+        })
+        return socketResp;
+    }
     disconnect(){
         this.socketRef.onclose = () =>{
             console.log('disconnecting from websocket')

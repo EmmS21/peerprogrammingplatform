@@ -17,40 +17,36 @@ const WaitingRoom = () =>  {
             updateProfile, pairUsers,
             allOnlineUsers, availableOnlineUsers,
             config, authTokens,
-            matchedUserState
+            receiveWebSocketData, matchedUserState,
+            sortUsersAlphabetically
         } = useContext(AuthContext)
     const [websocketVal, setWebSocketVal] = useState('')
-    const [matchedInState, setMatchedInState] = useState('')
 
     useEffect((() => {
         // WebSocketInstance.connect()
         const username = user.username
-        const matchedUser = availableOnlineUsers.current.filter(function(user){
-            return user !== username && user !== '' 
-                && user !== 'null' && user !== 'undefined'
-        }).pop()
+        const matchedUser = availableOnlineUsers.current.filter(user =>
+            user !== username && user !== 'null'
+                                                                && user !== 'undefined'
+                                                                ).pop()
         let sending = {}
-        console.log('matched user', matchedUser)
         sending.data = username+','+matchedUser
-        // console.log(`sending data, ${JSON.stringify(sending)}`)
-        matchedUserState.current = matchedUser
-
+        console.log('sending', sending)
         axios.post('http://127.0.0.1:8000/get_room/', sending).then((res =>{
             redirectMatchedUser(res.data)
         }))
-
-        createTwilioConference(user.username, matchedUserState.current)
         //don't need this in state
+        matchedUserState.current = matchedUser
+        console.log('matched in state', matchedUserState.current)
+        setState({...state, username});
+        createTwilioConference(user.username, matchedUserState.current)
         handleRoomCreate(username, matchedUserState.current)
     }), [])
 
-    function sortUsersAlphabetically(str) {
-        return [...str].sort((a, b) => a.localeCompare(b)).join("");
-      }
 
     function createTwilioConference(username, matchedUser){
         const pairedUsers ={}
-        pairedUsers['roomName'] = sortUsersAlphabetically([username,matchedUser])
+        pairedUsers['roomName'] = sortUsersAlphabetically([username,matchedUser]).join('')
         pairedUsers['participantLabel'] = sortUsersAlphabetically([username,matchedUser])
         pairedUsers['currUser'] = username
         pairedUsers['matchedUser'] = matchedUser
@@ -79,15 +75,23 @@ const WaitingRoom = () =>  {
     }
 
     const handleRoomCreate = (username, matchedUser) => {
-        const createdRoomTopic = sortUsersAlphabetically([username,matchedUser])
+        const createdRoomTopic = sortUsersAlphabetically([username,matchedUser]).join('')
+        console.log('createdRoomTopic inside handleRoomCreate', createdRoomTopic)
         const selectedRoom = {
             room_name: createdRoomTopic, participants: []
         };
         selectedRoom.participants.push(username)
         selectedRoom.participants.push(matchedUser)
         const rooms = state.rooms; 
+        const roomId = [username,matchedUser] 
         setState({...state, rooms, selectedRoom});
+        // receiveWebSocketData(matchedUser, roomId).then( (res) =>
+        //                                             { redirectMatchedUser(JSON.parse(res))
+        //                                               setWebSocketVal(res)
+        //                                             })
     }
+
+
 
     return (
     <>

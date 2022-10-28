@@ -13,7 +13,7 @@ const Room = ({room}) => {
     const {device, nickname} = state;
     const { user, logOutUser, 
             receiveWebSocketData, matchedUserState,
-            driverInState } = useContext(AuthContext)
+            driverInState, sortUsersAlphabetically } = useContext(AuthContext)
     // const roomName = state.selectedRoom.room_name;
     console.log(`!!!!!matched: ${matchedUserState.current}!!!!!`)
     // const showModal = () => {
@@ -28,10 +28,9 @@ const Room = ({room}) => {
 
     
     function selectDriver() {
-        const dataToBeSent = 'selection'+','+matchedUserState.current+','+user.username
-        receiveWebSocketData(dataToBeSent).then( (res) =>{
-            driverInState.current = JSON.parse(JSON.parse(res)['text'])['data'] 
-        })
+        console.log('matched', matchedUserState.current)
+        driverInState.current = sortUsersAlphabetically([user.username, matchedUserState.current])[0]
+        console.log('driver in state', driverInState.current)
     }
 
 

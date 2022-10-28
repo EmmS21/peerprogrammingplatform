@@ -289,6 +289,14 @@ export const AuthProvider = ({children}) => {
         //     : await WebSocketInstance.sendData(selectDriver)
     };
 
+    // async function sendReceiveCode(data){
+    //     return await WebSocketInstance.sendDirect(data)
+    // }
+
+    function sortUsersAlphabetically(str) {
+        return [...str].sort();
+    }
+
 
     let contextData = {
         user:user,
@@ -336,6 +344,8 @@ export const AuthProvider = ({children}) => {
         updateProfilePic: updateProfilePic,
         receiveWebSocketData: receiveWebSocketData,
         driverInState: driverInState,
+        // sendReceiveCode: sendReceiveCode,
+        sortUsersAlphabetically: sortUsersAlphabetically,
     }
 
 

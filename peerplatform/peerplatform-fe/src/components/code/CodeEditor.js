@@ -32,6 +32,8 @@ import { Icon, Header,
          Menu, Button as button,
          Modal, Label} from 'semantic-ui-react';
 import { useGlobalState } from '../../context/RoomContextProvider';
+import WebSocketInstance from '../../websocket/Connect';
+
 
 
 //change language based on map
@@ -41,18 +43,23 @@ const CodeEditor = () => {
     const output = null;
     const { Step } = Steps;
     const { TabPane } = Tabs;
-    const { sendCodeJudge0, spinnerOn, 
-            setSpinnerOn, resp, setResp } = useContext(AuthContext)
     const [visible, setVisible] = useState(false);
     const selectLang = useRef(0);
     const [sidebar, setSidebar] = useState(true)
     let { user, logOutUser, 
-          matchedUserState, driverInState } = useContext(AuthContext)
+          matchedUserState, driverInState,
+          receiveWebSocketData, sortUsersAlphabetically,
+          sendCodeJudge0, spinnerOn, 
+          setSpinnerOn, resp, 
+          setResp
+         } = useContext(AuthContext)
     let photoURL = user.photo.split('"').join('');
     let baseURL = "https://codesquad.onrender.com/media/";
     const [open, setOpen] = useState(true)
     const [state] = useGlobalState();
-    
+    const [query, setQuery] = useState('');
+    const [displayCode, setDisplayCode] = useState('');
+    const received = useRef([]);
     // useEffect(() => {
     //     selectDriver()
     // }, [])
@@ -86,7 +93,6 @@ const CodeEditor = () => {
     const changeLanguageHandler = (e) => {
         selectLang.current = e.target.value
         setCurrentLanguage(languageMap[selectLang.current])
-        
     }
     //handle submission
     const makeSubmission = (e) => {
@@ -112,7 +118,30 @@ const CodeEditor = () => {
         setTimer(array[index]);
         setKey(key+1)
     }
-    
+
+    useEffect((() => {
+        WebSocketInstance.response().then((res) => {
+            console.log(`!!! received: ${res} !!!`)
+            const temp = res
+            const tempObj = temp ? JSON.parse(temp)['text'] : null
+            received.current = temp ? JSON.parse(tempObj)['data'] : null
+        })
+        console.log('in state', received.current)
+    }))
+
+    useEffect((() => {
+        const codeOutput = setTimeout(() => onChange(query), 1500);
+        return () => clearTimeout(codeOutput)
+    }), [query])
+
+
+    function onChange(code){
+        const dataToBeSent = user.username+','+matchedUserState.current+','+code
+        receiveWebSocketData(dataToBeSent)
+        // .then( (res) =>{
+        //     console.log(`!!! received: ${res} !!!`)
+        // })
+    }
 
         return (
         <>
@@ -190,16 +219,36 @@ const CodeEditor = () => {
                     <option value="62">Java</option>
                 </select>
             </div>
+            {
+                driverInState.current === user.username ?
             <div className="my-0" style={{ marginLeft: !visible && !sidebar ? -200 : visible && !sidebar ? -100 : sidebar && !visible ? -200 : -100 }}>
                 <AceEditor
                     mode={currentLanguage}
                     theme="monokai"
                     name="code_editor"
+                    onChange={setQuery}
+                    readOnly={driverInState.current === user.username ? false : true}
                     editorProps={{ $blockScrolling: true }}
                     enableLiveAutocompletion={true}
                     width={!visible && !sidebar ? 1200 : visible && !sidebar ? 700 : sidebar && !visible ? 900 : 600}
                 />
             </div>
+            :
+            <div className="my-0" style={{ marginLeft: !visible && !sidebar ? -200 : visible && !sidebar ? -100 : sidebar && !visible ? -200 : -100 }}>
+                <AceEditor
+                    mode={currentLanguage}
+                    theme="monokai"
+                    name="code_editor"
+                    value={ received.current }
+                    onChange={setQuery}
+                    readOnly={driverInState.current === user.username ? false : true}
+                    editorProps={{ $blockScrolling: true }}
+                    enableLiveAutocompletion={true}
+                    width={!visible && !sidebar ? 1200 : visible && !sidebar ? 700 : sidebar && !visible ? 900 : 600}
+                />
+            </div>
+
+            }
            </div>
            {
             visible ? (

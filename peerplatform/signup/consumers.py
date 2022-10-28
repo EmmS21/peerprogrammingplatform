@@ -42,31 +42,25 @@ class PracticeConsumer(AsyncWebsocketConsumer):
         print('what is event', event)
         received = event["text"]
         split_event = received.split(",")
-        selection = split_event[0]
-        print('selection', selection)
-        if selection == 'selection':
-            queried_id = int((await self.get_user_id(split_event[1])))
-            current_user_id = int((await self.get_user_id(split_event[2])))
-            list_to_send = [queried_id, current_user_id]
-            unsorted_sending = [split_event[1], split_event[2]]
-            unsorted_sending.sort()
-            sending = unsorted_sending[0]
-            print('sorted array', sending)
-        else:
-            list_to_send = [1]
-            sending = 'placeholder'
+        print('split event', split_event)
+        current_id = int((await self.get_user_id(split_event[0])))
+        queried_id = int((await self.get_user_id(split_event[1])))
+        data_to_be_sent = split_event[2]
+        list_to_send = [queried_id, current_id]
+        print('we are sending', data_to_be_sent)
+        print('list', list_to_send)
         message = {
-            "data": sending
+            "data": data_to_be_sent
         }
+        print('list', list_to_send)
         sleep(1)
-        for user_id in list_to_send:
-            await self.channel_layer.group_send(
-                '{}'.format(user_id),
-                {
-                    "type": "send.message",
-                    "message": json.dumps(message),
-                    "username": received[2]
-                })
+        await self.channel_layer.group_send(
+            '{}'.format(46),
+            {
+                "type": "send.message",
+                "message": json.dumps(message),
+                "username": 46
+            })
 
     async def websocket_disconnect(self, event):
         print("who is disconnecting", self.scope['user'])
