@@ -45,6 +45,8 @@ export const AuthProvider = ({children}) => {
     const [ allOnlineUsers, setAllOnlineUsers ] = useState([])
     const [loginError, setLoginError] = useState('');
     const availableOnlineUsers = useRef([])
+    const matchedUserState = useRef([])
+    const driverInState = useRef([])
     const profileURL = 'https://codesquad.onrender.com/update_profile/' 
 
 
@@ -329,9 +331,11 @@ export const AuthProvider = ({children}) => {
         allOnlineUsers: allOnlineUsers,
         setAllOnlineUsers: setAllOnlineUsers,
         availableOnlineUsers: availableOnlineUsers,
+        matchedUserState: matchedUserState,
         loginError : loginError,
         updateProfilePic: updateProfilePic,
         receiveWebSocketData: receiveWebSocketData,
+        driverInState: driverInState,
     }
 
 

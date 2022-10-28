@@ -35,7 +35,7 @@ import { useGlobalState } from '../../context/RoomContextProvider';
 
 
 //change language based on map
-const CodeEditor = (props) => {
+const CodeEditor = () => {
     const [currentLanguage, setCurrentLanguage] = useState("");
     const [token, setToken] = useState("");
     const output = null;
@@ -46,13 +46,17 @@ const CodeEditor = (props) => {
     const [visible, setVisible] = useState(false);
     const selectLang = useRef(0);
     const [sidebar, setSidebar] = useState(true)
-    let { user, logOutUser } = useContext(AuthContext)
+    let { user, logOutUser, 
+          matchedUserState, driverInState } = useContext(AuthContext)
     let photoURL = user.photo.split('"').join('');
     let baseURL = "https://codesquad.onrender.com/media/";
     const [open, setOpen] = useState(true)
     const [state] = useGlobalState();
-    const matchedUser = state.matchedUser
     
+    // useEffect(() => {
+    //     selectDriver()
+    // }, [])
+
     //change language in select options
     //map language id to language
     const languageMap = {
@@ -112,11 +116,17 @@ const CodeEditor = (props) => {
 
         return (
         <>
-        <Menu pointing widths={ 10 } size={"tiny"} style={{ marginTop:0 }}>
+        <Menu pointing widths={ 5 } size={"tiny"} style={{ marginTop:0 }}>
             <Menu.Item>
-                <Label image>
-                    Driver: 
-                </Label>
+                {
+                    driverInState.current ?
+                        <Label image>
+                            Driver: {driverInState.current}
+                        </Label>
+                        : null
+                }
+            </Menu.Item>
+            <Menu.Item>
                 {
                     index < 4 ?
                         <div>Call connected

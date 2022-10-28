@@ -26,13 +26,13 @@ class WebSocketService {
         };
     }
     async sendData(data){
-        console.log('what is in data', data)
+        console.log(`^^^^what are we sending: ${data}^^^^`)
         if(this.socketRef.readyState !== WebSocket.OPEN) {
             console.log('we are still waiting')
             this.socketRef.onopen = () => this.socketRef.send(data);
             const socketResp = await new Promise((resolve, reject) => {
                 this.socketRef.onmessage = e => {
-                console.log('***********receiving data*************', e.data)
+                // console.log('***********receiving data*************', e.data)
                 resolve(e.data)
                 }
             })

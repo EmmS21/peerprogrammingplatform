@@ -48,7 +48,10 @@ class PracticeConsumer(AsyncWebsocketConsumer):
             queried_id = int((await self.get_user_id(split_event[1])))
             current_user_id = int((await self.get_user_id(split_event[2])))
             list_to_send = [queried_id, current_user_id]
-            sending = random.choice([split_event[1], split_event[2]])
+            unsorted_sending = [split_event[1], split_event[2]]
+            unsorted_sending.sort()
+            sending = unsorted_sending[0]
+            print('sorted array', sending)
         else:
             list_to_send = [1]
             sending = 'placeholder'

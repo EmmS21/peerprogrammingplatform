@@ -10,7 +10,7 @@ const initialState = {
     roomId: '',
     onlineUsers: [],
     username: '',
-    matchedUser: '',
+    driver: '',
 };
 
 const RoomContext = createContext(null);

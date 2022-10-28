@@ -12,11 +12,10 @@ const Room = ({room}) => {
     const [call, setCall] = useState();
     const {device, nickname} = state;
     const { user, logOutUser, 
-            receiveWebSocketData } = useContext(AuthContext)
-    const [driver, setDriver] = useState('');
+            receiveWebSocketData, matchedUserState,
+            driverInState } = useContext(AuthContext)
     // const roomName = state.selectedRoom.room_name;
-    const matchedUser = state.matchedUser;
-   
+    console.log(`!!!!!matched: ${matchedUserState.current}!!!!!`)
     // const showModal = () => {
     //     setOpen(true)
     // }
@@ -28,10 +27,10 @@ const Room = ({room}) => {
     }, [])
 
     
-    function selectDriver(driver) {
-        const dataToBeSent = 'selection'+','+matchedUser+','+user.username
-        receiveWebSocketData(dataToBeSent).then((res) =>{
-            setDriver(JSON.parse(res.data))
+    function selectDriver() {
+        const dataToBeSent = 'selection'+','+matchedUserState.current+','+user.username
+        receiveWebSocketData(dataToBeSent).then( (res) =>{
+            driverInState.current = JSON.parse(JSON.parse(res)['text'])['data'] 
         })
     }
 
@@ -63,7 +62,7 @@ const Room = ({room}) => {
 
     return (
     <>  
-        <CodeEditor driver={driver}/>
+        <CodeEditor />
     </>
     )
 }

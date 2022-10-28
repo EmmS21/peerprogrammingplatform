@@ -16,7 +16,8 @@ const WaitingRoom = () =>  {
     const { user, logOutUser,
             updateProfile, pairUsers,
             allOnlineUsers, availableOnlineUsers,
-            config, authTokens
+            config, authTokens,
+            matchedUserState
         } = useContext(AuthContext)
     const [websocketVal, setWebSocketVal] = useState('')
     const [matchedInState, setMatchedInState] = useState('')
@@ -24,20 +25,23 @@ const WaitingRoom = () =>  {
     useEffect((() => {
         // WebSocketInstance.connect()
         const username = user.username
-        const matchedUser = availableOnlineUsers.current.filter(user =>
-                                                                user !== username && user !== 'null'
-                                                                && user !== 'undefined'
-                                                                ).pop()
+        const matchedUser = availableOnlineUsers.current.filter(function(user){
+            return user !== username && user !== '' 
+                && user !== 'null' && user !== 'undefined'
+        }).pop()
         let sending = {}
+        console.log('matched user', matchedUser)
         sending.data = username+','+matchedUser
-        createTwilioConference(user.username, matchedUser)
+        // console.log(`sending data, ${JSON.stringify(sending)}`)
+        matchedUserState.current = matchedUser
 
         axios.post('http://127.0.0.1:8000/get_room/', sending).then((res =>{
             redirectMatchedUser(res.data)
         }))
+
+        createTwilioConference(user.username, matchedUserState.current)
         //don't need this in state
-        setMatchedInState(matchedUser)
-        handleRoomCreate(username, matchedUser)
+        handleRoomCreate(username, matchedUserState.current)
     }), [])
 
     function sortUsersAlphabetically(str) {
@@ -83,8 +87,6 @@ const WaitingRoom = () =>  {
         selectedRoom.participants.push(matchedUser)
         const rooms = state.rooms; 
         setState({...state, rooms, selectedRoom});
-        setState({...state, username, 'matchedUser': matchedUser});
-        console.log(`!!!!global state: ${state.matchedUser}`)
     }
 
     return (
