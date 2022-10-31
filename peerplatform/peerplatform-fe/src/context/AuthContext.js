@@ -294,7 +294,13 @@ export const AuthProvider = ({children}) => {
     // }
 
     function sortUsersAlphabetically(str) {
-        return [...str].sort();
+        const hours = new Date().getHours()
+        console.log('hours', hours)
+        if(hours % 2 === 0){
+            return [...str].sort();
+        } else {
+            return [...str].sort().reverse();
+        }
     }
 
 

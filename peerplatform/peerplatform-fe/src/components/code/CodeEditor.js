@@ -60,10 +60,7 @@ const CodeEditor = () => {
     const [query, setQuery] = useState('');
     const [displayCode, setDisplayCode] = useState('');
     const received = useRef([]);
-    // useEffect(() => {
-    //     selectDriver()
-    // }, [])
-    console.log('what is in received', received.current)
+    const [rerender, setRerender] = useState(false)
 
     //change language in select options
     //map language id to language
@@ -128,6 +125,7 @@ const CodeEditor = () => {
             console.log('temp is', temp)
             received.current = temp ? temp.data : ''
             console.log(`!!in state: ${received.current}!!`)
+            setRerender(!rerender);
         })
     }))
 
@@ -139,6 +137,7 @@ const CodeEditor = () => {
 
     function onChange(code){
         const dataToBeSent = matchedUserState.current+','+code
+        console.log('matched', matchedUserState.current)
         console.log('sending code', dataToBeSent)
         sendWebSocketData(dataToBeSent)
         // .then( (res) =>{

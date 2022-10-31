@@ -51,9 +51,8 @@ const StartCodingComponent = () => {
                             })
                             axios(config)
                             .then(res => {
-                                // console.log('online users', res.data.elements)
                                 availableOnlineUsers.current = res.data.elements
-                                // console.log('availusers in startcoding is now', availableOnlineUsers.current)
+                                console.log('availusers in startcoding is now', availableOnlineUsers.current)
                             })
                 })
             })

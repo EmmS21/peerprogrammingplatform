@@ -25,10 +25,10 @@ const WaitingRoom = () =>  {
     useEffect((() => {
         // WebSocketInstance.connect()
         const username = user.username
-        const matchedUser = availableOnlineUsers.current.filter(user =>
-            user !== username && user !== 'null'
-                                                                && user !== 'undefined'
-                                                                ).pop()
+        const matchedUser = availableOnlineUsers.current.filter(function(user){
+            return user !== username && user !== '' 
+                && user !== 'null' && user !== 'undefined'
+        }).pop()
         let sending = {}
         sending.data = username+','+matchedUser
         console.log('sending', sending)
