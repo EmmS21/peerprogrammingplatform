@@ -43,23 +43,21 @@ class PracticeConsumer(AsyncWebsocketConsumer):
         received = event["text"]
         split_event = received.split(",")
         print('split event', split_event)
-        current_id = int((await self.get_user_id(split_event[0])))
-        queried_id = int((await self.get_user_id(split_event[1])))
-        data_to_be_sent = split_event[2]
-        list_to_send = [queried_id, current_id]
+        queried_id = int((await self.get_user_id(split_event[0])))
+        data_to_be_sent = split_event[1]
+        # list_to_send = [queried_id, current_id]
         print('we are sending', data_to_be_sent)
-        print('list', list_to_send)
         message = {
             "data": data_to_be_sent
         }
-        print('list', list_to_send)
+        # print('list', list_to_send)
         sleep(1)
         await self.channel_layer.group_send(
-            '{}'.format(46),
+            '{}'.format(queried_id),
             {
                 "type": "send.message",
                 "message": json.dumps(message),
-                "username": 46
+                "username": queried_id
             })
 
     async def websocket_disconnect(self, event):

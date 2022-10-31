@@ -48,7 +48,7 @@ const CodeEditor = () => {
     const [sidebar, setSidebar] = useState(true)
     let { user, logOutUser, 
           matchedUserState, driverInState,
-          receiveWebSocketData, sortUsersAlphabetically,
+          sendWebSocketData, sortUsersAlphabetically,
           sendCodeJudge0, spinnerOn, 
           setSpinnerOn, resp, 
           setResp
@@ -63,6 +63,7 @@ const CodeEditor = () => {
     // useEffect(() => {
     //     selectDriver()
     // }, [])
+    console.log('what is in received', received.current)
 
     //change language in select options
     //map language id to language
@@ -121,12 +122,13 @@ const CodeEditor = () => {
 
     useEffect((() => {
         WebSocketInstance.response().then((res) => {
-            console.log(`!!! received: ${res} !!!`)
-            const temp = res
-            const tempObj = temp ? JSON.parse(temp)['text'] : null
-            received.current = temp ? JSON.parse(tempObj)['data'] : null
+            console.log('we are inside response method')
+            console.log(`!!! response received: ${JSON.stringify(res)} !!!`)
+            var temp = res ? JSON.parse(res.text) : ''
+            console.log('temp is', temp)
+            received.current = temp ? temp.data : ''
+            console.log(`!!in state: ${received.current}!!`)
         })
-        console.log('in state', received.current)
     }))
 
     useEffect((() => {
@@ -136,8 +138,9 @@ const CodeEditor = () => {
 
 
     function onChange(code){
-        const dataToBeSent = user.username+','+matchedUserState.current+','+code
-        receiveWebSocketData(dataToBeSent)
+        const dataToBeSent = matchedUserState.current+','+code
+        console.log('sending code', dataToBeSent)
+        sendWebSocketData(dataToBeSent)
         // .then( (res) =>{
         //     console.log(`!!! received: ${res} !!!`)
         // })
@@ -239,7 +242,7 @@ const CodeEditor = () => {
                     mode={currentLanguage}
                     theme="monokai"
                     name="code_editor"
-                    value={ received.current }
+                    value={received.current.length ? received.current : ''}
                     onChange={setQuery}
                     readOnly={driverInState.current === user.username ? false : true}
                     editorProps={{ $blockScrolling: true }}

@@ -281,7 +281,7 @@ export const AuthProvider = ({children}) => {
             })
         };
     
-    async function receiveWebSocketData(data){
+    async function sendWebSocketData(data){
         return await WebSocketInstance.sendData(data)
         // console.log(`data: ${data}`)
         // return !selectDriver ? 
@@ -342,7 +342,7 @@ export const AuthProvider = ({children}) => {
         matchedUserState: matchedUserState,
         loginError : loginError,
         updateProfilePic: updateProfilePic,
-        receiveWebSocketData: receiveWebSocketData,
+        sendWebSocketData: sendWebSocketData,
         driverInState: driverInState,
         // sendReceiveCode: sendReceiveCode,
         sortUsersAlphabetically: sortUsersAlphabetically,

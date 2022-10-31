@@ -14,6 +14,7 @@ const Room = ({room}) => {
     const { user, logOutUser, 
             receiveWebSocketData, matchedUserState,
             driverInState, sortUsersAlphabetically } = useContext(AuthContext)
+
     // const roomName = state.selectedRoom.room_name;
     console.log(`!!!!!matched: ${matchedUserState.current}!!!!!`)
     // const showModal = () => {
@@ -25,6 +26,7 @@ const Room = ({room}) => {
         WebSocketInstance.connect()
         selectDriver()
     }, [])
+
 
     
     function selectDriver() {
