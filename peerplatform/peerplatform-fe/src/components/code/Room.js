@@ -15,7 +15,7 @@ const Room = ({room}) => {
             receiveWebSocketData, matchedUserState,
             driverInState, sortUsersAlphabetically } = useContext(AuthContext)
 
-    // const roomName = state.selectedRoom.room_name;
+    const roomName = state.selectedRoom.room_name;
     // console.log(`!!!!!matched: ${matchedUserState.current}!!!!!`)
     // const showModal = () => {
     //     setOpen(true)
@@ -35,22 +35,21 @@ const Room = ({room}) => {
         console.log('driver in state', driverInState.current)
     }
 
-
-//     useEffect(() => {
-//        const params = {
-//            roomName: roomName, participantLabel: nickname
-//        };
-//        console.log('participants are:', state.selectedRoom.participants)
-//        if (!call) {
-//            const callPromise = device.connect({ params });
-//            callPromise.then((call) => {
-//                setCall(call);
-//            });
-//        }
-//        if (!state.selectedRoom.participants.includes(nickname)) {
-//            state.selectedRoom.participants.push(nickname);
-//        }
-//    }, [device, roomName, nickname, room, call]);
+    useEffect(() => {
+       const params = {
+           roomName: roomName, participantLabel: nickname
+       };
+       console.log('participants are:', state.selectedRoom.participants)
+       if (!call) {
+           const callPromise = device.connect({ params });
+           callPromise.then((call) => {
+               setCall(call);
+           });
+       }
+       if (!state.selectedRoom.participants.includes(nickname)) {
+           state.selectedRoom.participants.push(nickname);
+       }
+   }, [device, roomName, nickname, room, call]);
 
     const handleLeaveRoom = () => {
         call.disconnect();
