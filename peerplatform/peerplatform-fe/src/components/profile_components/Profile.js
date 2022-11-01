@@ -49,7 +49,7 @@ import WebSocketInstance from '../../websocket/Connect';
         let { user, logOutUser,
               updateProfile, retrieveChallenge,
               getProfileInfo, pairUsers,
-              updateProfilePic
+              updateProfilePic, profileURL
             } = useContext(AuthContext)
         //store users in state
         const[profileUser, setProfileUser] = useState({user})
@@ -68,13 +68,13 @@ import WebSocketInstance from '../../websocket/Connect';
         // const imageMimeType = /image\/(png|jpg|jpeg)/i;
         const [fileDataURL, setFileDataURL] = useState(null);
         const [profilePic, setProfilePic] = useState(null);
-        const baseURL = "https://codesquad.onrender.com/media/"
+        const baseURL = `${profileURL}media/`
         const photoURL = user.photo.split('"').join('');
 
 
         //on idle update Profile model activity field
         const handleOnIdle = (event: any) => {
-            axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
+            axios.patch(`${profileURL}update_profile/${user.user_id}/`, {
                 currently_active: false
             })
             .then(res => {
@@ -84,7 +84,7 @@ import WebSocketInstance from '../../websocket/Connect';
 
         //on active update profile model activity field
         const handleOnActive = (event: any) => {
-            axios.patch(`https://codesquad.onrender.com/update_active/${user.user_id}/`, {
+            axios.patch(`${profileURL}update_active/${user.user_id}/`, {
                 currently_active: true
             })
             .then(res => {
@@ -133,7 +133,7 @@ import WebSocketInstance from '../../websocket/Connect';
         };
 
         const updateWaitingRoomStatus = () => {
-        axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
+        axios.patch(`${profileURL}update_profile/${user.user_id}/`, {
             in_waiting_room: false
         })
         .then(res => {
@@ -186,7 +186,9 @@ import WebSocketInstance from '../../websocket/Connect';
                   <Col md="4">
                     <Card className="card-user">
                       <div className="image">
-                        <img src={fileDataURL ? fileDataURL : `${baseURL}${photoURL}`}/>
+                        <img 
+                            alt="..."
+                            src={fileDataURL ? fileDataURL : `${baseURL}${photoURL}`}/>
                       </div>
                       <CardBody>
                         <div className="author">

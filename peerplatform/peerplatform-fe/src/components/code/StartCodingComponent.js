@@ -11,22 +11,18 @@ import WebSocketInstance from '../../websocket/Connect';
 const StartCodingComponent = () => {
     const history = useHistory();
     const [ state, setState ] = useGlobalState();
-    const { user,
-            logOutUser,
-            updateProfile,
-            getUsers,
-            onlineUsers,
-            setPairUsers,
-            pairUsers,
-            allOnlineUsers,
-            setAllOnlineUsers,
-            config, availableOnlineUsers } = useContext(AuthContext)
+    const { user, logOutUser,
+            updateProfile, getUsers,
+            onlineUsers, setPairUsers,
+            pairUsers, allOnlineUsers,
+            setAllOnlineUsers, config, 
+            availableOnlineUsers, profileURL } = useContext(AuthContext)
     let [loading, setLoading] = useState(false);
     const [color, setColor] = useState("#3f37db");
 
 
     const updateWaitingRoomStatus = async () => {
-        await axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
+        await axios.patch(`${profileURL}update_profile/${user.user_id}/`, {
             in_waiting_room: true
         })
         .then(res => {
@@ -35,18 +31,18 @@ const StartCodingComponent = () => {
     }
 
     const sendWaitingRoomUsersToRedisCache = () => {
-        axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
+        axios.patch(`${profileURL}update_profile/${user.user_id}/`, {
             in_waiting_room: true
         })
         .then(res => {
             // console.log('Updated user', res.data)
-            axios.get('https://codesquad.onrender.com/users/')
+            axios.get(`${profileURL}users/`)
                 .then(res => {
                         const filteredUsers = res.data.filter(filtered => filtered.profile.in_waiting_room === true)
                         const allUserNames  = filteredUsers.map(arr => arr.username)
                         //specifying key we will be using to retrieve these users in Redis with pre-defined pattern to clearly identify key in server
                         //write users to Redis set
-                        axios.post('https://codesquad.onrender.com/cache/', allUserNames)
+                        axios.post(`${profileURL}cache/`, allUserNames)
                             .then(res => {
                             })
                             axios(config)
@@ -63,12 +59,10 @@ const StartCodingComponent = () => {
         const nickname = user.username;
         setupTwilio(nickname);
         const rooms = state.rooms;
-        // updateWaitingRoomStatus()
         setState((state) => {
             return {...state, rooms }
         });
         sendWaitingRoomUsersToRedisCache()
-        let availUsers = null ;
         if(availableOnlineUsers.current.length){
                 history.push('/rooms');
         }
@@ -81,7 +75,7 @@ const StartCodingComponent = () => {
     }
 
     const setupTwilio = (nickname) => {
-        fetch(`https://codesquad.onrender.com/voice_chat/token/${nickname}`)
+        fetch(`${profileURL}voice_chat/token/${nickname}`)
         .then(response => response.json())
         .then(data => {
             // setup device

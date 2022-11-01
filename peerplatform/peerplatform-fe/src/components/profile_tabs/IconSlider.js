@@ -14,7 +14,7 @@ const IconSlider = (props) => {
   const preColorCls = valueOne >= mid ? '' : 'icon-wrapper-active';
   const nextColorCls = valueOne >= mid ? 'icon-wrapper-active' : '';
 
-  console.log(`what is the value in state: ${valueOne}`)
+  // console.log(`what is the value in state: ${valueOne}`)
   return (
     <div className="icon-wrapper">
       <FrownOutlined className={preColorCls} />

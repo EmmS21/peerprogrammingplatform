@@ -7,10 +7,11 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 import re
+from django.core.cache import caches
+from django.views.decorators.csrf import csrf_exempt
 
-redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
-                                   port=settings.REDIS_PORT,
-                                   password =settings.REDIS_PASSWORD)
+redis_instance = caches["default"]
+elasticache_redis_instance = caches["leadership_board"]
 
 @api_view(['GET', 'POST'])
 def manage_items(request, *args, **kwargs):
@@ -92,11 +93,6 @@ def manage_item(request, *args, **kwargs):
                         return Response(response, status=404)
 
 
-# user makes a request to backend to find a match
-# rest of the work backend
-# talk to redis, find list of avail users
-# try to ask users one by one until they find first available users
-# user joins
 @api_view(['GET', 'POST'])
 def post_object(request, *args, **kwargs):
     if request.method == 'GET':
@@ -146,27 +142,15 @@ def manage_post_object(request, *args, **kwargs):
         }
         return Response(response, status=404)
 
-# post and get from redis channel layer
-# @api_view(['GET', 'POST'])
-# def subscriptions_to_redis_channel(request, *args, **kwargs):
-#     if request.method == 'GET':
-#         subs = []
-#         count = 0
-#         for elem in redis_channel.smembers("channel"):
-#             print('getting from redis', elem.decode("utf-8"))
-#             subs.append(elem.decode("utf-8"))
-#             count += 1
-#         response = {
-#             'subscriptions': subs
-#         }
-#         return Response(response, status=200)
-#     elif request.method == 'POST':
-#         subscriptions = request.body.decode("utf-8").split(",")
-#         print('users', subscriptions)
-#         for i in range(0, len(subscriptions)):
-#             print('each iter', subscriptions[i])
-#             redis_channel.sadd('pairs', re.sub("[\"\']", "", subscriptions[i]).strip('[]'))
-#         response = {
-#             'msg': f' subscriptions set contains: {subscriptions}'
-#         }
-#         return Response(response, 201)
+@api_view(['GET','POST'])
+@csrf_exempt
+def leadership_update(request, *args, **kwargs):
+    if request.method == 'GET':
+        return Response('response', status=200)
+    elif request.method == 'POST':
+        print(request.body.decode("utf-8"))
+        response = {
+            'msg': f'set contains:'
+        }
+        return Response(response, 201)
+    

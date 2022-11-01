@@ -32,6 +32,7 @@ export const AuthProvider = ({children}) => {
     const [valueOne, setValueOne] = useState(0)
     const [valueTwo, setValueTwo] = useState(0)
     const [valueThree, setValueThree] = useState(0)
+    const [valueFour, setValueFour] = useState(0)
     const [errorText, setErrorText] = useState('');
     const [visible, setVisible] = useState(false);
     const [successSignup, setSuccessSignup] = useState(false)
@@ -47,8 +48,7 @@ export const AuthProvider = ({children}) => {
     const availableOnlineUsers = useRef([])
     const matchedUserState = useRef([])
     const driverInState = useRef([])
-    const profileURL = 'https://codesquad.onrender.com/update_profile/' 
-
+    const profileURL = 'https://codesquad.onrender.com/' 
 
 
     const history = useHistory();
@@ -64,20 +64,15 @@ export const AuthProvider = ({children}) => {
     //we are going to pass this information down to login page
     //async function because we must wait for something to happen first
     const loginUser = async (tokens) => {
-        let response = await axios.post('https://codesquad.onrender.com/api/token/',tokens)
+        let response = await axios.post(`${profileURL}api/token/`,tokens)
         try {
-//            let response = await axios.post('https://codesquad.onrender.com/api/token/',tokens)
-            //we are going to set our tokens in state so we can easily access it
             setAuthTokens(authTokens => ({
                 ...response.data
             }))
-            //we are decoding access information and storing that in our user state
             const decoded = jwt_decode(response.data.access)
             setUser(user => ({
                 ...decoded
             }))
-            //store tokens in localStorage
-            //we stringify because we can only store strings in localStorage
             localStorage.setItem('authTokens',JSON.stringify(response.data))
             history.push('/')
         }
@@ -94,7 +89,7 @@ export const AuthProvider = ({children}) => {
 
     //get profile information
     const getProfileInfo = (userId) => {
-        axios.get(`https://codesquad.onrender.com/users/${userId}`)
+        axios.get(`${profileURL}users/${userId}`)
                 .then(res => {
                     setUser({ ...user,
                             first_name: res.data.first_name,
@@ -167,7 +162,7 @@ export const AuthProvider = ({children}) => {
 
     //turn is_online off
     let handleServerLogout = () => {
-        axios.patch(`https://codesquad.onrender.com/update_profile/${user.user_id}/`, {
+        axios.patch(`${profileURL}update_profile/${user.user_id}/`, {
             is_online: 'False'
         })
         .then(res => {
@@ -182,7 +177,7 @@ export const AuthProvider = ({children}) => {
         }
         console.log('Update token function has been triggered')
         try {
-            let response = await axios.post('https://codesquad.onrender.com/api/token/refresh/',refreshToken)
+            let response = await axios.post(`${profileURL}api/token/refresh/`,refreshToken)
             //update state with token
             setAuthTokens({'access': response.data.access,
                             'refresh': refreshToken.refresh})
@@ -239,7 +234,7 @@ export const AuthProvider = ({children}) => {
     //redis get request
     const config = {
         method: 'GET',
-        url: 'https://codesquad.onrender.com/cache/',
+        url: `${profileURL}cache/`,
         headers: {
             "accept": "*/*",
         }
@@ -257,7 +252,7 @@ export const AuthProvider = ({children}) => {
                         country: data.country,
             }
         };
-        fetch('https://codesquad.onrender.com/api/register', {
+        fetch(`${profileURL}api/register`, {
             method: 'POST',
             headers: {
                 'Content-Type':'application/json'
@@ -283,15 +278,7 @@ export const AuthProvider = ({children}) => {
     
     async function sendWebSocketData(data){
         return await WebSocketInstance.sendData(data)
-        // console.log(`data: ${data}`)
-        // return !selectDriver ? 
-        //     await WebSocketInstance.sendData(matchedUser+' '+roomId+' '+user.username)
-        //     : await WebSocketInstance.sendData(selectDriver)
     };
-
-    // async function sendReceiveCode(data){
-    //     return await WebSocketInstance.sendDirect(data)
-    // }
 
     function sortUsersAlphabetically(str) {
         const hours = new Date().getHours()
@@ -301,6 +288,23 @@ export const AuthProvider = ({children}) => {
         } else {
             return [...str].sort().reverse();
         }
+    }
+
+    function postReview(){
+        console.log('inside postReview')
+        const review = {}
+        review['user'] = user.username
+        review['communication'] = valueOne
+        review['problem-solving'] = valueTwo
+        review['collaboration'] = valueThree
+        review['programming'] = valueFour
+        axios.post(`${profileURL}update_score/`, review)
+        .then(res => {
+            console.log('our response', res)
+        })
+        // axios.post
+        // update_score
+        // console.log('total review is', JSON.stringify(review))
     }
 
 
@@ -328,6 +332,8 @@ export const AuthProvider = ({children}) => {
         setValueTwo: setValueTwo,
         valueThree: valueThree,
         setValueThree: setValueThree,
+        valueFour: valueFour, 
+        setValueFour: setValueFour,
         onSubmit: onSubmit,
         errorText: errorText,
         visible: visible,
@@ -350,8 +356,9 @@ export const AuthProvider = ({children}) => {
         updateProfilePic: updateProfilePic,
         sendWebSocketData: sendWebSocketData,
         driverInState: driverInState,
-        // sendReceiveCode: sendReceiveCode,
         sortUsersAlphabetically: sortUsersAlphabetically,
+        profileURL: profileURL,
+        postReview: postReview
     }
 
 

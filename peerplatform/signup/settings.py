@@ -148,13 +148,21 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        # "LOCATION": "redis://newredis:10000",
         "LOCATION": "redis://default:P@ssword21@redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com:19576",
         "TIMEOUT": 5 * 60,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         },
         "KEY_PREFIX": "pairprogramming"
+    },
+    "leadership_board" :{
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://clustercfg.pair-programming-leadership-board.znfz9i.use1.cache.amazonaws.com:6379",
+        "TIMEOUT": 5 * 60,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        },
+        "KEY_PREFIX": "leadershipboard"
     }
 }
 

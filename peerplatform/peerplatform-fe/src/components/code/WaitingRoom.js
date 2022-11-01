@@ -18,7 +18,7 @@ const WaitingRoom = () =>  {
             allOnlineUsers, availableOnlineUsers,
             config, authTokens,
             receiveWebSocketData, matchedUserState,
-            sortUsersAlphabetically
+            sortUsersAlphabetically, profileURL
         } = useContext(AuthContext)
     const [websocketVal, setWebSocketVal] = useState('')
 
@@ -32,7 +32,7 @@ const WaitingRoom = () =>  {
         let sending = {}
         sending.data = username+','+matchedUser
         console.log('sending', sending)
-        axios.post('http://127.0.0.1:8000/get_room/', sending).then((res =>{
+        axios.post(`${profileURL}get_room/`, sending).then((res =>{
             redirectMatchedUser(res.data)
         }))
         //don't need this in state
@@ -50,7 +50,7 @@ const WaitingRoom = () =>  {
         pairedUsers['participantLabel'] = sortUsersAlphabetically([username,matchedUser])
         pairedUsers['currUser'] = username
         pairedUsers['matchedUser'] = matchedUser
-        axios.post('https://codesquad.onrender.com/voice_chat/rooms',pairedUsers)
+        axios.post(`${profileURL}voice_chat/rooms`,pairedUsers)
             .then(res =>{
                 console.log('twilio call created', res.data)
             })
@@ -68,7 +68,7 @@ const WaitingRoom = () =>  {
         const deletingUsers = {}
         deletingUsers['username'] = username
         deletingUsers['matched'] = matchedUser
-        axios.delete('https://codesquad.onrender.com/cache/delete', deletingUsers)
+        axios.delete(`${profileURL}cache/delete`, deletingUsers)
             .then(res=> {
                 console.log('axios delete response', res)
             })
@@ -85,10 +85,6 @@ const WaitingRoom = () =>  {
         const rooms = state.rooms; 
         const roomId = [username,matchedUser] 
         setState({...state, rooms, selectedRoom});
-        // receiveWebSocketData(matchedUser, roomId).then( (res) =>
-        //                                             { redirectMatchedUser(JSON.parse(res))
-        //                                               setWebSocketVal(res)
-        //                                             })
     }
 
 

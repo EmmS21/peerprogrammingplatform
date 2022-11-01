@@ -21,14 +21,14 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from accounts.models import models
 from accounts.models import ProgrammingChallenge, Profile
-from django.core.cache import cache
+from django.core.cache import caches
 import redis
 import random
 
-redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
-                                   port=settings.REDIS_PORT, db=0,
-                                   )
-
+redis_instance = caches["default"]
+# redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
+#                                    port=settings.REDIS_PORT, db=0,
+#                                    )
 
 @api_view(['GET'])
 def CacheView(request):

@@ -22,17 +22,25 @@ export default function ProgrammingChallenge() {
     console.log('examples', challengeExamples)
 
     //show url text as URL
-    function urlLink(str){
-      const textRegex = /(?<=\[).*?(?=\])/g
-      const urlText = str.match(textRegex)
-      const urlRegex = /(?<=\().*?(?=\))/g 
-      const urlLink = str.match(urlRegex)
-      return <a href={urlLink}>urlText</a>
+    function urlLink(challengeDescription, textRegex, urlRegex){
+      const urlText = challengeDescription.match(textRegex)
+      const urlLink = challengeDescription.match(urlRegex)
+      return <a href={urlLink}> { urlText }</a>
+    }
+
+    function exampleExtractor(challengeDescription, exampleRegex){
+        const example = challengeDescription.match(exampleRegex)
+        return <p> { example } </p>
     }
 
     function codeSubStr (str) {
-        const strConv = String(str)
-        return strConv.substring(strConv.indexOf("```") + 1, strConv.lastIndexOf("```") )
+      const urlTextRegex = /(?<=\[).*?(?=\])/g
+      const urlRegex = /(?<=\().*?(?=\))/g
+      const exampleRegex = 'Example(?=s| |$)(.*)```(.*)```'
+      urlLink(urlTextRegex, urlRegex)
+      exampleExtractor(exampleRegex)
+        // const strConv = String(str)
+        // return strConv.substring(strConv.indexOf("```") + 1, strConv.lastIndexOf("```") )
 //        return String(str).substring( String(str).indexOf("```") + 1, String(str).lastIndexOf("```")  )
 //        return str.substring( str.indexOf("```") + 1, str.lastIndexOf("```") )
 //        return str.lastIndexOf("```")

@@ -4,11 +4,12 @@ import { FrownOutlined, SmileOutlined } from '@ant-design/icons';
 import IconSlider from './IconSlider.js'
 import IconSliderTwo from './IconSliderQuestionTwo.js'
 import IconSliderThree from './IconSliderQuestionThree.js'
+import IconSliderFour from './IconSliderQuestionFour.js';
 import AuthContext from '../../context/AuthContext';
 
 const Ratings = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { valueOne, valueTwo, valueThree } = useContext(AuthContext);
+  const { postReview } = useContext(AuthContext);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -16,6 +17,7 @@ const Ratings = () => {
 
   const handleOk = () => {
     setIsModalVisible(false);
+    postReview();
   };
 
   const handleCancel = () => {
@@ -34,7 +36,8 @@ const Ratings = () => {
         <IconSliderTwo/>
         <center>How willing would you be to work with them again?</center>
         <IconSliderThree/>
-
+        <center>How would you rate their ability to read and write clean code</center>
+        <IconSliderFour/>
       </Modal>
     </>
   );
