@@ -10,8 +10,11 @@ import re
 from django.core.cache import caches
 from django.views.decorators.csrf import csrf_exempt
 
-redis_instance = caches["default"]
-elasticache_redis_instance = caches["leadership_board"]
+# redis_instance = caches["default"]
+# elasticache_redis_instance = caches["leadership_board"]
+redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
+                                   port=settings.REDIS_PORT,
+                                   password =settings.REDIS_PASSWORD)
 
 @api_view(['GET', 'POST'])
 def manage_items(request, *args, **kwargs):

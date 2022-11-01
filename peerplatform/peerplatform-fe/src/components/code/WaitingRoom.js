@@ -24,6 +24,7 @@ const WaitingRoom = () =>  {
 
     useEffect((() => {
         // WebSocketInstance.connect()
+        console.log(`$$$ device is now:${state.device} $$$`)
         const username = user.username
         const matchedUser = availableOnlineUsers.current.filter(function(user){
             return user !== username && user !== '' 
@@ -85,6 +86,7 @@ const WaitingRoom = () =>  {
         const rooms = state.rooms; 
         const roomId = [username,matchedUser] 
         setState({...state, rooms, selectedRoom});
+        console.log('room name in state', state.selectedRoom)
     }
 
 

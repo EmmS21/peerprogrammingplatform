@@ -16,6 +16,9 @@ const Room = ({room}) => {
             driverInState, sortUsersAlphabetically } = useContext(AuthContext)
 
     const roomName = state.selectedRoom.room_name;
+    console.log('what is device', device)
+    console.log('roomName', roomName)
+    console.log('participantLabel', state.participantLabel)
     // console.log(`!!!!!matched: ${matchedUserState.current}!!!!!`)
     // const showModal = () => {
     //     setOpen(true)
@@ -41,7 +44,7 @@ const Room = ({room}) => {
        };
        console.log('participants are:', state.selectedRoom.participants)
        if (!call) {
-           const callPromise = device.connect({ params });
+           const callPromise = device?.connect({ params });
            callPromise.then((call) => {
                setCall(call);
            });
