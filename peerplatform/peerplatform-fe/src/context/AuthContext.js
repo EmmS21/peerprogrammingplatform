@@ -48,8 +48,8 @@ export const AuthProvider = ({children}) => {
     const availableOnlineUsers = useRef([])
     const matchedUserState = useRef([])
     const driverInState = useRef([])
-    const profileURL = 'http://127.0.0.1:8000/'
-    // const profileURL = 'https://codesquad.onrender.com/' 
+    // const profileURL = 'http://127.0.0.1:8000/'
+    const profileURL = 'https://codesquad.onrender.com/' 
 
 
     const history = useHistory();
