@@ -51,10 +51,9 @@ const CodeEditor = () => {
           sendWebSocketData, sortUsersAlphabetically,
           sendCodeJudge0, spinnerOn, 
           setSpinnerOn, resp, 
-          setResp
+          setResp,mediaURL
          } = useContext(AuthContext)
     let photoURL = user.photo.split('"').join('');
-    let baseURL = "https://codesquad.onrender.com/media/";
     const [open, setOpen] = useState(true)
     const [state] = useGlobalState();
     const [query, setQuery] = useState('');
@@ -147,7 +146,7 @@ const CodeEditor = () => {
 
         return (
         <>
-        <Menu pointing widths={ 5 } size={"tiny"} style={{ marginTop:0 }}>
+        <Menu class="w-full" pointing widths={ sidebar ? 5 : 6 } size={"tiny"} style={{ marginTop:0 }}>
             <Menu.Item>
                 {
                     driverInState.current ?
@@ -160,10 +159,10 @@ const CodeEditor = () => {
             <Menu.Item>
                 {
                     index < 4 ?
-                        <div>Call connected
+                        <div>Connected
                             <Icon name="microphone"/>
                         </div> :
-                        <div>Call Terminated
+                        <div>Terminated
                             <Icon name="microphone slash"/>
                         </div>
                 }

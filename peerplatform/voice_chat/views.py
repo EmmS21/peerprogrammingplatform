@@ -70,7 +70,11 @@ class TokenView(View):
         )
         access_token.add_grant(voice_grant)
         jwt_token = access_token.to_jwt()
-        jwt_decoded = jwt_token.decode("utf-8")
-        full_data = {'token': jwt_decoded}
+        if isinstance(jwt_token, str):
+            result_token = jwt_token
+        else:
+            result_token = jwt_token.decode("utf-8")
+
+        full_data = {'token': result_token}
         print('full data', full_data)
         return JsonResponse(json.dumps(full_data), content_type="application/json", safe=False)
