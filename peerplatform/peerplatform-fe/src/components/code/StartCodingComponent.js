@@ -79,11 +79,11 @@ const StartCodingComponent = () => {
         .then(response => response.json())
         .then(data => {
             // setup device
-            console.log('are we getting a response from twilio')
+            // console.log('are we getting a response from twilio')
             const twilioToken = JSON.parse(data).token;
-            console.log('***what is twiliotoken', twilioToken)
+            // console.log('***what is twiliotoken', twilioToken)
             const device = new Device(twilioToken);
-            console.log('what is device', device)
+            // console.log('what is device', device)
             device.updateOptions(twilioToken, {
                 codecPreferences: ['opus', 'pcmu'],
                 fakeLocalDTMF: true,
@@ -94,7 +94,7 @@ const StartCodingComponent = () => {
                 console.log("error: ", device)
             });
             setState({...state, device, twilioToken, nickname})
-            console.log(` !!! device in state: ${state.device} !!!!`)
+            // console.log(` !!! device in state: ${state.device} !!!!`)
         })
         .catch((error) => {
             console.log(error)

@@ -10,22 +10,20 @@ const Room = ({room}) => {
     const history = useHistory();
     const [state, setState] = useGlobalState();
     const [call, setCall] = useState();
-    const {device, nickname} = state;
+    const { device } = state;
     const { user, logOutUser, 
             receiveWebSocketData, matchedUserState,
-            driverInState, sortUsersAlphabetically } = useContext(AuthContext)
+            driverInState, sortUsersAlphabetically,
+            room_name, participants
+         } = useContext(AuthContext)
+    const roomName = room_name.current
 
-    const roomName = state.selectedRoom.room_name;
     console.log('what is device', device)
-    console.log('roomName', roomName)
-    console.log('participantLabel', state.participantLabel)
-    // console.log(`!!!!!matched: ${matchedUserState.current}!!!!!`)
-    // const showModal = () => {
-    //     setOpen(true)
-    // }
+    console.log('do we have room name in state in Rooms', roomName)
+    console.log('participantLabel', user.username)
+    console.log('participants are:', participants)
 
     useEffect(() => {
-        // showModal()
         WebSocketInstance.connect()
         selectDriver()
     }, [])
@@ -39,21 +37,22 @@ const Room = ({room}) => {
     }
 
     useEffect(() => {
-       const params = {
-           roomName: roomName, participantLabel: nickname
-       };
-       console.log('participants are:', state.selectedRoom.participants)
-       if (!call) {
-           const callPromise = device?.connect({ params });
-           callPromise.then((call) => {
-               setCall(call);
-           });
-       }
-       if (!state.selectedRoom.participants.includes(nickname)) {
-           state.selectedRoom.participants.push(nickname);
-       }
-   }, [device, roomName, nickname, room, call]);
-
+        console.log('!!!*** how many times is twilio being called ***!!!')
+        const params = {
+            roomName: roomName, participantLabel: user.username
+        };
+        if (!call) {
+            const callPromise = device.connect({ params });
+            callPromise.then((call) => {
+            console.log(' ***what is call', call)
+            setCall(call);
+            });
+        }
+        if (!participants.current.includes(user.username)) {
+                participants.current.push(user.username);
+        }
+    }, []);
+    // [device, state.selectedRoom.room_name, nickname, room, call]
     const handleLeaveRoom = () => {
         call.disconnect();
         history.push('/rooms');

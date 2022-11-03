@@ -48,6 +48,8 @@ export const AuthProvider = ({children}) => {
     const availableOnlineUsers = useRef([])
     const matchedUserState = useRef([])
     const driverInState = useRef([])
+    const room_name = useRef([])
+    const participants = useRef([])
     // const profileURL = 'http://127.0.0.1:8000/'
     const profileURL = 'https://codesquad.onrender.com/' 
 
@@ -359,7 +361,9 @@ export const AuthProvider = ({children}) => {
         driverInState: driverInState,
         sortUsersAlphabetically: sortUsersAlphabetically,
         profileURL: profileURL,
-        postReview: postReview
+        postReview: postReview,
+        room_name: room_name,
+        participants: participants
     }
 
 

@@ -18,7 +18,8 @@ const WaitingRoom = () =>  {
             allOnlineUsers, availableOnlineUsers,
             config, authTokens,
             receiveWebSocketData, matchedUserState,
-            sortUsersAlphabetically, profileURL
+            sortUsersAlphabetically, profileURL,
+            room_name, participants
         } = useContext(AuthContext)
     const [websocketVal, setWebSocketVal] = useState('')
 
@@ -46,6 +47,7 @@ const WaitingRoom = () =>  {
 
 
     function createTwilioConference(username, matchedUser){
+        console.log(' *** creating TwiML response *** ')
         const pairedUsers ={}
         pairedUsers['roomName'] = sortUsersAlphabetically([username,matchedUser]).join('')
         pairedUsers['participantLabel'] = sortUsersAlphabetically([username,matchedUser])
@@ -78,15 +80,19 @@ const WaitingRoom = () =>  {
     const handleRoomCreate = (username, matchedUser) => {
         const createdRoomTopic = sortUsersAlphabetically([username,matchedUser]).join('')
         console.log('createdRoomTopic inside handleRoomCreate', createdRoomTopic)
-        const selectedRoom = {
-            room_name: createdRoomTopic, participants: []
-        };
-        selectedRoom.participants.push(username)
-        selectedRoom.participants.push(matchedUser)
+        // const selectedRoom = {
+        //     room_name: createdRoomTopic, participants: []
+        // };
+        participants.current.push(username);
+        participants.current.push(matchedUser);
+        // selectedRoom.participants.push(username)
+        // selectedRoom.participants.push(matchedUser)
         const rooms = state.rooms; 
         const roomId = [username,matchedUser] 
-        setState({...state, rooms, selectedRoom});
-        console.log('room name in state', state.selectedRoom)
+        // setState({...state, rooms, selectedRoom});
+        setState({...state, rooms});
+        room_name.current = createdRoomTopic;
+        // console.log('room name in state', state.selectedRoom)
     }
 
 
