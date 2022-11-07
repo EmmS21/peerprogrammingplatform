@@ -83,7 +83,7 @@ const StartCodingComponent = () => {
             const twilioToken = JSON.parse(data).token;
             // console.log('***what is twiliotoken', twilioToken)
             const device = new Device(twilioToken);
-            // console.log('what is device', device)
+            // console.log('!!!!!!!!what is device', JSON.stringify(device))
             device.updateOptions(twilioToken, {
                 codecPreferences: ['opus', 'pcmu'],
                 fakeLocalDTMF: true,

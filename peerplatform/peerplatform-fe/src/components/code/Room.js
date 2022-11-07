@@ -6,6 +6,7 @@ import CodeEditor from './CodeEditor';
 import AuthContext from '../../context/AuthContext';
 import WebSocketInstance from '../../websocket/Connect';
 
+let checkCall = false
 const Room = ({room}) => {
     const history = useHistory();
     const [state, setState] = useGlobalState();
@@ -23,12 +24,10 @@ const Room = ({room}) => {
     console.log('participantLabel', user.username)
     console.log('participants are:', participants)
 
-    useEffect(() => {
-        WebSocketInstance.connect()
-        selectDriver()
-    }, [])
-
-
+    // useEffect(() => {
+    //     WebSocketInstance.connect()
+    //     selectDriver()
+    // }, [])
     
     function selectDriver() {
         console.log('matched', matchedUserState.current)
@@ -38,18 +37,24 @@ const Room = ({room}) => {
 
     useEffect(() => {
         console.log('!!!*** how many times is twilio being called ***!!!')
+        console.log('what is checkCall', checkCall)
+        WebSocketInstance.connect()
+        selectDriver()
         const params = {
             roomName: roomName, participantLabel: user.username
         };
-        if (!call) {
-            const callPromise = device.connect({ params });
-            callPromise.then((call) => {
-            console.log(' ***what is call', call)
-            setCall(call);
-            });
-        }
-        if (!participants.current.includes(user.username)) {
-                participants.current.push(user.username);
+        if(checkCall === false){
+            if (!call) {
+                const callPromise = device.connect({ params });
+                callPromise.then((call) => {
+                console.log(' ***what is call', call)
+                setCall(call);
+                });
+            }
+            if (!participants.current.includes(user.username)) {
+                    participants.current.push(user.username);
+            }
+            checkCall = true
         }
     }, []);
     // [device, state.selectedRoom.room_name, nickname, room, call]

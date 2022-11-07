@@ -33,6 +33,7 @@ class RoomView(View):
 
     def post(self, request, *args, **kwargs):
         request_body = json.loads(request.body)
+        print('request body', request_body)
         room_name = request_body.get("roomName")
         participant_label = request_body["participantLabel"]
         curr_username = request_body.get('currUser')
@@ -52,9 +53,6 @@ class RoomView(View):
         print(dial)
         response.append(dial)
         return HttpResponse(response.to_xml(), content_type="text/xml")
-        #send a broadcast message to both user+ matched user
-    #function to send notification
-
 
 class TokenView(View):
     def get(self, request, username, *args, **kwargs):
