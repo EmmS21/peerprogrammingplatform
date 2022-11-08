@@ -114,7 +114,7 @@ def post_object(request, *args, **kwargs):
         }
         return Response(response, status=200)
     elif request.method == 'POST':
-        print('post request')
+        # print('post request')
         item = json.loads(request.body)
         key = list(item.keys())[0]
         value = item[key]
@@ -128,6 +128,7 @@ def post_object(request, *args, **kwargs):
 @api_view(['DELETE'])
 def manage_post_object(request, *args, **kwargs):
     request_body = json.loads(request.body)
+    print('****request body is ***', request_body)
     username = request_body.get('username')
     matched = request_body.get('matched')
     result = redis_instance.srem('pairs', username)

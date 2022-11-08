@@ -32,17 +32,11 @@ class RoomView(View):
         return JsonResponse({"rooms": rooms_reps})
 
     def post(self, request, *args, **kwargs):
-        request_body = json.loads(request.body)
-        print('request body', request_body)
-        room_name = request_body.get("roomName")
-        participant_label = request_body["participantLabel"]
-        curr_username = request_body.get('currUser')
-        matched_user = request_body.get('matchedUser')
-        print('username', curr_username)
-        # current_user_id = User.objects.get(
-        #                                     username=curr_username).pk
-        # matched_user_id = User.objects.get(
-        #                                     username=matched_user).pk
+        # decode_request = request.body.decode("utf-8")
+        # request_body = json.loads(decode_request)
+        # print('****request body', request_body)
+        room_name = request.POST.get("roomName", "default")
+        participant_label = request.POST.get("participantLabel", "default")
         response = VoiceResponse()
         dial = Dial()
         dial.conference(
@@ -50,7 +44,6 @@ class RoomView(View):
             participant_label=participant_label,
             start_conference_on_enter=True,
         )
-        print(dial)
         response.append(dial)
         return HttpResponse(response.to_xml(), content_type="text/xml")
 
@@ -74,5 +67,4 @@ class TokenView(View):
             result_token = jwt_token.decode("utf-8")
 
         full_data = {'token': result_token}
-        print('full data', full_data)
         return JsonResponse(json.dumps(full_data), content_type="application/json", safe=False)

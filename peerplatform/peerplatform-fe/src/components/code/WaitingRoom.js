@@ -34,15 +34,15 @@ const WaitingRoom = () =>  {
         let sending = {}
         sending.data = username+','+matchedUser
         console.log('sending', sending)
-        axios.post(`${profileURL}get_room/`, sending).then((res =>{
-            redirectMatchedUser(res.data)
-        }))
         //don't need this in state
         matchedUserState.current = matchedUser
         console.log('matched in state', matchedUserState.current)
         setState({...state, username});
         createTwilioConference(user.username, matchedUserState.current)
         handleRoomCreate(username, matchedUserState.current)
+        axios.post(`${profileURL}get_room/`, sending).then((res =>{
+            redirectMatchedUser(res.data)
+        }))
     }), [])
 
 
@@ -50,9 +50,9 @@ const WaitingRoom = () =>  {
         console.log(' *** creating TwiML response *** ')
         const pairedUsers ={}
         pairedUsers['roomName'] = sortUsersAlphabetically([username,matchedUser]).join('')
-        pairedUsers['participantLabel'] = sortUsersAlphabetically([username,matchedUser])
-        pairedUsers['currUser'] = username
+        pairedUsers['participantLabel'] = username
         pairedUsers['matchedUser'] = matchedUser
+        console.log(`@@@ we are sending ${JSON.stringify(pairedUsers)}`)
         axios.post(`${profileURL}voice_chat/rooms`,pairedUsers)
             .then(res =>{
                 console.log('twilio call created', res.data)

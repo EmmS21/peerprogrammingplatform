@@ -28,9 +28,9 @@ class PracticeConsumer(AsyncWebsocketConsumer):
         #this should be named user_id
         username = self.scope['user']
         username_id = str(await self.get_user(username))
-        print('username is connected: ', username)
+        # print('username is connected: ', username)
         group_name = username_id
-        print("user's group name", group_name)
+        # print("user's group name", group_name)
         #subscribe user to group
         await self.channel_layer.group_add(
             '{}'.format(group_name),
@@ -39,14 +39,14 @@ class PracticeConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def websocket_receive(self, event):
-        print('what is event', event)
+        # print('what is event', event)
         received = event["text"]
         split_event = received.split(",")
-        print('split event', split_event)
+        # print('split event', split_event)
         queried_id = int((await self.get_user_id(split_event[0])))
         data_to_be_sent = split_event[1]
         # list_to_send = [queried_id, current_id]
-        print('we are sending', data_to_be_sent)
+        # print('we are sending', data_to_be_sent)
         message = {
             "data": data_to_be_sent
         }

@@ -43,6 +43,7 @@ const Room = ({room}) => {
         const params = {
             roomName: roomName, participantLabel: user.username
         };
+        console.log('inside params', params.roomName, params.participantLabel)
         if(checkCall === false){
             if (!call) {
                 const callPromise = device.connect({ params });

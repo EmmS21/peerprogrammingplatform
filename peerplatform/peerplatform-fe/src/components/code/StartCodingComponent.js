@@ -64,6 +64,7 @@ const StartCodingComponent = () => {
         });
         sendWaitingRoomUsersToRedisCache()
         if(availableOnlineUsers.current.length){
+            console.log('redirected')
                 history.push('/rooms');
         }
         else {
