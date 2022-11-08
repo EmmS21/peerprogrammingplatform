@@ -33,10 +33,14 @@ class RoomView(View):
 
     def post(self, request, *args, **kwargs):
         # decode_request = request.body.decode("utf-8")
-        # request_body = json.loads(decode_request)
-        # print('****request body', request_body)
-        room_name = request.POST.get("roomName", "default")
-        participant_label = request.POST.get("participantLabel", "default")
+        try:
+            request_body = json.loads(request.body)
+            room_name = request_body["roomName"]
+            participant_label = request_body["participantLabel"]
+        except:
+            request_body = request.POST
+            room_name = request_body.get("roomName")
+            participant_label = request_body.get("participantLabel")
         response = VoiceResponse()
         dial = Dial()
         dial.conference(
