@@ -37,19 +37,29 @@ class RoomView(View):
             request_body = json.loads(request.body)
             room_name = request_body["roomName"]
             participant_label = request_body["participantLabel"]
+            #select moderator
+            is_moderator = self.selectModerator(room_name, participant_label)
         except:
             request_body = request.POST
             room_name = request_body.get("roomName")
             participant_label = request_body.get("participantLabel")
+            is_moderator = self.selectModerator(room_name, participant_label)
         response = VoiceResponse()
         dial = Dial()
         dial.conference(
             name=room_name,
             participant_label=participant_label,
-            start_conference_on_enter=True,
+            start_conference_on_enter=True if is_moderator == True else False,
         )
         response.append(dial)
         return HttpResponse(response.to_xml(), content_type="text/xml")
+    
+    def selectModerator(self, users, current_user):
+        curr_len = len(current_user)
+        is_first = users[0:curr_len]
+        return is_first == current_user
+
+
 
 class TokenView(View):
     def get(self, request, username, *args, **kwargs):
