@@ -22,7 +22,7 @@ export const AuthProvider = ({children}) => {
     //now  we want the information contained in tokens -> jwt.io
     let [user,setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
     let [loading, setLoading] = useState(true)
-    let [challengeInState, setChallengeInState] = useState([])
+    let [challengeInState, setChallengeInState] = useState({})
     //creating new drop in audio chat
     const [state, setState] = useState(useGlobalState());
     const [onlineUsers, setOnlineUsers] = useState([]);
@@ -52,6 +52,7 @@ export const AuthProvider = ({children}) => {
     const participants = useRef([])
     // const profileURL = 'http://127.0.0.1:8000/'
     const profileURL = 'https://codesquad.onrender.com/' 
+    const difficultySelected = useRef([])
 
 
     const history = useHistory();
@@ -143,17 +144,17 @@ export const AuthProvider = ({children}) => {
 
 
     //retrieve random programming challenge
-    const retrieveChallenge = () => {
-        const challenge = codeWarsIds[(Math.random() * codeWarsIds.length) | 0]
-        const roomName = user.username
-        axios.get(`https://www.codewars.com/api/v1/code-challenges/${challenge}`)
-            .then(res=>{
-                setChallengeInState(res.data)
-            })
-            .catch(err=> {
-                console.log(err)
-            })
-    }
+    // const retrieveChallenge = () => {
+    //     const challenge = codeWarsIds[(Math.random() * codeWarsIds.length) | 0]
+    //     const roomName = user.username
+    //     axios.get(`https://www.codewars.com/api/v1/code-challenges/${challenge}`)
+    //         .then(res=>{
+    //             setChallengeInState(res.data)
+    //         })
+    //         .catch(err=> {
+    //             console.log(err)
+    //         })
+    // }
 
     let logOutUser = () => {
         handleServerLogout()
@@ -319,7 +320,6 @@ export const AuthProvider = ({children}) => {
         updateToken: updateToken,
         updateProfile: updateProfile,
         getProfileInfo: getProfileInfo,
-        retrieveChallenge: retrieveChallenge,
         challengeInState: challengeInState,
         config: config,
         onlineUsers: onlineUsers,
@@ -363,7 +363,9 @@ export const AuthProvider = ({children}) => {
         profileURL: profileURL,
         postReview: postReview,
         room_name: room_name,
-        participants: participants
+        participants: participants,
+        difficultySelected: difficultySelected,
+        setChallengeInState: setChallengeInState
     }
 
 

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'redisCache',
     'channels',
     'webpush',
+    'connectmongodb',
 ]
 
 MIDDLEWARE = [
@@ -119,6 +120,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
 
 CHANNEL_LAYERS = {
     "default": {

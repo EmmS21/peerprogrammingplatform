@@ -152,7 +152,7 @@ clone the project and run the following commands. You will need to install ngrok
 
 ```
 pip install -r requirements.txt
-python manaage.py makemigrations
+python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```

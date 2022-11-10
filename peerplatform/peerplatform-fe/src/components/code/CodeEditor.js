@@ -196,7 +196,7 @@ const CodeEditor = () => {
         </Menu>
         <div className="row">
         { sidebar ? (
-            <div className={ visible ? "col-2 whiteCol my-0" : "col-3 whiteCol my-0" } style={{  marginLeft: !visible ? -60 : -20}}>
+            <div className={ visible ? "col-2 whiteCol my-0" : "col-3 whiteCol my-0" } style={{ overflow:'scroll', height:400, marginLeft: !visible ? -60 : -20}}>
                 <Tabs type="card">
                     <TabPane tab="Stages" key="1">
                         <ProfileTabs index={index}/>
