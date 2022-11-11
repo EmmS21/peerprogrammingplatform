@@ -22,16 +22,12 @@ from signup.views import UpdateProfileView
 
 logger = logging.getLogger('django')
 
-class PracticeConsumer(AsyncWebsocketConsumer):
+class synchronizeCodeEditorStates(AsyncWebsocketConsumer):
     username_id = None
     async def websocket_connect(self, event):
-        #this should be named user_id
         username = self.scope['user']
         username_id = str(await self.get_user(username))
-        # print('username is connected: ', username)
         group_name = username_id
-        # print("user's group name", group_name)
-        #subscribe user to group
         await self.channel_layer.group_add(
             '{}'.format(group_name),
             self.channel_name
@@ -39,18 +35,14 @@ class PracticeConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def websocket_receive(self, event):
-        # print('what is event', event)
         received = event["text"]
         split_event = received.split(",")
-        # print('split event', split_event)
+        print('*** split event ***', split_event)
         queried_id = int((await self.get_user_id(split_event[0])))
         data_to_be_sent = split_event[1]
-        # list_to_send = [queried_id, current_id]
-        # print('we are sending', data_to_be_sent)
         message = {
             "data": data_to_be_sent
         }
-        # print('list', list_to_send)
         sleep(1)
         await self.channel_layer.group_send(
             '{}'.format(queried_id),
@@ -68,7 +60,6 @@ class PracticeConsumer(AsyncWebsocketConsumer):
         )
     async def send_message(self, event):
         message = event['message']
-        # logger.info(f'sending message inside presenter{message}')
         await self.send(text_data=json.dumps({
             'type': 'send_message',
             'text': message
@@ -87,4 +78,3 @@ class PracticeConsumer(AsyncWebsocketConsumer):
             return User.objects.get(username=username).pk
         except User.DoesNotExist:
             return 'User does not exist'
-    

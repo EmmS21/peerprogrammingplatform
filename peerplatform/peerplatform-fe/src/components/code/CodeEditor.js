@@ -51,7 +51,8 @@ const CodeEditor = () => {
           sendWebSocketData, sortUsersAlphabetically,
           sendCodeJudge0, spinnerOn, 
           setSpinnerOn, resp, 
-          setResp,mediaURL
+          setResp, mediaURL, 
+          challengeInState
          } = useContext(AuthContext)
     let photoURL = user.photo.split('"').join('');
     const [open, setOpen] = useState(true)

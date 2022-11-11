@@ -21,7 +21,6 @@ def retrieveEasy(request):
     request = urllib2.Request(get_easy)
     request.add_header('api-key', api_key)
     result = urllib2.urlopen(request).read()
-    print('*** output ***', result)
     return Response(json.loads(result))
 
 @api_view(('GET',))
@@ -33,7 +32,6 @@ def retrieveMedium(request):
     request = urllib2.Request(get_medium)
     request.add_header('api-key', api_key)
     result = urllib2.urlopen(request).read()
-    print('*** output ***', result)
     return Response(json.loads(result))
 
 @api_view(('GET',))
@@ -45,7 +43,6 @@ def retrieveHard(request):
     request = urllib2.Request(get_hard)
     request.add_header('api-key', api_key)
     result = urllib2.urlopen(request).read()
-    print('*** output ***', result)
     return Response(json.loads(result))
 
     

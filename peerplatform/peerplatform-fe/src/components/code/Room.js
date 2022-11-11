@@ -18,7 +18,7 @@ const Room = ({room}) => {
             matchedUserState, driverInState, 
             sortUsersAlphabetically,room_name, 
             participants, difficultySelected,
-            setChallengeInState
+            challengeInState, profileURL
          } = useContext(AuthContext)
     const roomName = room_name.current
     const difficultyLevels = [
@@ -43,7 +43,6 @@ const Room = ({room}) => {
         driverInState.current = sortUsersAlphabetically([user.username, matchedUserState.current])[0]
         console.log('driver in state', driverInState.current)
     }
-
 
     useEffect(() => {
         console.log('!!!*** how many times is twilio being called ***!!!')
@@ -82,7 +81,6 @@ const Room = ({room}) => {
     function handleOnChange(e, data){
         difficultySelected.current = data.value
         let selection = null
-        setShowSelect(false)
         if(data.value === 'Easy'){
             selection = 'get_easy'
         }
@@ -95,11 +93,20 @@ const Room = ({room}) => {
         const base_url = `http://127.0.0.1:8000/programming_challenge/${selection}` 
         axios.get(base_url)
         .then(res=>{
-            setChallengeInState(res.data)
+            console.log('challenge received', res.data)
+            challengeInState.current = res.data
+            const sendingChallenge = {}
+            const key = 'challenge'
+            sendingChallenge[key] = challengeInState.current[0]
+            axios.post(`${profileURL}cache/postChallenge`, sendingChallenge).then(res => {
+                console.log('receiving this from backend', res)
+            })
+            // console.log('challengeInState', challengeInState.current[0])
         })
         .catch(err=> {
             console.log(err)
         })
+        setShowSelect(false)
     }
 
     return (

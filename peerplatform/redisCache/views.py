@@ -146,6 +146,31 @@ def manage_post_object(request, *args, **kwargs):
         }
         return Response(response, status=404)
 
+@api_view(['GET', 'POST'])
+def programmingChallenge(request, *args, **kwargs):
+    if request.method == 'GET':
+        items = []
+        count = 0
+        for elem in redis_instance.smembers("pairs"):
+            # print('getting from redis', elem.decode("utf-8"))
+            items.append(elem.decode("utf-8"))
+            count += 1
+        response = {
+            'elements': items
+        }
+        return Response(response, status=200)
+    elif request.method == 'POST':
+        print('before we have', request.body)
+        programmingChallengeReceived = request.body.decode("utf-8")
+        print('received', programmingChallengeReceived)
+        # for i in range(0, len(new_users)):
+        #     # print('each iter', new_users[i])
+        #     redis_instance.sadd('pairs', re.sub("[\"\']", "", new_users[i]).strip('[]'))
+        response = {
+            'msg': 'set contains'
+        }
+        return Response(response, 201)
+
 @api_view(['GET','POST'])
 @csrf_exempt
 def leadership_update(request, *args, **kwargs):

@@ -22,7 +22,6 @@ export const AuthProvider = ({children}) => {
     //now  we want the information contained in tokens -> jwt.io
     let [user,setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
     let [loading, setLoading] = useState(true)
-    let [challengeInState, setChallengeInState] = useState({})
     //creating new drop in audio chat
     const [state, setState] = useState(useGlobalState());
     const [onlineUsers, setOnlineUsers] = useState([]);
@@ -50,6 +49,7 @@ export const AuthProvider = ({children}) => {
     const driverInState = useRef([])
     const room_name = useRef([])
     const participants = useRef([])
+    const challengeInState = useRef({})
     // const profileURL = 'http://127.0.0.1:8000/'
     const profileURL = 'https://codesquad.onrender.com/' 
     const difficultySelected = useRef([])
@@ -320,7 +320,6 @@ export const AuthProvider = ({children}) => {
         updateToken: updateToken,
         updateProfile: updateProfile,
         getProfileInfo: getProfileInfo,
-        challengeInState: challengeInState,
         config: config,
         onlineUsers: onlineUsers,
         availableUsers: availableUsers,
@@ -365,7 +364,7 @@ export const AuthProvider = ({children}) => {
         room_name: room_name,
         participants: participants,
         difficultySelected: difficultySelected,
-        setChallengeInState: setChallengeInState
+        challengeInState: challengeInState,
     }
 
 

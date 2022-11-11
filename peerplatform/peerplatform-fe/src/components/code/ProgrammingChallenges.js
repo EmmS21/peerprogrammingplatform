@@ -8,12 +8,17 @@ import "../../assets/other_css/codeeditor.css";
 export default function ProgrammingChallenge() {
     const { challengeInState } = useContext(AuthContext);
     const { Panel } = Collapse;
-    const challengeName = challengeInState.challenge_name;
-    const codeExamplesMatch = challengeInState.description?.match('Example(?=s| |$)(.*)```(.*)```');
-    const challengeExamples =codeExamplesMatch?.length ? codeExamplesMatch[1] : null;
-    const challengeDescription = challengeInState.description?.replace(challengeExamples, '');
-    // const challengeDescription = challengeMatch?.length ? challengeMatch[1] : challengeInState.description
+    const challengeName = challengeInState?.current[0].title;
+    const challengeDifficulty = challengeInState?.current[0].difficulty;
+    const exampleOne = challengeInState?.current[0].Example2;
+    const exampleTwo = challengeInState?.current[0].Example3;
+    const challengeDescription = challengeInState?.current[0].place;
 
+
+    const arrExamples = [exampleOne, exampleTwo]
+    console.log(`!!!! entire challenge !!!! ${challengeInState?.current[0]}`)
+    console.log("THIS WILL BE THE ARRAY OF EXAMPLES", arrExamples)
+    console.log("HIII");
     // console.log('challenge descr', challengeDescription)
     // console.log('examples', challengeExamples)
 
@@ -50,9 +55,12 @@ export default function ProgrammingChallenge() {
 
   function formatCode(description) {
       //     const matched = test.match('Example(?=s| |$)(.*)```(.*)```')
-   
+      const newDescription= description.split("\n").join(" ")
+      return newDescription;
    }
 
+   console.log("FormatCode output:", formatCode(challengeDescription))
+   const formattedDescription = formatCode(challengeDescription)
 //    [
 //     {
 //         "_id": "636c362e8991d2e4d8da0d2e",
@@ -67,32 +75,36 @@ export default function ProgrammingChallenge() {
 // ]
 
 // probably make an array of the examples so you can map through all of them;
-
     return (
         <div className='challenge'>
                 <PageHeader
                     className="site-page-header"
                     onBack={()=> null}
-                    title=  { challengeInState.slug }
+                    title=  { challengeName }
                 />
                 <div className="challenge-top" style={{display:'flex', justifyContent:'space-evenly', alignItems:'center'}}> 
-                    <h4> 1544. Make The String Great</h4> 
-                    <p>Easy</p> 
+                    <h4> {challengeName}</h4> 
+                    <p>{challengeDifficulty}</p> 
                 </div>
 
-                <div className='problem-container'> 
+                <div className='problem-container'>{formattedDescription} </div>
+                
+                {/* <div className='problem-container'>   THIS IS HOW IT SHOULD BE FORMATTED;
                     <p> Given a string s of lower and upper case English letters.<br/>
                     A good string is a string which doesn't have two adjacent characters s[i] and s[i + 1] where: <br/> 
                     <code> 0 &#8804; i &#8805; s.length - 2 </code> <br/> s[i] is a lower-case letter and s[i + 1] is the same letter but in upper-case or vice-versa.<br/>
                     To make the string good, you can choose two adjacent characters that make the string bad and remove them. You can keep doing this until the string becomes good.<br/>
                     Return the string after making it good. The answer is guaranteed to be unique under the given constraints.<br/>
-                    Notice that an empty string is also good.  </p>
-                </div>
+                    Notice that an empty string is also good.    </p>
+                </div> */}
 
                 <div className="examples">
                     <h4> Examples </h4>
+
                     <ol> 
-                        <li> Input: s = <span className="example-output" style={{}}> "leetcode"</span> <br/> Output: <span className="example-output"> "leetcode" </span> <br/> Explanation: In the first step, either you choose i = 1 or i = 2, both will result <span className="example-output">"leetcode" </span> to be reduced to <span className="example-output">"leetcode"</span>.</li>
+                        {arrExamples.map((example, idx) => {
+                            return(<li key={idx}> {example}</li>)
+                        })}
                         <li>Input: s = <span className="example-output"> "abBAcC\" </span> <br/> Output: <span className="example-output">"\" </span> <br/> Explanation: We have many possible scenarios, and all lead to the same answer. For example: <br/> <span className="example-output">"abBAcC\"</span> --&gt; <span className="example-output">"aAcC\"</span> --&gt; <span className="example-output">"cC\"</span> --&gt; <span>"\" </span> <br/> <span>"abBAcC\"</span> --&gt; <span>"abBA\" </span> --&gt; <span>"aA\" </span>,</li>
                     </ol>
 

@@ -12,11 +12,11 @@ class WebSocketService {
    constructor() {
     this.socketRef = null;
   }
-    connect() {
+    connect(one) {
         const args = JSON.parse(localStorage.getItem('authTokens'))
         const queryString = args.refresh
-        const path = `wss://codesquad.onrender.com/connect/testing/?${queryString}`;
-        // const path = `ws://127.0.0.1:8000/connect/testing/?${queryString}`;
+        // const path = `wss://codesquad.onrender.com/connect/sync/?${queryString}`;
+        const path = `ws://127.0.0.1:8000/connect/sync/?${queryString}`;
         this.socketRef = new WebSocket(path);
         this.socketRef.onopen = (data) => {
             console.log('WebSocket open');
