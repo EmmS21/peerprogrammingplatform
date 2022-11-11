@@ -33,6 +33,7 @@ urlpatterns = [
     path('voice_chat/', include('voice_chat.urls')),
     path('payments/', include('payments.urls')),
     path('cache/', include('redisCache.urls')),
+    path('redis_challenge/', include('redisChallenge.urls')),
     path('programming_challenge/', include ('connectmongodb.urls')),
     path('cacheUsers/', CacheView, name='cacheUsers'),
     path('api/programming_challenges/', ProgrammingChallengeView.as_view({'get': 'list'}), name='programming_challenges'),

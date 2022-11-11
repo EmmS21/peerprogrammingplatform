@@ -9,7 +9,6 @@ urlpatterns = [
     path("delete",manage_post_object, name="single_paired"),
     path("<slug:key>", manage_item, name="single_item"),
     path("update_score/", leadership_update, name="update_score"),
-    path("postChallenge", programmingChallenge, name="programmingChallenge")
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

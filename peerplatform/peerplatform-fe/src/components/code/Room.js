@@ -77,6 +77,23 @@ const Room = ({room}) => {
         setState({...state, createdRoomTopic: null}); // clear created room.
     };
 
+    function getChallenge(){
+        const sendingRoom = {}
+        const key = "room"
+        sendingRoom[key] = roomName
+        axios.get(`${profileURL}redis_challenge/`, sendingRoom).then(res => {
+            console.log('receiving this from backend', res)
+            // challengeInState.current = res.
+        })
+    }
+
+    useEffect(() => {
+        if(driverInState.current !== user.username){
+            console.log('***** use Effect running *****')
+            getChallenge()
+        }
+    })
+
 
     function handleOnChange(e, data){
         difficultySelected.current = data.value
@@ -97,11 +114,12 @@ const Room = ({room}) => {
             challengeInState.current = res.data
             const sendingChallenge = {}
             const key = 'challenge'
+            const roomKey = 'room'
+            sendingChallenge[roomKey] = roomName
             sendingChallenge[key] = challengeInState.current[0]
-            axios.post(`${profileURL}cache/postChallenge`, sendingChallenge).then(res => {
+            axios.post(`${profileURL}redis_challenge/`, sendingChallenge).then(res => {
                 console.log('receiving this from backend', res)
             })
-            // console.log('challengeInState', challengeInState.current[0])
         })
         .catch(err=> {
             console.log(err)
