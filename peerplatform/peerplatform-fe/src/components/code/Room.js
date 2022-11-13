@@ -5,6 +5,7 @@ import { useFetchRooms } from '../../hooks/useFetchRooms';
 import CodeEditor from './CodeEditor';
 import AuthContext from '../../context/AuthContext';
 import WebSocketInstance from '../../websocket/Connect';
+// import SecondSocketInstance from '../../websocket/SecondConnect';
 import { Select } from 'semantic-ui-react';
 import axios from 'axios';
 
@@ -18,7 +19,7 @@ const Room = ({room}) => {
             matchedUserState, driverInState, 
             sortUsersAlphabetically,room_name, 
             participants, difficultySelected,
-            challengeInState, profileURL
+            challengeInState
          } = useContext(AuthContext)
     const roomName = room_name.current
     const difficultyLevels = [
@@ -44,10 +45,26 @@ const Room = ({room}) => {
         console.log('driver in state', driverInState.current)
     }
 
+    // useEffect(() => {
+    //     console.log('**** USE EFFECT ****')
+    //     console.log(`isDriver: ${driverInState.current === user.username} challengeLen: ${challengeInState?.current.length > 0}, challenge:${challengeInState?.current[0]}`)
+    //     if(driverInState.current === user.username && challengeInState.current.length > 0){
+    //         console.log('*****!!!! CONDITION HIT !!!!*****')
+    //         const dataToBeSent = matchedUserState.current+','+challengeInState.current[0]
+    //         SecondSocketInstance.sendData(dataToBeSent)
+    //     }
+    // },[challengeInState])
+    useEffect(() => {
+        if(driverInState.current !== user.username){
+            WebSocketInstance.receiveChallenge().then((res) => console.log('we are receiving',res))
+        }
+    })
+
     useEffect(() => {
         console.log('!!!*** how many times is twilio being called ***!!!')
         console.log('what is checkCall', checkCall)
         WebSocketInstance.connect()
+        // SecondSocketInstance.connect()
         selectDriver()
         const params = {
             roomName: roomName, participantLabel: user.username
@@ -77,23 +94,6 @@ const Room = ({room}) => {
         setState({...state, createdRoomTopic: null}); // clear created room.
     };
 
-    function getChallenge(){
-        const sendingRoom = {}
-        const key = "room"
-        sendingRoom[key] = roomName
-        axios.get(`${profileURL}redis_challenge/`, sendingRoom).then(res => {
-            console.log('receiving this from backend', res)
-            // challengeInState.current = res.
-        })
-    }
-
-    useEffect(() => {
-        if(driverInState.current !== user.username){
-            console.log('***** use Effect running *****')
-            getChallenge()
-        }
-    })
-
 
     function handleOnChange(e, data){
         difficultySelected.current = data.value
@@ -110,16 +110,16 @@ const Room = ({room}) => {
         const base_url = `http://127.0.0.1:8000/programming_challenge/${selection}` 
         axios.get(base_url)
         .then(res=>{
-            console.log('challenge received', res.data)
             challengeInState.current = res.data
-            const sendingChallenge = {}
-            const key = 'challenge'
-            const roomKey = 'room'
-            sendingChallenge[roomKey] = roomName
-            sendingChallenge[key] = challengeInState.current[0]
-            axios.post(`${profileURL}redis_challenge/`, sendingChallenge).then(res => {
-                console.log('receiving this from backend', res)
-            })
+            console.log('challengeInState', challengeInState.current[0])
+            if(driverInState.current === user.username){
+                const dataToSend = {}
+                dataToSend["type"] = "send.challenge"
+                dataToSend["user"] = matchedUserState.current
+                dataToSend["data"] = challengeInState.current[0]
+                WebSocketInstance.sendData(JSON.stringify(dataToSend))
+                // SecondSocketInstance.sendData(dataToBeSent)
+            }
         })
         .catch(err=> {
             console.log(err)

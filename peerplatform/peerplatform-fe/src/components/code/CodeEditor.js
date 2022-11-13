@@ -33,6 +33,7 @@ import { Icon, Header,
          Modal, Label} from 'semantic-ui-react';
 import { useGlobalState } from '../../context/RoomContextProvider';
 import WebSocketInstance from '../../websocket/Connect';
+// import SecondSocketInstance from '../../websocket/SecondConnect';
 
 
 
@@ -127,6 +128,9 @@ const CodeEditor = () => {
             console.log(`!!in state: ${received.current}!!`)
             setRerender(!rerender);
         })
+        // SecondSocketInstance.response().then((res)=>{
+        //     console.log(`!!! received response : ${res} !!!`)
+        // })
     }))
 
     useEffect((() => {
@@ -136,10 +140,14 @@ const CodeEditor = () => {
 
 
     function onChange(code){
-        const dataToBeSent = matchedUserState.current+','+code
-        console.log('matched', matchedUserState.current)
-        console.log('sending code', dataToBeSent)
-        sendWebSocketData(dataToBeSent)
+        const dataToBeSent = {}
+        dataToBeSent['type'] = "send.message"
+        dataToBeSent['user'] = matchedUserState.current
+        dataToBeSent['data'] = code        
+        // 'send.message'+','+matchedUserState.current+','+code
+        // console.log('matched', matchedUserState.current)
+        // console.log('sending code', dataToBeSent)
+        sendWebSocketData(JSON.stringify(dataToBeSent))
         // .then( (res) =>{
         //     console.log(`!!! received: ${res} !!!`)
         // })

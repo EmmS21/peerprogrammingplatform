@@ -36,12 +36,29 @@ class WebSocketService {
     response(){
         this.connect()
         return new Promise((resolve, reject) => {
-                this.socketRef.onmessage = e => {
+                this.socketRef.addEventListener("message", (e) => {
                     var response = JSON.parse(e.data)
-                    console.log(`!!!! response: ${JSON.stringify(response)} !!!`)
-                    resolve(response)
-                }  
+                    if(response.type === 'send_message'){
+                        resolve(response)
+                    } 
+                });
             })
+    }
+    receiveChallenge(){
+        console.log('are we calling receiveChallenge?')
+        this.connect()
+        return new Promise((resolve, reject) => {
+            this.socketRef.addEventListener("message", (e) => {
+                var response = JSON.parse(e.data)
+                if(response.type === 'send_challenge'){
+                    resolve(response)
+                    console.log(`!!!!! RESPONSE HAS BEEN RECEIVED ${response}`)
+                } else{
+                    console.log('OTHER TYPE')
+                    reject(new Error("fail"))
+                }
+            });
+        })
     }
     disconnect(){
         this.socketRef.onclose = () =>{

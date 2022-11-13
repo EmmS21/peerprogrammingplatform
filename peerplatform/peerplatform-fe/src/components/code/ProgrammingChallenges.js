@@ -16,9 +16,9 @@ export default function ProgrammingChallenge() {
 
 
     const arrExamples = [exampleOne, exampleTwo]
-    console.log(`!!!! entire challenge !!!! ${challengeInState?.current[0]}`)
+    // make it into the
+    console.log(`!!!! entire challenge !!!! ${JSON.stringify(challengeInState?.current[0])}`)
     console.log("THIS WILL BE THE ARRAY OF EXAMPLES", arrExamples)
-    console.log("HIII");
     // console.log('challenge descr', challengeDescription)
     // console.log('examples', challengeExamples)
 
@@ -60,7 +60,7 @@ export default function ProgrammingChallenge() {
    }
 
    console.log("FormatCode output:", formatCode(challengeDescription))
-   const formattedDescription = formatCode(challengeDescription)
+   const formattedDescription = formatCode(challengeDescription) 
 //    [
 //     {
 //         "_id": "636c362e8991d2e4d8da0d2e",
@@ -83,7 +83,7 @@ export default function ProgrammingChallenge() {
                     title=  { challengeName }
                 />
                 <div className="challenge-top" style={{display:'flex', justifyContent:'space-evenly', alignItems:'center'}}> 
-                    <h4> {challengeName}</h4> 
+                    <h4> {formattedDescription}</h4> 
                     <p>{challengeDifficulty}</p> 
                 </div>
 

@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'channels',
     'webpush',
     'connectmongodb',
-    'redisChallenge',
 ]
 
 MIDDLEWARE = [
@@ -127,8 +126,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            # "hosts": [("redis://default:P@ssword21@redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com:19576")],
-            "hosts": [("redis://default:redispw@localhost:49153")],
+            "hosts": [("redis://default:P@ssword21@redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com:19576")],
         },
     },
 }
@@ -278,12 +276,9 @@ SIMPLE_JWT = {
 # REDIS_PORT = 10000
 # REDIS_PASSWORD = 'P@ssword21'
 
-# REDIS_HOST = "redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com"
-REDIS_HOST = "localhost"
-# REDIS_PORT = 19576
-REDIS_PORT = 49153
-# REDIS_PASSWORD = "P@ssword21" 
-REDIS_PASSWORD = "redispw"
+REDIS_HOST = "redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com"
+REDIS_PORT = 19576
+REDIS_PASSWORD = "P@ssword21"
 
 # redis://default:P@ssword21@redis-19576.c62.us-east-1-4.ec2.cloud.redislabs.com:19576
 # REDIS_HOST_LAYER = 'localhost'

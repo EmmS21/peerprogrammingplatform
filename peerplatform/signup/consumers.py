@@ -35,11 +35,14 @@ class synchronizeCodeEditorStates(AsyncWebsocketConsumer):
         await self.accept()
 
     async def websocket_receive(self, event):
-        received = event["text"]
-        split_event = received.split(",")
-        print('*** split event ***', split_event)
-        queried_id = int((await self.get_user_id(split_event[0])))
-        data_to_be_sent = split_event[1]
+        print(f'event is:{event} type is{type(event)}')
+        received = json.loads(event["text"])
+        # split_event = received.split(",")
+        # print('*** split event ***', split_event)
+        event_type = received["type"]
+        queried_id = int((await self.get_user_id(received["user"])))
+        data_to_be_sent = received["data"]
+        print('event type', event_type)
         message = {
             "data": data_to_be_sent
         }
@@ -47,7 +50,7 @@ class synchronizeCodeEditorStates(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             '{}'.format(queried_id),
             {
-                "type": "send.message",
+                "type": event_type,
                 "message": json.dumps(message),
                 "username": queried_id
             })
@@ -64,6 +67,12 @@ class synchronizeCodeEditorStates(AsyncWebsocketConsumer):
             'type': 'send_message',
             'text': message
         }))
+    async def send_challenge(self, event):
+        message = event['message']
+        await self.send(text_data=json.dumps({
+            'type': 'send_challenge',
+            'text': message
+        }))
 
     @database_sync_to_async
     def get_user(self, user_id):
@@ -78,3 +87,46 @@ class synchronizeCodeEditorStates(AsyncWebsocketConsumer):
             return User.objects.get(username=username).pk
         except User.DoesNotExist:
             return 'User does not exist'
+
+class synchronizeChallenges(AsyncWebsocketConsumer):
+    username_id = None
+    async def websocket_connect(self, event):
+        username = self.scope['user']
+        username_id = str(await synchronizeCodeEditorStates.get_user(username))
+        group_name = username_id
+        await self.channel_layer.group_add(
+            '{}'.format(group_name),
+            self.channel_name
+        )
+        await self.accept()
+
+    async def websocket_receive(self, event):
+        received = event["text"]
+        split_event = received.split(",")
+        print('*** split event in SyncChallenge ***', split_event)
+        queried_id = int((await synchronizeCodeEditorStates.get_user_id(split_event[0])))
+        data_to_be_sent = split_event[1]
+        message = {
+            "data": data_to_be_sent
+        }
+        sleep(1)
+        await self.channel_layer.group_send(
+            '{}'.format(queried_id),
+            {
+                "type": "send.challenge",
+                "challenge": json.dumps(message),
+                "username": queried_id
+            })
+
+    async def websocket_disconnect(self, event):
+        print("who is disconnecting", self.scope['user'])
+        self.channel_layer.group_discard(
+            '{}'.format(self.username_id),
+            self.channel_name
+        )
+    async def send_challenge(self, event):
+        challenge = event['challenge']
+        await self.send(text_data=json.dumps({
+            'type': 'send_challenge',
+            'text': challenge
+        }))
