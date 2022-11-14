@@ -52,19 +52,19 @@ const Room = ({room}) => {
             roomName: roomName, participantLabel: user.username
         };
         console.log('inside params', params.roomName, params.participantLabel)
-        // if(checkCall === false){
-        //     if (!call) {
-        //         const callPromise = device.connect({ params });
-        //         callPromise.then((call) => {
-        //         console.log(' ***what is call', call)
-        //         setCall(call);
-        //         });
-        //     }
-        //     if (!participants.current.includes(user.username)) {
-        //             participants.current.push(user.username);
-        //     }
-        //     checkCall = true
-        // }
+        if(checkCall === false){
+            if (!call) {
+                const callPromise = device.connect({ params });
+                callPromise.then((call) => {
+                console.log(' ***what is call', call)
+                setCall(call);
+                });
+            }
+            if (!participants.current.includes(user.username)) {
+                    participants.current.push(user.username);
+            }
+            checkCall = true
+        }
     }, []);
     // [device, state.selectedRoom.room_name, nickname, room, call]
     const handleLeaveRoom = () => {

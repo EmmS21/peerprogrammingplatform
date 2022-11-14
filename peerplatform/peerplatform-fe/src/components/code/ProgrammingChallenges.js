@@ -24,7 +24,7 @@ export default function ProgrammingChallenge() {
    function formatExamples(example){
     const constraintsIdx = example.indexOf("Constraints")
     const cleanExample = example.slice(0,constraintsIdx)
-    const exampleArr = cleanExample.slice(3).split(/\S+(?=: )/g)
+    const exampleArr = cleanExample.slice(3).split(/\S+(?=: )/g) 
     exampleArr.shift()
     return exampleArr
    }
