@@ -285,7 +285,7 @@ export const AuthProvider = ({children}) => {
     };
 
     function sortUsersAlphabetically(str) {
-        const hours = new Date().getHours()
+        const hours = new Date(new Date().toLocaleString('en', {timeZone: 'America/New_York'})).getHours()
         console.log('hours', hours)
         if(hours % 2 === 0){
             return [...str].sort();
