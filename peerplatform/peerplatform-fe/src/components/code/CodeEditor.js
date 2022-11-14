@@ -109,6 +109,8 @@ const CodeEditor = () => {
     const [key, setKey] = useState(1);
     const [index, setIndex] = useState(1);
     const [timer, setTimer] = useState(array[0]);
+    const [receive, setReceive] = useState(false)
+
 
     
     //event handler to change clock timer based on index
@@ -119,6 +121,17 @@ const CodeEditor = () => {
     }
 
     useEffect((() => {
+        WebSocketInstance.receiveChallenge().then((res) => {
+            // console.log('what are receiving', JSON.stringify(res.text))
+            var tempData = res ? JSON.parse(res.text) : ''
+            challengeInState.current = tempData ? tempData.data : ''
+            setReceive(true)
+            setRerender(!rerender)
+        })
+    }))
+
+    useEffect((() =>{
+        console.log('second useEffect is running')
         WebSocketInstance.response().then((res) => {
             console.log('we are inside response method')
             console.log(`!!! response received: ${JSON.stringify(res)} !!!`)
@@ -128,9 +141,6 @@ const CodeEditor = () => {
             console.log(`!!in state: ${received.current}!!`)
             setRerender(!rerender);
         })
-        // SecondSocketInstance.response().then((res)=>{
-        //     console.log(`!!! received response : ${res} !!!`)
-        // })
     }))
 
     useEffect((() => {

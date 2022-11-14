@@ -37,6 +37,7 @@ class WebSocketService {
         this.connect()
         return new Promise((resolve, reject) => {
                 this.socketRef.addEventListener("message", (e) => {
+                    console.log('receiving something in response')
                     var response = JSON.parse(e.data)
                     if(response.type === 'send_message'){
                         resolve(response)
@@ -52,11 +53,8 @@ class WebSocketService {
                 var response = JSON.parse(e.data)
                 if(response.type === 'send_challenge'){
                     resolve(response)
-                    console.log(`!!!!! RESPONSE HAS BEEN RECEIVED ${response}`)
-                } else{
-                    console.log('OTHER TYPE')
-                    reject(new Error("fail"))
-                }
+                    // console.log(`!!!!! RESPONSE HAS BEEN RECEIVED ${response}`)
+                } 
             });
         })
     }

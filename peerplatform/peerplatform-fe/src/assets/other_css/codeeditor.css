@@ -80,6 +80,11 @@ p {
   overflow-y: scroll;
 }
 
+.ul-list{
+  list-style-type: none;
+  list-style: none;
+}
+
 @-webkit-keyframes blink {
   0% {
     opacity: 0;

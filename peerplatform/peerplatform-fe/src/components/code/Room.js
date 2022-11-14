@@ -34,10 +34,6 @@ const Room = ({room}) => {
     console.log('participantLabel', user.username)
     console.log('participants are:', participants)
 
-    // useEffect(() => {
-    //     WebSocketInstance.connect()
-    //     selectDriver()
-    // }, [])
     
     function selectDriver() {
         console.log('matched', matchedUserState.current)
@@ -45,20 +41,6 @@ const Room = ({room}) => {
         console.log('driver in state', driverInState.current)
     }
 
-    // useEffect(() => {
-    //     console.log('**** USE EFFECT ****')
-    //     console.log(`isDriver: ${driverInState.current === user.username} challengeLen: ${challengeInState?.current.length > 0}, challenge:${challengeInState?.current[0]}`)
-    //     if(driverInState.current === user.username && challengeInState.current.length > 0){
-    //         console.log('*****!!!! CONDITION HIT !!!!*****')
-    //         const dataToBeSent = matchedUserState.current+','+challengeInState.current[0]
-    //         SecondSocketInstance.sendData(dataToBeSent)
-    //     }
-    // },[challengeInState])
-    useEffect(() => {
-        if(driverInState.current !== user.username){
-            WebSocketInstance.receiveChallenge().then((res) => console.log('we are receiving',res))
-        }
-    })
 
     useEffect(() => {
         console.log('!!!*** how many times is twilio being called ***!!!')
@@ -98,25 +80,26 @@ const Room = ({room}) => {
     function handleOnChange(e, data){
         difficultySelected.current = data.value
         let selection = null
-        if(data.value === 'Easy'){
+        if(data.value === 'easy'){
             selection = 'get_easy'
         }
-        else if(data.value === 'Medium'){
+        else if(data.value === 'medium'){
             selection = 'get_medium'
         }
         else {
             selection = 'get_hard'
         }
+        console.log('selection value is', data.value)
+        console.log('selection is', selection)
         const base_url = `http://127.0.0.1:8000/programming_challenge/${selection}` 
         axios.get(base_url)
         .then(res=>{
             challengeInState.current = res.data
-            console.log('challengeInState', challengeInState.current[0])
             if(driverInState.current === user.username){
                 const dataToSend = {}
                 dataToSend["type"] = "send.challenge"
                 dataToSend["user"] = matchedUserState.current
-                dataToSend["data"] = challengeInState.current[0]
+                dataToSend["data"] = challengeInState.current
                 WebSocketInstance.sendData(JSON.stringify(dataToSend))
                 // SecondSocketInstance.sendData(dataToBeSent)
             }
