@@ -19,7 +19,7 @@ const Room = ({room}) => {
             matchedUserState, driverInState, 
             sortUsersAlphabetically,room_name, 
             participants, difficultySelected,
-            challengeInState
+            challengeInState, profileURL
          } = useContext(AuthContext)
     const roomName = room_name.current
     const difficultyLevels = [
@@ -91,7 +91,7 @@ const Room = ({room}) => {
         }
         console.log('selection value is', data.value)
         console.log('selection is', selection)
-        const base_url = `http://127.0.0.1:8000/programming_challenge/${selection}` 
+        const base_url = `${profileURL}programming_challenge/${selection}` 
         axios.get(base_url)
         .then(res=>{
             challengeInState.current = res.data
