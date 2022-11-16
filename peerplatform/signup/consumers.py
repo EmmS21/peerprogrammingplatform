@@ -35,8 +35,8 @@ class synchronizeCodeEditorStates(AsyncWebsocketConsumer):
         await self.accept()
 
     async def websocket_receive(self, event):
+        print('***received', event)
         received = json.loads(event["text"])
-        print('****received', received)
         # split_event = received.split(",")
         # print('*** split event ***', split_event)
         event_type = received["type"]

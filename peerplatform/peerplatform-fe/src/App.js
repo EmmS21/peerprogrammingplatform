@@ -15,7 +15,6 @@ import Home from './views/Home';
 import PrivateRoute from './utils/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
 //we can probably deconstruct these to a one-liner
-import Pages from './components/code/Pages';
 import { RoomContextProvider, useGlobalState } from './context/RoomContextProvider';
 import WaitingRoom from './components/code/WaitingRoom';
 import Room from './components/code/Room';

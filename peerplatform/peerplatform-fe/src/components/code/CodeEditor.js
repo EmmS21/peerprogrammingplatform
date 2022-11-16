@@ -26,6 +26,7 @@ import { AudioOutlined, MessageOutlined,
         SolutionOutlined } from '@ant-design/icons';
 import ClockCounter from '../profile_tabs/ClockCounter';
 import ProgrammingChallenge from './ProgrammingChallenges';
+import SelectDifficulty from './SelectDifficulty';
 import AuthContext from '../../context/AuthContext';
 import 'semantic-ui-css/semantic.min.css'
 import { Icon, Header, 
@@ -33,12 +34,9 @@ import { Icon, Header,
          Modal, Label} from 'semantic-ui-react';
 import { useGlobalState } from '../../context/RoomContextProvider';
 import WebSocketInstance from '../../websocket/Connect';
-// import SecondSocketInstance from '../../websocket/SecondConnect';
-
-
 
 //change language based on map
-const CodeEditor = () => {
+const CodeEditor = ({endCall}) => {
     const [currentLanguage, setCurrentLanguage] = useState("");
     const [token, setToken] = useState("");
     const output = null;
@@ -62,6 +60,10 @@ const CodeEditor = () => {
     const [displayCode, setDisplayCode] = useState('');
     const received = useRef([]);
     const [rerender, setRerender] = useState(false)
+
+    // checks to see if select or programming challenge should be shown;
+    const [showSelect, setShowSelect] = useState(true)
+
 
     //change language in select options
     //map language id to language
@@ -122,14 +124,14 @@ const CodeEditor = () => {
 
     useEffect((() => {
         WebSocketInstance.receiveChallenge().then((res) => {
-            // console.log('what are receiving', JSON.stringify(res.text))
+            console.log('what are receiving', JSON.stringify(res.text))
             var tempData = res ? JSON.parse(res.text) : ''
             challengeInState.current = tempData ? tempData.data : ''
             setReceive(true)
             setRerender(!rerender)
         })
     }))
-
+    
     useEffect((() =>{
         console.log('second useEffect is running')
         WebSocketInstance.response().then((res) => {
@@ -176,15 +178,7 @@ const CodeEditor = () => {
                 }
             </Menu.Item>
             <Menu.Item>
-                {
-                    index < 4 ?
-                        <div>Connected
-                            <Icon name="microphone"/>
-                        </div> :
-                        <div>Terminated
-                            <Icon name="microphone slash"/>
-                        </div>
-                }
+                <Button onClick={()=> endCall()}>Terminate Call</Button>
             </Menu.Item>
             <Menu.Item>
                 {
@@ -220,9 +214,26 @@ const CodeEditor = () => {
                     <TabPane tab="Stages" key="1">
                         <ProfileTabs index={index}/>
                     </TabPane>
-                    <TabPane tab="Coding Challenge" key="2">
-                            <ProgrammingChallenge/>
-                    </TabPane>
+                    { 
+                        driverInState.current === user.username ?                    
+                            showSelect === false ?
+                            <TabPane tab="Coding Challenge" key="2">
+                                        <ProgrammingChallenge/>
+                                </TabPane> : 
+                                <TabPane tab="Select Difficulty" key="2">
+                                    <SelectDifficulty showSelect={showSelect} setShowSelect={setShowSelect} /> 
+                                </TabPane>
+                            :
+                            <TabPane tab="Coding Challenge" key="2">
+                                {
+                                receive === true ?
+                                <ProgrammingChallenge/>
+                                : <h1> not challenge yet</h1>
+                                }
+                                    
+                            </TabPane>
+                        
+                    }
                 </Tabs>
             </div>
             ): null
