@@ -85,8 +85,6 @@ const WaitingRoom = () =>  {
         // };
         participants.current.push(username);
         participants.current.push(matchedUser);
-        // selectedRoom.participants.push(username)
-        // selectedRoom.participants.push(matchedUser)
         const rooms = state.rooms; 
         const roomId = [username,matchedUser] 
         // setState({...state, rooms, selectedRoom});

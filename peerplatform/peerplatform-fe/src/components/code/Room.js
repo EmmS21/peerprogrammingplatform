@@ -16,18 +16,15 @@ const Room = ({ showSelect,setShowSelect}) => {
     const { user, logOutUser, 
             matchedUserState, driverInState, 
             sortUsersAlphabetically,room_name, 
-            participants, difficultySelected,
-            challengeInState, profileURL
+            participants, profileURL
          } = useContext(AuthContext)
     const roomName = room_name.current
 
-    function selectDriver() {
-        console.log('matched', matchedUserState.current)
-        driverInState.current = sortUsersAlphabetically([user.username, matchedUserState.current])[0]
-        console.log('driver in state', driverInState.current)
-    }
-
+    
     useEffect(() => {
+        function selectDriver() {
+            driverInState.current = sortUsersAlphabetically([user.username, matchedUserState.current])[0]
+        }
         console.log('!!!*** how many times is twilio being called ***!!!')
         WebSocketInstance.connect()
         selectDriver()
@@ -48,15 +45,10 @@ const Room = ({ showSelect,setShowSelect}) => {
             }
             checkCall = true
         }
-    }, []);
-    
-    useEffect(()=> {
-        console.log('CALL IN STATE', JSON.stringify(call))
-    },[call])
+    }, [roomName, user, call, device, participants, driverInState,matchedUserState,sortUsersAlphabetically]);
     
     const handleLeaveRoom = () => {
         console.log('INSIDE FUNCTION TO TERMINATE CALL', JSON.stringify(call))
-        // call.disconnect();
         // history.push('/rooms');
     };
     const endCall = () => {
