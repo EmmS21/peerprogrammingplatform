@@ -25,101 +25,21 @@ The front end is built purely on React. All code related to the frontend is cont
 
 Inside `src` you will find these folders:
 
-### Assets:
-This folder contains all css and scss used to style this project along with images rendered in our front-end. In most cases the name of the css/scss stylesheet denotes which file this stylesheet is relevant to.
+## Process: 
 
-### Axios:
-This folder currently contains code related to making an axios call to our Django server with authentication tokens included.
+Users signup, creating a new user profile. Authentication is token based and handled using Redux. Once users have been authenticated they are redirected back to the Home Page.
 
-### Components:
-Contains all components created. Components are mostly grouped by their functional purpose on the platform. 
+Users have access to the User profile, this is a protected view that is only accessible for authenticated users. Once users click on their profile, they have the abilty to update their profile information. Specifically, users can update their; profile picture, first name, last name and location.
 
-##### Code: 
-All components related to the coding_editor. Specifically;
+Users who wish to pair program can click on the 'Join Waiting Room' button. This component, sends a list of all users who are ready to be matched to a Redis cache, retrieves this list and sets the local state with a list of all users available for a pair programming session. This component also interacts with a RESTful API creating a Twilio token for each user.
 
-`CodeEditor`: A code-editor built using the brace package (Ace Editor). Code written is sent to Judge0, an online code execution system, returning a token which is then resent to Judge0 in order to receive our code's output.
+Once the state has been updated, the user is redirected to the waiting room. Here the user is matched with another user waiting to be matched, requests are made to a RESTful API instructing Twilio to create a conference call named after the two matched users. These users are redirected to their respective pair programming sessions.
 
-- Brace Documentation: https://www.npmjs.com/package/react-brace
-- Judge0 Documentation: https://ce.judge0.com/
+Upon navigating to their pair programming sessions, a Twilio conference call commencces connecting the two matched users. Based on the time of the day, one of the users is selected as the 'Driver' of the pair programming session. The Driver is responsible for writing the code in the online IDE, while the observer has read only access to the IDE. The Driver selects a level of difficulty for the programming challenge. This triggers a 'GET' request to a RESTful API in Django that interacts with a MongoDB database containing 2000 programming challenges. Depending on the level of difficulty selected, the backend interacts with a custom end point that triggers a SQL script that will retrieve a random programming challenge from the DB. This is received in the backend and sent back to the frontend. 
 
-`NewRoom`: Renders a new audio chat room (work in progress).
+When the Driver receives the programming challenge, the challenge is sent to the observer through a websocket, with an event listener waiting for a specific signal to read and update one of the states for the observer storing the programming challenge. This is then rendered on the observer's side bar.
 
-`Pages`: Routers pertaining to our audio chat functionality (work in progress, will be moved to a different folder)
-
-`Programming Challenges`: Component rendering programming challenges from our database
-
-`Room, RoomList, SignupForm`: All pertaining to our audio chat functionality (work in progress, will be refactored)
-
-`Spinner`: A spinner shown on our CodeEditor while we wait for a response from Judge0
-
-##### Elements:
-Elements used in some components (Profile and Home Page in particular). (Will be refactored)
-
-##### Layout:
-Similar to elements, but specifically related to our Headers and Footers
-
-##### Login_components:
-`Login`: Renders our login page. (Not Yet Done: front end validation)
-
-`LoginActions`: All axios functions pertaining to our login functionality; ie. sending login details to Django, receiving tokens and redirecting users to appropriate point (name should probably be changed)
-
-`LoginReducer`: Actions to be carried out when user attempts to login ie. set token and set current user
-
-`LoginTypes`: Types of actions that are carried out when a user attempts to login
-
-`Logout`: Clearing tokens from localStorage and redirecting user to home page
-
-##### Navbars
-Navigation bar on profile page (needs to be refactored)
-
-##### Profile Components
-Components relevant to profile page
-
-`Profile`: renders profile page
-
-`StartModal`: The idea behind this was to create a modal that would appear when a user clicks `Start Coding`. The modal is supposed to be a multi-step form (not requiring any user input) walking users through how the platform works (work in progress, do we need this?)
-
-`useModalCustomHook`: Related to the above code
-
-##### Profile Tabs
-A clockcounter counting down from when users start off the pair programming session. The clock counter. This clock counter runs through 4 phases, controlling the tab selected based
-
-`ClockCounter`: The clockcounter itself
-`ProfileTab`: The tab showing user what phase of the pair programming session they are in, based on the ClockCounter
-
-##### Sections
-Includes sections relevant to the home page; ie. Testimonials, Pricing Table sections etc
-
-##### SideBar
-SideBar shown on home page
-
-##### Signup Components
-Components relevant to rendering signup page (CountryList is not currently in use - this was supposed to enable users to select their country from a list of countries- this might not be useful for the platform overall)
-
-### Context:
-
-##### AuthContext:
-- Passes down props to multiple components
-- Axios function to login user, Axios function to refresh tokens, Axios function to carry out `PUT` request to update user profile (need to look at this again), axios function to log user off and Axios function to make a `GET` request to retrieve a random programming challenge from database
-
-##### RoomContextProvider:
-- Initializing states related to audio drop in chat (work in progress).
-
-### Hooks:
-- (Work in Progress- related to audio drop in chat)
-
-### Layouts:
-More layouts related to Home page
-
-### Routes:
-Defining protected routes for Profile page (should include code-editor)
-
-### Utils:
-Defining private routes and other routes (ie. AppRoute). Also other files related to access tokens and scroll effects
-
-### Views
-`Home`: renders home page
-`Table`: Profile page table - not currently in use. This will eventually be used to show user score based on peer ratings.
+When the Driver types into the IDE, we wait for the Driver to stop typing for a few seconds before sending the code typed into the IDE through the websocke to the observer in order to synchronize states between both users ensuring the observer sees the code the Driver has typed into the IDE.
 
 ## Files outside of folders
 
@@ -133,17 +53,34 @@ Defining private routes and other routes (ie. AppRoute). Also other files relate
 
 
 # Technologies/Frameworks
-Built using: Django and React
+Built using: Django, React and Redis
 
 Django Dependencies: `requirements.txt` (Let me know if there are packages not included in requirements.txt)
 
-# How to run
-clone and run the following commands. You will need to install ngrok to interact with Twilio Programming Voice API
-With ngrok specifically, you will need to expose the server to ngrok by running ngrok http <portName>. 
+# Road Map
 
-- project is contained inside folder peerplatform (remember to cd into peerplatform - will rectify this issue)
-- https://ngrok.com/
-- What is ngrok? -> 'Ngrok is a cross-platform application that exposes local server ports to the Internet.'
+## Collate user feedback and make changes
+The current priority is to test the platform with live users, collate their feedback and fix any major issues that need to be resolved to get the platform more functional. This will include UI changes based on what users find more appealing and what is realistically feasible to implement
+
+## Testing
+Programmatically test; if the Twilio call is actually starting when two users are matched, if users are receiving the programming challenge, if the code editor terminal produces the expected output based on the code executed, if users can update their profile picture, if users are not receiving the same programming challenge over and over again, if the matching process works as intended in all circumstances
+
+## Leadership Board
+When users complete the pair programming session, they get rated by their peers on communication + collaboration + problem solving skills. I would like to build a real time leadership board to show how users rank and include the feature to filter for users in the leadership board by bootcamp/college + have a total ranking for each college/bootcamp (this is further down the line)
+Possible Solutions: ElastiCache for Redis
+
+## Autograder (Maybe)
+Building or integrating an existing autograder to test whether code executed produces expected output
+
+## User Dashboard
+Enable users to track their pair programming session scores and be able to visualize which questions they do better in/struggle with. This would require tagging questions I have by category (ie. binary search tree, linkedlist, dynamic programming etc.)
+
+## Tool Related Challenges
+Enable users to select between receiving Leetcode style questions versus questions based on specific tools. So if for example you chose React; you would get a question regarding debugging some React related issue (would need to see how feasible this is)
+
+## Refactor Old Code
+Improve efficiency, remove redundancy and clean up code.
+
 
 ```
 pip install -r requirements.txt
@@ -152,17 +89,4 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-
-# For Collaborators
-Project roadmap is contained in peerplatform/ProjectRoadMap.md
-
-Here are a few links on blogs I published detailing the process and rationale behind some of the decisions made in building features in this platform
-- https://medium.com/codingsquad/a-pair-programming-platform-to-help-you-get-better-at-technical-interviews-building-out-the-14c03762ebf4
-- https://medium.com/codingsquad/pair-programming-platform-redirecting-matched-pairs-of-users-7517add184d3
-
-# Built by: Emmanuel Sibanda
-
-
->>>>>>> 39affa0 (initial commit)
-
->>>>>>> b763871ec2007342378648b1fbc7db028ab7d9ff
+#Built by: Emmanuel Sibanda

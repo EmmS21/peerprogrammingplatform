@@ -2,39 +2,30 @@
 # Project Description
 Pair programming platform randomly matching similarly skilled users to solve timed randomly generated programming challenges
 
-#How it works
+# How it works
 Users can signup creating a profile click on a button immediately matching them to another user. This action redirects the user to a code-editor and initiates an audio voice chat between both matched users. These users are then given a predefined period of time to solve randomly retrieved programming challenges.
 
-###Purpose
+### Purpose
 This platform is designed to enable bootcamp students and other learners better prepare for technical interviews through pair programming. The process helps users get more comfortable communicating their logic to other stakeholders while simultaneously improving their problem-solving skills.
 
-##Backend
+## Backend
 The backend is built on Django and comprises three apps; accounts, signup and voice_chat
 
-###Accounts: 
+### Accounts: 
 The accounts folder/app comprises of two models; 1 being an extension of the custom Django user model enabling us to store additional information about a user namely their city, country, bio and profile picture. The accounts model also comprises of a model enabling us to create and store programming challenges. These models are registered in admin.py in order for us to interact with these data-tables in the admin panel.
 
-####Signup: 
+#### Signup: 
 Signup primarily houses the code creating an API to be consumed by our React frontend app. Our API enables us to create a user and edit their profile information. `urls.py` contains all API endpoints related to our API
 
-####Voice Chat: 
+#### Voice Chat: 
 Voice chat contains all backend code pertaining to our drop in audio chat. The file `urls.py` contains all API end points related to this API.
 
-##FrontEnd
+## FrontEnd
 The front end is built purely on React. All code related to the frontend is contained in the folder; `peerplatform-fe`.
 
 Inside `src` you will find these folders:
 
-###Assets:
-This folder contains all css and scss used to style this project along with images rendered in our front-end. In most cases the name of the css/scss stylesheet denotes which file this stylesheet is relevant to.
-
-###Axios:
-This folder currently contains code related to making an axios call to our Django server with authentication tokens included.
-
-###Components:
-Contains all components created. Components are mostly grouped by their functional purpose on the platform. 
-
-#####Process: 
+## Process: 
 
 Users signup, creating a new user profile. Authentication is token based and handled using Redux. Once users have been authenticated they are redirected back to the Home Page.
 
@@ -61,33 +52,33 @@ When the Driver types into the IDE, we wait for the Driver to stop typing for a 
 `routes.js`: Routes for profile page and Table
 
 
-#Technologies/Frameworks
+# Technologies/Frameworks
 Built using: Django, React and Redis
 
 Django Dependencies: `requirements.txt` (Let me know if there are packages not included in requirements.txt)
 
-#Road Map
+# Road Map
 
-##Collate user feedback and make changes
+## Collate user feedback and make changes
 The current priority is to test the platform with live users, collate their feedback and fix any major issues that need to be resolved to get the platform more functional. This will include UI changes based on what users find more appealing and what is realistically feasible to implement
 
-##Testing
+## Testing
 Programmatically test; if the Twilio call is actually starting when two users are matched, if users are receiving the programming challenge, if the code editor terminal produces the expected output based on the code executed, if users can update their profile picture, if users are not receiving the same programming challenge over and over again, if the matching process works as intended in all circumstances
 
-##Leadership Board
+## Leadership Board
 When users complete the pair programming session, they get rated by their peers on communication + collaboration + problem solving skills. I would like to build a real time leadership board to show how users rank and include the feature to filter for users in the leadership board by bootcamp/college + have a total ranking for each college/bootcamp (this is further down the line)
 Possible Solutions: ElastiCache for Redis
 
-##Autograder (Maybe)
+## Autograder (Maybe)
 Building or integrating an existing autograder to test whether code executed produces expected output
 
-##User Dashboard
+## User Dashboard
 Enable users to track their pair programming session scores and be able to visualize which questions they do better in/struggle with. This would require tagging questions I have by category (ie. binary search tree, linkedlist, dynamic programming etc.)
 
-##Tool Related Challenges
+## Tool Related Challenges
 Enable users to select between receiving Leetcode style questions versus questions based on specific tools. So if for example you chose React; you would get a question regarding debugging some React related issue (would need to see how feasible this is)
 
-##Refactor Old Code
+## Refactor Old Code
 Improve efficiency, remove redundancy and clean up code.
 
 
@@ -99,6 +90,3 @@ python manage.py runserver
 ```
 
 #Built by: Emmanuel Sibanda
-
-
->>>>>>> 39affa0 (initial commit)
