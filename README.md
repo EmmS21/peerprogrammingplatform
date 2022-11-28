@@ -1,12 +1,25 @@
-<<<<<<< HEAD
 # Project Description
 Pair programming platform randomly matching similarly skilled users to solve timed randomly generated programming challenges
 
 # How it works
 Users can signup creating a profile click on a button immediately matching them to another user. This action redirects the user to a code-editor and initiates an audio voice chat between both matched users. These users are then given a predefined period of time to solve randomly retrieved programming challenges.
 
-### Purpose
+# Purpose
 This platform is designed to enable bootcamp students and other learners better prepare for technical interviews through pair programming. The process helps users get more comfortable communicating their logic to other stakeholders while simultaneously improving their problem-solving skills.
+
+# How to run locally
+- git clone the repository
+- cd into peerplatform (NB)
+- to run backend follow these steps (not backend has been deployed, you don't need to run this locally):
+```
+pip install -r requirements.txt
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+```
+- cd into peerplatform-fe
+- run npm i --legacy-peer-deps
+- run npm start to start frontend
 
 ## Backend
 The backend is built on Django and comprises three apps; accounts, signup and voice_chat
@@ -82,11 +95,5 @@ Enable users to select between receiving Leetcode style questions versus questio
 Improve efficiency, remove redundancy and clean up code.
 
 
-```
-pip install -r requirements.txt
-python manage.py makemigrations
-python manage.py migrate
-python manage.py runserver
-```
 
 #Built by: Emmanuel Sibanda
