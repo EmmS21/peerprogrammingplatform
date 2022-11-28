@@ -50,8 +50,8 @@ export const AuthProvider = ({children}) => {
     const room_name = useRef([])
     const participants = useRef([])
     const challengeInState = useRef({})
-    const profileURL = 'http://127.0.0.1:8000/'
-    // const profileURL = 'https://codesquad.onrender.com/' 
+    // const profileURL = 'http://127.0.0.1:8000/'
+    const profileURL = 'https://codesquad.onrender.com/' 
     const difficultySelected = useRef([])
 
 
