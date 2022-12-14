@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'channels',
     'webpush',
     'connectmongodb',
+    'codehelp',
 ]
 
 MIDDLEWARE = [

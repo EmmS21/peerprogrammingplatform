@@ -3,10 +3,11 @@ import AuthContext from '../../context/AuthContext';
 import { PageHeader, Tag } from 'antd';
 import "../../assets/other_css/programmingChallenges.css";
 import "../../assets/other_css/codeeditor.css";
+import axios from 'axios'
 
 
 export default function ProgrammingChallenge() {
-    const { challengeInState, driverInState, user } = useContext(AuthContext);
+    const { challengeInState, driverInState, user, getSolution } = useContext(AuthContext);
     const challengeName = challengeInState?.current[0].title;
     const challengeDifficulty = challengeInState?.current[0].difficulty;
     const exampleOne = challengeInState?.current[0].Example2;
@@ -64,6 +65,7 @@ export default function ProgrammingChallenge() {
                 <div><strong>Constraints:</strong>
                 {getConstraints(arrExamples.join(''))}
                 </div>
-            </div>    
+            </div>
+            <button onClick={()=>getSolution(challengeName)}>Get Solution</button>
         </div> )
 }

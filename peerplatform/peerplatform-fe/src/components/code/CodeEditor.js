@@ -20,7 +20,7 @@ import ProfileTabs from '../profile_tabs/ProfileTab';
 import "antd/dist/antd.css";
 import { Steps, Result, 
          Button, Spin, 
-         Tabs } from 'antd'
+         Tabs, Modal } from 'antd'
 import { AudioOutlined, MessageOutlined, 
         CloseOutlined, CodeOutlined,
         SolutionOutlined } from '@ant-design/icons';
@@ -30,10 +30,10 @@ import SelectDifficulty from './SelectDifficulty';
 import AuthContext from '../../context/AuthContext';
 import 'semantic-ui-css/semantic.min.css'
 import { Icon, Header, 
-         Menu, Button as button,
-         Modal, Label} from 'semantic-ui-react';
+         Menu, Button as button, Label} from 'semantic-ui-react';
 import { useGlobalState } from '../../context/RoomContextProvider';
 import WebSocketInstance from '../../websocket/Connect';
+
 
 //change language based on map
 const CodeEditor = ({endCall}) => {
@@ -51,7 +51,8 @@ const CodeEditor = ({endCall}) => {
           sendCodeJudge0, spinnerOn, 
           setSpinnerOn, resp, 
           setResp, mediaURL, 
-          challengeInState
+          challengeInState, openModal,
+          setOpenModal,setGptResp, gptresp
          } = useContext(AuthContext)
     let photoURL = user.photo.split('"').join('');
     const [open, setOpen] = useState(true)
@@ -59,7 +60,7 @@ const CodeEditor = ({endCall}) => {
     const [query, setQuery] = useState('');
     const [displayCode, setDisplayCode] = useState('');
     const received = useRef([]);
-    const [rerender, setRerender] = useState(false)
+    const [rerender, setRerender] = useState(false);
 
     // checks to see if select or programming challenge should be shown;
     const [showSelect, setShowSelect] = useState(true)
@@ -165,6 +166,11 @@ const CodeEditor = ({endCall}) => {
         // })
     }
 
+    function offModal() {
+        setGptResp('');
+        setOpenModal(false);
+    }
+
         return (
         <>
         <Menu class="w-full" pointing widths={ sidebar ? 5 : 6 } size={"tiny"} style={{ marginTop:0 }}>
@@ -238,6 +244,13 @@ const CodeEditor = ({endCall}) => {
             </div>
             ): null
         }
+        {   openModal ?
+                    <Modal title="solution" onCancel={offModal}>
+                        <p>{gptresp}</p>
+                    </Modal> :
+                    null
+        }
+
            <div className="col-4" style={{ marginTop: -20 }}>
             <div className="select-dropdown">
                 <select

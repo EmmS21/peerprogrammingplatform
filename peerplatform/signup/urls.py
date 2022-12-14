@@ -36,6 +36,7 @@ urlpatterns = [
     path('programming_challenge/', include ('connectmongodb.urls')),
     path('cacheUsers/', CacheView, name='cacheUsers'),
     path('api/programming_challenges/', ProgrammingChallengeView.as_view({'get': 'list'}), name='programming_challenges'),
+    path('code_help/', include('codehelp.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.site.header = 'The Gradient Boost'
