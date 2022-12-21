@@ -33,11 +33,11 @@ import { Icon, Header,
          Menu, Button as button, Label} from 'semantic-ui-react';
 import { useGlobalState } from '../../context/RoomContextProvider';
 import WebSocketInstance from '../../websocket/Connect';
+import Solutions from './Solutions';
 
 
 //change language based on map
 const CodeEditor = ({endCall}) => {
-    const [currentLanguage, setCurrentLanguage] = useState("");
     const [token, setToken] = useState("");
     const output = null;
     const { Step } = Steps;
@@ -52,7 +52,8 @@ const CodeEditor = ({endCall}) => {
           setSpinnerOn, resp, 
           setResp, mediaURL, 
           challengeInState, openModal,
-          setOpenModal,setGptResp, gptresp
+          setOpenModal, gptresp,
+          setCurrentLanguage, currentLanguage, contextHolder
          } = useContext(AuthContext)
     let photoURL = user.photo.split('"').join('');
     const [open, setOpen] = useState(true)
@@ -64,7 +65,6 @@ const CodeEditor = ({endCall}) => {
 
     // checks to see if select or programming challenge should be shown;
     const [showSelect, setShowSelect] = useState(true)
-
 
     //change language in select options
     //map language id to language
@@ -151,7 +151,6 @@ const CodeEditor = ({endCall}) => {
         return () => clearTimeout(codeOutput)
     }), [query])
 
-
     function onChange(code){
         const dataToBeSent = {}
         dataToBeSent['type'] = "send.message"
@@ -167,7 +166,7 @@ const CodeEditor = ({endCall}) => {
     }
 
     function offModal() {
-        setGptResp('');
+        gptresp.current = ''
         setOpenModal(false);
     }
 
@@ -214,6 +213,7 @@ const CodeEditor = ({endCall}) => {
             </Menu.Item>
         </Menu>
         <div className="row">
+        { contextHolder }
         { sidebar ? (
             <div className={ visible ? "col-2 whiteCol my-0" : "col-3 whiteCol my-0" } style={{ overflow:'scroll', height:400, marginLeft: !visible ? -60 : -20}}>
                 <Tabs type="card">
@@ -235,29 +235,24 @@ const CodeEditor = ({endCall}) => {
                                 receive === true ?
                                 <ProgrammingChallenge/>
                                 : <h1> not challenge yet</h1>
-                                }
-                                    
-                            </TabPane>
-                        
+                                }                   
+                            </TabPane>                        
                     }
+                    
+                    <TabPane tab="Solution" key="3">
+                        <Solutions/>
+                    </TabPane>
                 </Tabs>
             </div>
             ): null
         }
-        {   openModal ?
-                    <Modal title="solution" onCancel={offModal}>
-                        <p>{gptresp}</p>
-                    </Modal> :
-                    null
-        }
-
            <div className="col-4" style={{ marginTop: -20 }}>
             <div className="select-dropdown">
                 <select
                     aria-label="Default select example"
                     onChange={changeLanguageHandler}
                  >
-                    <option selected>Select language</option>
+                    <option selected value="">Select language</option>
                     <option value="70">Python</option>
                     <option value="63">Javascript</option>
                     <option value="62">Java</option>

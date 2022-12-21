@@ -8,6 +8,7 @@ import axiosWithAuth from "../axios"
 import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../context/RoomContextProvider';
 import WebSocketInstance from '../websocket/Connect';
+import { notification as notify } from 'antd';
 
 
 const AuthContext = createContext()
@@ -53,10 +54,10 @@ export const AuthProvider = ({children}) => {
      const profileURL = 'http://127.0.0.1:8000/'
 //    const profileURL = 'https://codesquad.onrender.com/'
     const difficultySelected = useRef([])
-    const [openModal, setOpenModal] = useState(false);
-    const [gptresp, setGptResp] = useState('')
-
-
+    const [openModal, setOpenModal] = useState(true);
+    const gptresp = useRef([])
+    const [api, contextHolder] = notify.useNotification();
+    const [currentLanguage, setCurrentLanguage] = useState("");
 
     const history = useHistory();
 
@@ -297,14 +298,15 @@ export const AuthProvider = ({children}) => {
         }
     }
 
-    function getSolution(title){
+    function getSolution(title, lang){
         const num = title?.match(/[\d\.]+/g)
         const leetTitleNum = parseInt(num[0].replace('.',''))
         const leetObj = {}
         leetObj["data"] =  leetTitleNum
+        leetObj["language"] = lang
         axios.post(`${profileURL}/code_help/get`, leetObj).then((res) => {
-            console.log('response', res.data)
-            setGptResp(res.data)
+            gptresp.current  = res.data
+            console.log('gptresp', gptresp.current)
             setOpenModal(true)
         })
     }
@@ -324,6 +326,14 @@ export const AuthProvider = ({children}) => {
         // axios.post
         // update_score
         // console.log('total review is', JSON.stringify(review))
+    }
+
+    const openNotification = () => {
+        api.open({
+            message: "Select language first!",
+            description: "Please select a language before trying to get a solution",
+            duration: 0,
+        })
     }
 
 
@@ -383,8 +393,11 @@ export const AuthProvider = ({children}) => {
         getSolution: getSolution,
         openModal: openModal,
         setOpenModal: setOpenModal,
-        setGptResp: setGptResp,
         gptresp : gptresp,
+        contextHolder: contextHolder,
+        openNotification: openNotification,
+        setCurrentLanguage: setCurrentLanguage,
+        currentLanguage: currentLanguage,
     }
 
 

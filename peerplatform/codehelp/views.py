@@ -13,9 +13,10 @@ openai.api_key = config('OPEN_AI_API_KEY')
 def get_help(request):
     md = markdown.Markdown(extensions=['extra'])
     data = request.data
+    print("Return a solution for Leetcode question {} using {}".format(data['data'], data["language"]))
     response = openai.Completion.create(
         engine="code-davinci-002",
-        prompt="Return a solution for Leetcode question {}".format(data['data']),
+        prompt="Return a solution for Leetcode question {} using {}".format(data['data'], data["language"]),
         temperature=0,
         max_tokens=256,
         top_p=1,

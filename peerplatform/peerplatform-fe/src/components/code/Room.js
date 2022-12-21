@@ -28,23 +28,23 @@ const Room = ({ showSelect,setShowSelect}) => {
         console.log('!!!*** how many times is twilio being called ***!!!')
         WebSocketInstance.connect()
         selectDriver()
-        const params = {
-            roomName: roomName, participantLabel: user.username
-        };
-        if(checkCall === false){
-            if (!call) {
-                const callPromise = device.connect({ params });
-                callPromise.then((twilioCall) => {
-                console.log(' ***what is call', twilioCall)
-                setCall((prev) => twilioCall);
-                setCallConnected(true)
-                });
-            }
-            if (!participants.current.includes(user.username)) {
-                    participants.current.push(user.username);
-            }
-            checkCall = true
-        }
+        // const params = {
+        //     roomName: roomName, participantLabel: user.username
+        // };
+        // if(checkCall === false){
+        //     if (!call) {
+        //         const callPromise = device.connect({ params });
+        //         callPromise.then((twilioCall) => {
+        //         console.log(' ***what is call', twilioCall)
+        //         setCall((prev) => twilioCall);
+        //         setCallConnected(true)
+        //         });
+        //     }
+        //     if (!participants.current.includes(user.username)) {
+        //             participants.current.push(user.username);
+        //     }
+        //     checkCall = true
+        // }
     }, [roomName, user, call, device, participants, driverInState,matchedUserState,sortUsersAlphabetically]);
     
     const handleLeaveRoom = () => {

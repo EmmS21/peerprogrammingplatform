@@ -7,7 +7,10 @@ import axios from 'axios'
 
 
 export default function ProgrammingChallenge() {
-    const { challengeInState, driverInState, user, getSolution } = useContext(AuthContext);
+    const { challengeInState, driverInState, 
+             user, getSolution,
+             currentLanguage, openNotification
+            } = useContext(AuthContext);
     const challengeName = challengeInState?.current[0].title;
     const challengeDifficulty = challengeInState?.current[0].difficulty;
     const exampleOne = challengeInState?.current[0].Example2;
@@ -23,16 +26,24 @@ export default function ProgrammingChallenge() {
    }
 
    function formatExamples(example){
-    const constraintsIdx = example.indexOf("Constraints")
-    const cleanExample = example.slice(0,constraintsIdx)
-    const exampleArr = cleanExample.slice(3).split(/\S+(?=: )/g) 
-    exampleArr.shift()
+    const constraintsIdx = example?.indexOf("Constraints")
+    const cleanExample = example?.slice(0,constraintsIdx)
+    const exampleArr = cleanExample?.slice(3).split(/\S+(?=: )/g) 
+    exampleArr?.shift()
     return exampleArr
    }
 
    function getConstraints(examples){
     const constraintsIdx = examples.indexOf("Constraints")
     return examples.slice(constraintsIdx+12, examples.length)
+   }
+
+   function getSolutionHandler(challengeName){
+    if(currentLanguage){
+        getSolution(challengeName, currentLanguage)
+    } else {
+        openNotification()
+    }
    }
 
 // probably make an array of the examples so you can map through all of them;
@@ -66,6 +77,6 @@ export default function ProgrammingChallenge() {
                 {getConstraints(arrExamples.join(''))}
                 </div>
             </div>
-            <button onClick={()=>getSolution(challengeName)}>Get Solution</button>
+            <button onClick={()=>getSolutionHandler(challengeName)}>Get Solution</button>
         </div> )
 }
