@@ -70,6 +70,22 @@ Built using: Django, React and Redis
 
 Django Dependencies: `requirements.txt` (Let me know if there are packages not included in requirements.txt)
 
+# Feature Breakdown
+How different features work (this will help with future debugging/refactoring)
+
+## Driver 
+
+This platform uses the driver-observer paradigm. One user is the driver while the other remains the observer. The driver has full access to the code editor (read and write), while the observer has read only access. This helps us maintain some order in the pair programming session, allowing one user to focus on the logic required to solve the problem, while the other user translates the logic to code.
+
+The driver is stored in state `driverInState`. We use Context API to store and pass this state down to multiple components that require this. The state is contained in AuthContext.
+
+Inside Room, a the function where the driver of the call is selected is contained in a useEffect. The function `selectDriver` updates the state, by calling the function `sortUsersAlphabetically` - this function is also contained in AuthContext. The `sortUsersAlphabetically`, takes two arguments (the name of both users).
+
+The `sortUsersAlphabetically` function gets the current date, checks if the date is divisible by 2; if it is, it returns the array of names sorted alphabetically, if not it reverses the order of the names. The first name is this returned output is selected as the Driver.
+
+We use the `sortUsersAlphabetically` to avoid having the same Driver all the time when the same two users are matched together and avoid any potential issues that could arise from having users select who the driver is between both of them
+
+
 # Road Map
 
 ## Collate user feedback and make changes
@@ -93,6 +109,7 @@ Enable users to select between receiving Leetcode style questions versus questio
 
 ## Refactor Old Code
 Improve efficiency, remove redundancy and clean up code.
+
 
 
 
