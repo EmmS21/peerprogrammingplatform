@@ -22,7 +22,7 @@ def get_help(request):
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
-        stop=["Problem:"]
+        # stop=["Problem:"]
     )
     print('response', md.convert(response["choices"][0]["text"]))
     return HttpResponse(md.convert(response["choices"][0]["text"]))
