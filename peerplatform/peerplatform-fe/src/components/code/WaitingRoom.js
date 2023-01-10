@@ -68,10 +68,10 @@ const WaitingRoom = () =>  {
 
     function deleteMatchedUsersRedis(username, matchedUser){
         console.log('deleteMatched triggered')
-        const deletingUsers = {}
-        deletingUsers['username'] = username
-        deletingUsers['matched'] = matchedUser
-        axios.delete(`${profileURL}cache/delete`, deletingUsers)
+        const usersToDelete = {}
+        usersToDelete['username'] = username
+        usersToDelete['matched'] = matchedUser
+        axios.delete(`${profileURL}cache/delete`, usersToDelete)
             .then(res=> {
                 console.log('axios delete response', res)
             })

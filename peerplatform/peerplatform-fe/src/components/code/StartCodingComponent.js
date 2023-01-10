@@ -108,7 +108,7 @@ const StartCodingComponent = () => {
             loading === true ?
                 <SyncLoader loading={loading} color={color} size={30} />
                 :
-                <button className="button button-primary button-wide-mobile button-sm"
+                <button id="joinroom" className="button button-primary button-wide-mobile button-sm"
                     onClick={handleSubmit}> Join Waiting Room
                 </button>
         }
