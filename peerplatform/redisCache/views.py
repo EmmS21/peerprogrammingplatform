@@ -9,12 +9,34 @@ from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 import re
 from django.core.cache import caches
 from django.views.decorators.csrf import csrf_exempt
+from .models import Counter
 
 # redis_instance = caches["default"]
 # elasticache_redis_instance = caches["leadership_board"]
 redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
                                    port=settings.REDIS_PORT,
                                    password =settings.REDIS_PASSWORD)
+
+
+@api_view(['GET', 'POST'])
+def add_to_redis(request, *args, **kwargs):
+    model = Counter
+    received = request.body.decode('utf-8')
+    username = json.loads(received)
+    if request.method == "POST":
+        obj = model.objects.create(user_name=username['username'])
+        print('last', model.objects.last())
+        obj.save()
+    return Response({'message': 'test'}, 201)
+
+
+    # def create(self,validated_data):
+    #     profile_data = validated_data.pop('profile')
+    #     user = User.objects.create(**validated_data)
+    #     Profile.objects.create(**profile_data, user=user)
+    #     return user
+
+
 
 @api_view(['GET', 'POST'])
 def manage_items(request, *args, **kwargs):
