@@ -27,9 +27,9 @@ const Ratings = () => {
   return (
     <>
       <Button type="primary" onClick={showModal}>
-        Rate Peer
+        Completed
       </Button>
-      <Modal title="Rate your peer" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+      {/* <Modal title="Rate your peer" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <center>How well did they explain their logic?</center>
         <IconSlider/>
         <center>How would you rate their problem solving skills?</center>
@@ -38,7 +38,7 @@ const Ratings = () => {
         <IconSliderThree/>
         <center>How would you rate their ability to read and write clean code</center>
         <IconSliderFour/>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

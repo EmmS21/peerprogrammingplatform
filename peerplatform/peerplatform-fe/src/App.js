@@ -65,9 +65,10 @@ const App = () => {
                     <AppRoute exact path="/payments" component={CheckoutForm} options={options}/>
                 </Elements>
                 <RoomContextProvider useGlobalState={useGlobalState}>
-                    <AppRoute exact path="/rooms" component={WaitingRoom} />
+                    <AppRoute exact path="/rooms" component={Room}/>
+                    {/* <AppRoute exact path="/rooms" component={WaitingRoom} /> */}
                     <PrivateRoute exact path="/profile" component={Profile} render={(props) => <AdminLayout {...props} />} />
-                    <AppRoute exact path="/rooms/:roomId" component={Room} />
+                    {/* <AppRoute exact path="/rooms/:roomId" component={Room} /> */}
                 </RoomContextProvider>
             </AuthProvider>
         </Switch>

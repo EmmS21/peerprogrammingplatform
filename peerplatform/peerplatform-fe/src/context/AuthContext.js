@@ -51,8 +51,8 @@ export const AuthProvider = ({children}) => {
     const room_name = useRef([])
     const participants = useRef([])
     const challengeInState = useRef({})
-    //  const profileURL = 'http://127.0.0.1:8000/'
-   const profileURL = 'https://codesquad.onrender.com/'
+     const profileURL = 'http://127.0.0.1:8000/'
+//    const profileURL = 'https://codesquad.onrender.com/'
     const difficultySelected = useRef([])
     const [openModal, setOpenModal] = useState(true);
     const gptresp = useRef([])
@@ -297,12 +297,14 @@ export const AuthProvider = ({children}) => {
         }
     }
 
-    function getSolution(title, lang){
+    function getSolution(title, lang, code){
         const num = title?.match(/[\d\.]+/g)
         const leetTitleNum = parseInt(num[0].replace('.',''))
         const leetObj = {}
         leetObj["data"] =  leetTitleNum
         leetObj["language"] = lang
+        leetObj["code"] =  code
+        leetObj["user"] = user['user_id']
         axios.post(`${profileURL}/code_help/get`, leetObj).then((res) => {
             gptresp.current  = res.data
             console.log('gptresp', gptresp.current)

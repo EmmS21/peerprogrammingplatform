@@ -51,15 +51,10 @@ const Room = ({ showSelect,setShowSelect}) => {
         console.log('INSIDE FUNCTION TO TERMINATE CALL', JSON.stringify(call))
         // history.push('/rooms');
     };
-    const endCall = () => {
-        handleLeaveRoom();
-        setState({...state, createdRoomTopic: null}); // clear created room.
-    };
 
     return (
     <>
-        <button onClick={ ()=> endCall() }>End Call</button>
-        <CodeEditor endCall={endCall} />
+        <CodeEditor/>
     </>
     )
 }

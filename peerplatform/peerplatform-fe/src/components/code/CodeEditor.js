@@ -37,7 +37,7 @@ import Solutions from './Solutions';
 
 
 //change language based on map
-const CodeEditor = ({endCall}) => {
+const CodeEditor = () => {
     const [token, setToken] = useState("");
     const output = null;
     const { Step } = Steps;
@@ -183,9 +183,6 @@ const CodeEditor = ({endCall}) => {
                 }
             </Menu.Item>
             <Menu.Item>
-                <Button onClick={()=> endCall()}>Terminate Call</Button>
-            </Menu.Item>
-            <Menu.Item>
                 {
                     <Button onClick={()=> setSidebar(!sidebar)}>{ sidebar ? "Hide Sidebar" : "Show Sidebar" }</Button>
                 }
@@ -224,7 +221,7 @@ const CodeEditor = ({endCall}) => {
                         driverInState.current === user.username ?                    
                             showSelect === false ?
                             <TabPane tab="Coding Challenge" key="2">
-                                        <ProgrammingChallenge/>
+                                        <ProgrammingChallenge query={query}/>
                                 </TabPane> : 
                                 <TabPane tab="Select Difficulty" key="2">
                                     <SelectDifficulty showSelect={showSelect} setShowSelect={setShowSelect} /> 

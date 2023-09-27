@@ -6,7 +6,7 @@ import "../../assets/other_css/codeeditor.css";
 import axios from 'axios'
 
 
-export default function ProgrammingChallenge() {
+export default function ProgrammingChallenge({query}) {
     const { challengeInState, driverInState, 
              user, getSolution,
              currentLanguage, openNotification
@@ -40,7 +40,8 @@ export default function ProgrammingChallenge() {
 
    function getSolutionHandler(challengeName){
     if(currentLanguage){
-        getSolution(challengeName, currentLanguage)
+        const codeFromEditor = query
+        getSolution(challengeName, currentLanguage, codeFromEditor)
     } else {
         openNotification()
     }
