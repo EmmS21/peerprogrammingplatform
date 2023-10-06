@@ -15,8 +15,15 @@ SECRET_KEY = '7v2g512#_rcafql%j3-8kd--2y&tjtfrybi4e#36^2+x2-2t8w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = [
+    ".ngrok.io",
+    "127.0.0.1",
+    "localhost",
+    "0.0.0.0",
+    "codesquad.onrender.com",
+    "peerprogrammingplatform.vercel.app",
+    "aicoder.onrender.com"  # Add this line
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
