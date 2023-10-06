@@ -1,5 +1,5 @@
 asgiref==3.7.2
-channels==4.0.0
+channels==3.0.5
 djangorestframework==3.14.0
 djangorestframework_simplejwt==5.3.0
 openai==0.28.1
