@@ -16,7 +16,9 @@ import json
 # from rest_auth.serializers import UserDetailsSerializer
 from accounts.models import ProgrammingChallenge
 from accounts.models import Profile
+import logging
 
+logger = logging.getLogger(__name__)
 # User = get_user_model()
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -162,7 +164,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 'user': 'Username or password is incorrect',
             }
         token = RefreshToken.for_user(user)
-        # customizing token payload
+        logger.debug(f"User Pair: {user}")
         token['username'] = user.username
         token['first_name'] = user.first_name
         token['last_name'] = user.last_name
@@ -187,6 +189,22 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+
+        # Check if the user is correctly authenticated
+        if response.status_code == 200:
+            user = request.user
+            if user.is_authenticated:
+                logger.debug(f"User {user.username} is authenticated.")
+                print('user', user)
+            else:
+                logger.debug("User is not authenticated.")
+        else:
+            logger.debug("Token obtain failed.")
+
+        return response
 
 
 class UserSerializer(serializers.ModelSerializer):

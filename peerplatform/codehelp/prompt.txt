@@ -1,0 +1,29 @@
+Please generate pseudo code for this Leetcode question
+
+I want this to be in the form of:
+1. Include the name of the algorithm being used to solve this question
+2. The first paragraph must include a summary of the algorithm. It must be explained both in technical terms and a simplified version. The simplified version should use everyday examples to explain how this algorithm works. This should be a detailed explanation
+3. Below this generate a simple question that is similar to the current Leetcode question, the question must not be the same as the current question or use a test case from the current question. If for example the question requires a two pointer technique, generate a question that would also require this technique, but is a lot easier than the current question.  Please note that this should be a different question that you Underneath the explanation of the example and how it's similar must be the code example solving this simpler version of the question using pseudo-code. Each line should include a comment on what is happening
+4. Step by step questions for me to figure out what I need to be doing at each point. For each question, include the text "Clue:" in bold. For this bullet point you need to include some clue to help me figure out what is going on.  How detailed this clue is should be based on the level I send to you, with easy meaning I need a lot more help and hard meaning I need less help. Add a second bullet point: "Alternative:" where you discuss alternative solutions for this step, explain why they would work, what difficulties they would present and why your option is the most optimal and easy to understand
+5.  For each question include a link where applicable. This link should be a link to an article to help the user understand then concept being introduced by the question
+
+At the end, include a summary explaining why this is the most optimal solution, giving the user hints regarding the time complexity and space complexity.
+
+Use this exact format for the answer
+Leetcode Question: [Title]
+
+Algorithm:
+<bold>Technical Explanation<bold>
+<bold>Simplified Explanation<bold>
+
+Example:
+[Example Text]
+<code> Pseudo-code/logic + line by line comments<code>
+
+Step By Step Breakdown
+- Question:
+  - <bold>Clue:<bold>
+  - <bold>Alternative:<bold>
+  - <link>Link to Article:<bold>
+
+Please return this as a JSON with the headers as titles. Make it as nested as required

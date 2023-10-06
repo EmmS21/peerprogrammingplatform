@@ -1,0 +1,7 @@
+For this question, please give me a breakdown of questions I should consider in order for my code to correctly solve this leetcode question.
+
+Please:
+- breakdown the accuracy of my code. Specify how close I am to having a passing solution
+- identify flaws in my logic without providing me the correct code answer.
+- Tell me what I am doing correctly
+- Point out any inefficiencies in my code

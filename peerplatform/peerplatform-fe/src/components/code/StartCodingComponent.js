@@ -5,8 +5,6 @@ import { useGlobalState } from '../../context/RoomContextProvider';
 import AuthContext from '../../context/AuthContext';
 import axios from 'axios';
 import SyncLoader from "react-spinners/ClipLoader";
-import WebSocketInstance from '../../websocket/Connect';
-
 
 const StartCodingComponent = () => {
     const history = useHistory();
@@ -56,23 +54,24 @@ const StartCodingComponent = () => {
     //handle submission
     const handleSubmit = e => {
         e.preventDefault();
-        const nickname = user.username;
-        setupTwilio(nickname);
-        const rooms = state.rooms;
-        setState((state) => {
-            return {...state, rooms }
-        });
-        sendWaitingRoomUsersToRedisCache()
-        if(availableOnlineUsers.current.length){
-            console.log('redirected')
-                history.push('/rooms');
-        }
-        else {
-            setLoading(true);
-            setTimeout(()=>{
-                history.push('/rooms');
-            },7000)
-        }
+        history.push('/rooms');
+        // const nickname = user.username;
+        // setupTwilio(nickname);
+        // const rooms = state.rooms;
+        // setState((state) => {
+        //     return {...state, rooms }
+        // });
+        // sendWaitingRoomUsersToRedisCache()
+        // if(availableOnlineUsers.current.length){
+        //     console.log('redirected')
+        //         history.push('/rooms');
+        // }
+        // else {
+        //     setLoading(true);
+        //     setTimeout(()=>{
+        //         history.push('/rooms');
+        //     },7000)
+        // }
     }
 
     const setupTwilio = (nickname) => {

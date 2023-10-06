@@ -27,6 +27,7 @@
     "form-data": "^4.0.0",
     "geckodriver": "^3.0.2",
     "jest-transform-css": "^4.0.1",
+    "json5": "^2.2.3",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.15",
     "notistack": "^2.0.5",

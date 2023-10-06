@@ -1,0 +1,11 @@
+.code-block {
+  display: block; /* Make it a block-level element */
+  background-color: #1e1e1e;
+  color: #ffffff;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: "Courier New", monospace;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  tab-size: 4;
+}
