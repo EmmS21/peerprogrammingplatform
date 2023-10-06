@@ -274,16 +274,6 @@ TWILIO_API_KEY = config('TWILIO_API_KEY')
 TWILIO_API_SECRET = config('TWILIO_API_SECRET')
 
 
-
-ALLOWED_HOSTS = [
-    ".ngrok.io",
-    "127.0.0.1",
-    "localhost",
-    "0.0.0.0",
-    "codesquad.onrender.com",
-    "peerprogrammingplatform.vercel.app"
-]
-
 SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
 }
