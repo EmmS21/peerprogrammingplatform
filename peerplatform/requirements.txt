@@ -21,3 +21,4 @@ django-redis==5.2.0
 daphne==3.0.2
 djangorestframework-api-key==2.2.0
 pyairtable==2.1.0.post1
+django-allauth
