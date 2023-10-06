@@ -1,16 +1,22 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import AuthContext from '../../context/AuthContext';
-import { Select } from 'semantic-ui-react';
+import { Select, Label } from 'semantic-ui-react';
 import axios from 'axios';
-import WebSocketInstance from '../../websocket/Connect';
 
-const SelectDifficulty = ({setShowSelect, showSelect}) => {
-    const { user,
-        matchedUserState, driverInState, 
-        sortUsersAlphabetically,room_name, 
-        participants, difficultySelected,
-        challengeInState, profileURL
+const SelectDifficulty = ({setShowSelect, showSelect, placeholderText}) => {
+    const { difficultySelected, getSolution, 
+        challengeInState, setChallengeInState, profileURL, setShowNextChallengeButton
      } = useContext(AuthContext)
+
+
+     useEffect(() => {
+        if(challengeInState[0] && challengeInState.length > 0){
+            const challengeName = challengeInState[0].title
+            localStorage.setItem('challenge', JSON.stringify(challengeInState));
+            getSolutionHandler(challengeName)
+        }
+    }, [challengeInState]);
+
     const difficultyLevels = [
         { key: 'e', value: 'easy', text: 'Easy' },
         { key: 'm', value: 'medium', text: 'Medium' },
@@ -28,37 +34,35 @@ const SelectDifficulty = ({setShowSelect, showSelect}) => {
         else {
             selection = 'get_hard'
         }
-        console.log('selection value is', data.value)
-        console.log('selection is', selection)
         const base_url = `${profileURL}programming_challenge/${selection}` 
         axios.get(base_url)
         .then(res=>{
-            challengeInState.current = res.data
-            if(driverInState.current === user.username){
-                const dataToSend = {}
-                dataToSend["type"] = "send.challenge"
-                dataToSend["user"] = matchedUserState.current
-                dataToSend["data"] = challengeInState.current
-                WebSocketInstance.sendData(JSON.stringify(dataToSend))
-                // SecondSocketInstance.sendData(dataToBeSent)
-            }
+            setChallengeInState(res.data)
             setShowSelect(false)
+            setShowNextChallengeButton(true)
         })
         .catch(err=> {
             setShowSelect(true)
             console.log(err)
         })
     }
-
+    async function getSolutionHandler(challengeName){
+        try {
+            await getSolution(challengeName)
+        } catch(error){
+            console.error('Error fetching the solution:', error)
+        } 
+    }
     return (
     <div>
-
-        {driverInState.current === user.username && <Select 
-            placeholder='Select Level of Difficulty' 
+        <Label color='blue' horizontal>
+            {placeholderText}:
+        </Label>
+        <Select
+            placeholder={placeholderText}
             options={difficultyLevels}
             onChange={handleOnChange}
-            /> }
-        
+            /> 
     </div>
   )
 }

@@ -16,11 +16,7 @@ const AuthContext = createContext()
 export default AuthContext;
 
 export const AuthProvider = ({children}) => {
-    //ensure user remains logged in even if browser is refreshed, we are going to start off by getting access token from local storage
-    //start off by checking if we have tokens in localStorage, if we have token parse it    //set some states for user and authentication tokens
-    //we have an anonymous function so that we get keys from localStorage once on initial load to make it less expensive on the browser
     let [authTokens, setAuthTokens] = useState(()=> localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
-    //now  we want the information contained in tokens -> jwt.io
     let [user,setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
     let [loading, setLoading] = useState(true)
     //creating new drop in audio chat
@@ -50,24 +46,23 @@ export const AuthProvider = ({children}) => {
     const driverInState = useRef([])
     const room_name = useRef([])
     const participants = useRef([])
-    const challengeInState = useRef({})
-     const profileURL = 'http://127.0.0.1:8000/'
-//    const profileURL = 'https://codesquad.onrender.com/'
+    //  const profileURL = 'http://127.0.0.1:8000/'
+    const profileURL = 'https://codesquad.onrender.com/'
     const difficultySelected = useRef([])
     const [openModal, setOpenModal] = useState(true);
-    const gptresp = useRef([])
+    const [gptresp, setGptResp] = useState({})
     const [api, contextHolder] = notify.useNotification();
-    const [currentLanguage, setCurrentLanguage] = useState("");
+    const [currentLanguage, setCurrentLanguage] = useState('');
+    const [formattedChallengeName, setFormattedChallengeName] = useState('')
+    const [inputArr, setInputArr] = useState([])
+    const [outputArr, setOutputArr] = useState([])
+    const [showNextChallengeButton, setShowNextChallengeButton] = useState(false);
+    const [challengeInState, setChallengeInState] = useState({});
+    const [codeHelpState, setCodeHelpState] = useState(null); // New state for Code Help
+
+
 
     const history = useHistory();
-
-    const codeWarsIds = ['523a86aa4230ebb5420001e1','541c8630095125aba6000c00','5266876b8f4bf2da9b000362',
-    '526dbd6c8c0eb53254000110','514a024011ea4fb54200004b','5270d0d18625160ada0000e4','520b9d2ad5c005041100000f',
-    '52742f58faf5485cae000b9a','546f922b54af40e1e90001da','546f922b54af40e1e90001da',
-    '523f5d21c841566fde000009','52597aa56021e91c93000cb0','57cebe1dc6fdc20c57000ac9',
-    '55f8a9c06c018a0d6e000132','545cedaa9943f7fe7b000048','55908aad6620c066bc00002a',
-    '546e2562b03326a88e000020','5390bac347d09b7da40006f6','5264d2b162488dc400000001',
-    '50654ddff44f800200000004']
 
     //we are going to pass this information down to login page
     //async function because we must wait for something to happen first
@@ -108,15 +103,15 @@ export const AuthProvider = ({children}) => {
                             profile_pic: res.data.profile_pic
                         })
                 })
-                console.log(`what is inside user ${user.first_name}`)
+                // console.log(`what is inside user ${user.first_name}`)
     }
 
     //update profile information
     const updateProfile = (userData, userID) => {
-        console.log('userData contains', userData)
+        // console.log('userData contains', userData)
         axios.put(`${profileURL}${userID}/`, userData)
         .then(res => {
-            console.log('profile update', res)
+            // console.log('profile update', res)
             setUser({ ...user, 
                         first_name:res.data.first_name,
                         last_name: res.data_last_name,
@@ -139,26 +134,12 @@ export const AuthProvider = ({children}) => {
             headers,
         })
             .then( res => {
-                console.log('uploadProfilePic', res)
+                // console.log('uploadProfilePic', res)
             })
             .catch((error) =>{
-                console.log('error',error)
+                // console.log('error',error)
             })
     }
-
-
-    //retrieve random programming challenge
-    // const retrieveChallenge = () => {
-    //     const challenge = codeWarsIds[(Math.random() * codeWarsIds.length) | 0]
-    //     const roomName = user.username
-    //     axios.get(`https://www.codewars.com/api/v1/code-challenges/${challenge}`)
-    //         .then(res=>{
-    //             setChallengeInState(res.data)
-    //         })
-    //         .catch(err=> {
-    //             console.log(err)
-    //         })
-    // }
 
     let logOutUser = () => {
         handleServerLogout()
@@ -216,23 +197,37 @@ export const AuthProvider = ({children}) => {
     const sendCodeJudge0 = (requestBody) => {
         axios.post(`${baseURL}`, requestBody, {
             headers
-            })
-            .then((res)=> {
-                threeSecondWait().then(()=>{
-                    axios.get(`${baseURL}/${res.data.token}`, {
-                        headers
-                    })
-                    .then((res)=> {
-                        setSpinnerOn(false)
-                        !res.data.stdout ? setResp(res.data.stderr)
-                            : setResp(res.data.stdout)
-                    })
-                    .catch((err)=> {
-                        console.log('err',err)
-                    })
+        })
+        .then((res) => {
+            threeSecondWait().then(() => {
+                axios.get(`${baseURL}/${res.data.token}`, {
+                    headers
+                })
+                .then((res) => {
+                    setSpinnerOn(false)
+                    !res.data.stdout ? setResp(res.data.stderr)
+                        : setResp(res.data.stdout)
+                })
+                .catch((err) => {
+                    setSpinnerOn(false)
+                    console.error('Error fetching result:', err);
+                    setResp('An error occurred while fetching the result. Please try again.');
                 })
             })
+        })
+        .catch((err) => {
+            if (err.response && err.response.status === 422) {
+                setSpinnerOn(false)
+                console.error('Unprocessable Content:', err.response.data);
+                setResp('It seems you have not selected a programming language or used an incorrect language selection. Please check and try again.');
+            } else {
+                setSpinnerOn(false)
+                console.error('An error occurred:', err);
+                setResp('An unknown error occurred. Please try again.');
+            }
+        });
     }
+    
     //send current and matched users to state
     const pairProgrammingMatching = (matchedUser) => {
         const username =  user.username
@@ -254,7 +249,6 @@ export const AuthProvider = ({children}) => {
             username: data.username,
             email: data.email,
             password: data.password,
-//            topic: Math.random().toString(36).slice(2,7)
             profile: {
                         city: data.city,
                         country: data.country,
@@ -297,23 +291,27 @@ export const AuthProvider = ({children}) => {
         }
     }
 
-    function getSolution(title, lang, code){
+    async function getSolution(title, query = null){
         const num = title?.match(/[\d\.]+/g)
-        const leetTitleNum = parseInt(num[0].replace('.',''))
-        const leetObj = {}
-        leetObj["data"] =  leetTitleNum
-        leetObj["language"] = lang
-        leetObj["code"] =  code
-        leetObj["user"] = user['user_id']
-        axios.post(`${profileURL}/code_help/get`, leetObj).then((res) => {
-            gptresp.current  = res.data
-            console.log('gptresp', gptresp.current)
-            setOpenModal(true)
-        })
+        const leetTitleNum = parseInt(num[0].replace('.','')+' ')
+        const leetObj = { data: leetTitleNum };
+        if (query) {
+          leetObj['query'] = query; 
+        }
+        const res = await axios.post(`${profileURL}/code_help/get`, leetObj)
+        const content = res.data;
+        if(query){
+            setCodeHelpState(content)
+        } else {
+            setGptResp(content)
+        }
+        setOpenModal(true)
+        return content
     }
+    
 
     function postReview(){
-        console.log('inside postReview')
+        // console.log('inside postReview')
         const review = {}
         review['user'] = user.username
         review['communication'] = valueOne
@@ -322,11 +320,8 @@ export const AuthProvider = ({children}) => {
         review['programming'] = valueFour
         axios.post(`${profileURL}update_score/`, review)
         .then(res => {
-            console.log('our response', res)
+            // console.log('our response', res)
         })
-        // axios.post
-        // update_score
-        // console.log('total review is', JSON.stringify(review))
     }
 
     const openNotification = () => {
@@ -390,7 +385,8 @@ export const AuthProvider = ({children}) => {
         room_name: room_name,
         participants: participants,
         difficultySelected: difficultySelected,
-        challengeInState: challengeInState,
+        challengeInState: challengeInState, 
+        setChallengeInState: setChallengeInState,
         getSolution: getSolution,
         openModal: openModal,
         setOpenModal: setOpenModal,
@@ -399,8 +395,16 @@ export const AuthProvider = ({children}) => {
         openNotification: openNotification,
         setCurrentLanguage: setCurrentLanguage,
         currentLanguage: currentLanguage,
+        formattedChallengeName: formattedChallengeName,
+        setFormattedChallengeName: setFormattedChallengeName,
+        inputArr: inputArr,
+        setInputArr: setInputArr,
+        outputArr: outputArr,
+        setOutputArr: setOutputArr,
+        showNextChallengeButton: showNextChallengeButton, 
+        setShowNextChallengeButton: setShowNextChallengeButton,
+        codeHelpState: codeHelpState
     }
-
 
     //so we refresh our refresh token and update state every 4 minutes
     useEffect(()=> {

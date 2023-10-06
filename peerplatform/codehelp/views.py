@@ -8,42 +8,39 @@ import json
 import markdown
 from .models import UserQuestionRequest
 import os
+from rest_framework.response import Response
+from django.views.decorators.cache import never_cache
+import requests
+import time
 
 openai.api_key = config('OPEN_AI_API_KEY')
 
 @api_view(['GET', 'POST'])
+@never_cache
 def get_help(request):
     md = markdown.Markdown(extensions=['extra'])
-    user_id = request.data['user']
     data = request.data
     question_id = data['data']
-    prompt_file_path = os.path.join(os.path.dirname(__file__), 'prompt.txt')
+    query =  data.get('query', None)
+    file_name = 'second.txt' if query else 'prompt.txt'
+    prompt_file_path = os.path.join(os.path.dirname(__file__), file_name)
 
-    UserQuestionRequest.objects.filter(user_id=user_id).update(request_count=0)
-    UserQuestionRequest.objects.update_or_create(
-        user_id=user_id,
-        question_id=question_id,
-        defaults={'request_count': 1}
-    )
-    # Determine the user's request count for the current question
-    request_count = UserQuestionRequest.objects.get(user_id=user_id, question_id=question_id).request_count
-    print('current', request_count)
-    # Select the prompt text from the list based on the request count
-    prompt_levels = ["ONE", "TWO", "THREE", "FOUR", "FIVE"]
-    selected_prompt = prompt_levels[min(request_count - 1, len(prompt_levels) - 1)]  # Ensure it's within valid range
     # Read the selected prompt text from your prompt.txt file
     with open(prompt_file_path, 'r') as file:
-        prompts = file.read().split('\n\n')
-        selected_prompt_text = prompts[prompt_levels.index(selected_prompt)]
-    prompt_string = f"{selected_prompt_text} 'code:{data['code']}' 'language:{data['language']}' 'question:{data['data']}'"
+        prompt_text = file.read()
+        # selected_prompt_text = prompts[prompt_levels.index(selected_prompt)]
+    final_prompt = f"{prompt_text} Question: {question_id}"
+    print('*****', final_prompt)
+    if query:
+        final_prompt += f"Code: {query}"
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a helpful assistant that provides code help."},
-            {"role": "user", "content": prompt_string},
+            {"role": "user", "content": final_prompt},
         ],
         temperature=0,
-        max_tokens=256,
+        max_tokens=2048,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
@@ -51,7 +48,8 @@ def get_help(request):
     if "choices" in response and len(response["choices"]) > 0:
         # Access the 'content' of the last message
         last_message_content = response["choices"][-1]["message"]["content"]
-        return HttpResponse(md.convert(last_message_content))
+        last_message_content = last_message_content.replace("<p>", "").replace("</p>", "")
+        return Response(last_message_content)
 
     # Handle the case where there is no valid response
     return HttpResponse("No response from the AI model.")
@@ -62,3 +60,4 @@ class receive_response(View):
         user_input = self.request.POST["user_input"]
         response = get_help(user_input)
         return HttpResponse(response)
+

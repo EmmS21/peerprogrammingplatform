@@ -43,7 +43,7 @@ const Footer = ({
             <Logo />
           </div>
           <div className="footer-bottom space-between text-xxs invert-order-desktop">
-            <div className="footer-copyright"><a>Pair Programming</a>. All right reserved</div>
+            <div className="footer-copyright"><a>AI Guided Learning</a>. Built by Emmanuel</div>
           </div>
         </div>
       </div>

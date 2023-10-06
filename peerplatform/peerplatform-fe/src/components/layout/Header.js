@@ -122,7 +122,7 @@ const Header = ({
                       className="list-reset header-nav-right"
                     >
                       <li>
-                        { user ? (
+                        {/* { user ? (
                                     <div className="parentButtons">
                                         {user && <p>Welcome back {user.username}</p>}
                                         <Link id="dashboard-button" to={"/profile"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Dashboard</Link>
@@ -133,7 +133,7 @@ const Header = ({
                                 <Link id="login" to={"/login"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Login</Link>
                             </div>
                             )
-                        }
+                        } */}
                       </li>
                     </ul>}
                 </div>

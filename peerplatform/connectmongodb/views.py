@@ -4,6 +4,7 @@ import urllib.request as urllib2
 import json
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
+from django.views.decorators.cache import never_cache
 
 
 # Create your views here.
@@ -14,6 +15,7 @@ get_hard = "https://data.mongodb-api.com/app/data-pkrpq/endpoint/getHardChalleng
 
 @api_view(('GET',))
 @renderer_classes((JSONRenderer,))
+@never_cache
 def retrieveEasy(request):
     auth_handler = urllib2.HTTPBasicAuthHandler()
     opener = urllib2.build_opener(auth_handler)
@@ -25,6 +27,7 @@ def retrieveEasy(request):
 
 @api_view(('GET',))
 @renderer_classes((JSONRenderer,))
+@never_cache
 def retrieveMedium(request):
     auth_handler = urllib2.HTTPBasicAuthHandler()
     opener = urllib2.build_opener(auth_handler)
@@ -36,6 +39,7 @@ def retrieveMedium(request):
 
 @api_view(('GET',))
 @renderer_classes((JSONRenderer,))
+@never_cache
 def retrieveHard(request):
     auth_handler = urllib2.HTTPBasicAuthHandler()
     opener = urllib2.build_opener(auth_handler)

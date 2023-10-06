@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import classNames from 'classnames';
 import { SectionProps } from '../../utils/SectionProps';
 import ButtonGroup from '../elements/ButtonGroup';
 import Button from '../elements/Button';
 import Image from '../elements/Image';
-import Modal from '../elements/Modal';
+import { Modal, Input } from 'antd';
 import {Alert} from 'antd';
+import { useHistory } from 'react-router-dom';
+import AuthContext from '../../context/AuthContext';
+
 
 const propTypes = {
   ...SectionProps.types
@@ -28,6 +31,30 @@ const Hero = ({
 
   const [videoModalActive, setVideomodalactive] = useState(false);
   const [visible, setVisible] = useState(false)
+  const history = useHistory();
+  const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
+  const [email, setEmail] = useState('');
+  let { profileURL } = useContext(AuthContext)
+
+  const handleGetStarted = () => {
+    setIsEmailModalVisible(true);
+  };
+
+  const handleEmailSubmit = async () => {
+    // Make API call to store email in the backend
+    console.log('handleEmailSubmit')
+    await fetch(`${profileURL}api/addEmail/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    setIsEmailModalVisible(false);
+    history.push('/rooms');
+  };
+
 
   const openModal = (e) => {
     e.preventDefault();
@@ -65,7 +92,7 @@ const Hero = ({
         <div className={innerClasses}>
           <div className="hero-content">
             <h1 id="header" className="mt-0 mb-16 reveal-from-bottom" data-reveal-delay="200">
-              Learn through <span className="text-color-primary">Peer to Peer programming</span>
+              Learn Leetcode <span className="text-color-primary">using AI</span>
             </h1>
             <div className="container-xs">
               <p className="m-0 mb-32 reveal-from-bottom" data-reveal-delay="400">
@@ -76,9 +103,25 @@ const Hero = ({
                         <Alert message="This platform is currently invite only, please subscribe to the mailing list and you will be notified when you can create a profile" type="error" showIcon closable />
                     ): null
                   }
-                  <Button tag="a" color="primary" wideMobile onClick={ () => setVisible(true)} id="get-started">
+                  <Button tag="a" color="primary" wideMobile onClick={handleGetStarted} id="get-started">
                     Get started
-                    </Button>
+                  </Button>
+                  <Modal
+                    title="Enter your email"
+                    visible={isEmailModalVisible}
+                    onCancel={() => setIsEmailModalVisible(false)}
+                    footer={[
+                      <Button key="submit" type="primary" onClick={handleEmailSubmit}>
+                        Submit
+                      </Button>,
+                    ]}
+                  >
+                    <Input
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </Modal>
               </div>
             </div>
           </div>

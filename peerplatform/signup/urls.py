@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/register', RegisterApi.as_view()),
+    path('api/addEmail/', views.addEmail, name='addEmail'),
     path('update_profile/<int:pk>/', views.UpdateProfileView.as_view(), name='update_profile'),
     path('update_active/<int:pk>/', views.UpdateProfileActive.as_view(), name='update_activity'),
     path('get_room/', usernames_to_room_id, name='get room id'),

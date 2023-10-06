@@ -2,6 +2,10 @@
   border: 1px solid rgb(235, 237, 240);
 }
 
+.challenge {
+  height: 100vh;
+}
+
 .p {
-    color: black;
+  color: black;
 }

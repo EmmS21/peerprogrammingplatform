@@ -1,19 +1,29 @@
-ONE: Help me solve this Leetcode problem. Look at the code I have given you based on the code, help me understand:
-- 1. What algorithm I would likely need to understand to solve this question - In the instance that my code has not shown an attempt to solve the question. ONLY, Tell me about the algorithm, how it works, why it would work for this question and link some articles to help me read more about this. In addition to this, add an additional section, explaining the algorithm using very simple relatable examples. Do not give me this information If I have shown based on my code that I understand what algorithm I need to use, instead move to the next step. If I have not made an attempt to solve the question do not give any feedback on my code or even mention it. 
-- 2. If I made an attempt to solve the question. Walk me through what I am doing wrong (do not provide code, just text and examples of code that is incorrect). Walk me through why this is wrong and give me very descriptive questions that will probe me to think about how to correct my code
+Please generate pseudo code for this Leetcode question
 
-TWO: Help me solve this Leetcode problem. Look at the code I have given you based on the code, help me understand. Keep in mind that I have already asked for help and need you to provide a more detailed breakdown:
-- 1. In the instance that my code has not shown an attempt to solve the question. ONLY tell me about what algorithm I would likely need to understand to solve this question. Construct a simple example different from this leetcode question and walk me through, step by step what questions I would need to answer to solve this example question. Walk me through how these questions could be generalized to solve my current question. If I have not made an attempt to solve the question do not give any feedback on my code or even mention it.
-- 2. If I made an attempt to solve the question. Walk me through what I am doing wrong (do not provide code, just text and examples of code that is incorrect). Give me questions that will probe me to think about how to correct my code. Include links to articles to help me understand any concepts that I don't seem to be fully grasping
+I want this to be in the form of:
+1. Include the name of the algorithm being used to solve this question
+2. The first paragraph must include a summary of the algorithm. It must be explained both in technical terms and a simplified version. The simplified version should use everyday examples to explain how this algorithm works. This should be a detailed explanation
+3. Below this generate a simple question that is similar to the current Leetcode question, the question must not be the same as the current question or use a test case from the current question. If for example the question requires a two pointer technique, generate a question that would also require this technique, but is a lot easier than the current question.  Please note that this should be a different question that you Underneath the explanation of the example and how it's similar must be the code example solving this simpler version of the question using pseudo-code. Each line should include a comment on what is happening
+4. Step by step questions for me to figure out what I need to be doing at each point. For each question, include the text "Clue:" in bold. For this bullet point you need to include some clue to help me figure out what is going on.  How detailed this clue is should be based on the level I send to you, with easy meaning I need a lot more help and hard meaning I need less help. Add a second bullet point: "Alternative:" where you discuss alternative solutions for this step, explain why they would work, what difficulties they would present and why your option is the most optimal and easy to understand
+5.  For each question include a link where applicable. This link should be a link to an article to help the user understand then concept being introduced by the question
 
-THREE: Help me solve this Leetcode problem. Look at the code I have given you based on the code, help me understand. Keep in mind that I have already asked for help (twice) and need you to provide a very detailed breakdown. Explain this to me like I have never written a line of code or studied computer science:
-- 1. In the instance that my code has not shown an attempt to solve the question. ONLY tell me explain the solution i would need to implement as through it is ingredients (do not provide code). Provide logic spelling out what I would need to do at each step. Explain why I would need to do this, explain alternatives at each step and why your explanation would be the most optimal option. At each step add an additional paragraph using simple examples of what is happening and why. If I have not made an attempt to solve the question do not give any feedback on my code or even mention it.
-- 2. If I made an attempt to solve the question. Walk me through what I am doing wrong (provide some code but pseudo-code that would still force me to think through each step). For some things I am doing wrong, do not give me the pseudo-code or logic, instead give me questions to help me figure out what I would need to do - along with hints to help me figure out the answer myself
+At the end, include a summary explaining why this is the most optimal solution, giving the user hints regarding the time complexity and space complexity.
 
-FOUR: Help me solve this Leetcode problem. Look at the code I have given you based on the code, help me understand. Keep in mind that I have already asked for help (three times already):
-- 1. In the instance that my code has not shown an attempt to solve the question. ONLY  Give me pseudo-logic I would need to implement to solve this question. This should be bullet points giving a step by step breakdown of questions I need  to answer to implement each logic to solve this question. Ensure that these questions are detailed and descriptive. ie: if I have to create a set to keep track of paths for example, give a question that would help me figure out that I need to create a set, why I need to create this set and what this set would track. If I have not made an attempt to solve the question do not give any feedback on my code or even mention it. Additionally, tell me with a passive aggressive tone that I will not learn if I do not try (imagine the tone of an agitated and experienced Developer on StackOverFlow and use this but with more aggression)
-- 2. If I made an attempt to solve the question. Walk me through what I am doing wrong (provide some pseudo-code that would still force me to think through each step). Explain why I would need to implement each step 
+Use this exact format for the answer
+Leetcode Question: [Title]
 
-FIVE: Help me solve this Leetcode problem. Look at the code I have given you based on the code, help me understand. Keep in mind that I have already asked for help (three times already):
-- 1. In the instance that my code has not shown an attempt to solve the question. ONLY Give me a template of SOME of the code I would need to implement for this question. For parts of the code you leave out, indicate that you have left this code out and add comments with questions to help me figure out what I would need to do. Express disappointment in my unwillingness to try (i have asked you 4 times for clues but still haven't tried). Explain what consequences this will have on learning leetcode and preparing for interviews. Use a very stern tone. If I have not made an attempt to solve the question do not give any feedback on my code or even mention it
-- 2. If I made an attempt to solve the question. Walk me through what I am doing wrong. Give me code corrections based on my solution
+Algorithm:
+<bold>Technical Explanation<bold>
+<bold>Simplified Explanation<bold>
+
+Example:
+[Example Text]
+<code> Pseudo-code/logic + line by line comments<code>
+
+Step By Step Breakdown
+- Question:
+  - <bold>Clue:<bold>
+  - <bold>Alternative:<bold>
+  - <link>Link to Article:<bold>
+
+Please return this as a JSON with the headers as titles. Make it as nested as required

@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.views import APIView
-
+from .models import UserEmail
 from . import settings
 from .serializers import RegisterSerializer, PasswordSerializer, UpdateUserSerializer, CustomTokenObtainPairSerializer, ProgrammingChallengeSerializer
 from rest_framework.permissions import AllowAny
@@ -24,12 +24,28 @@ from accounts.models import ProgrammingChallenge, Profile
 from django.core.cache import caches
 import redis
 import random
+from pyairtable import Table
+from decouple import config
+
+
 
 redis_instance = caches["default"]
-# redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,
-#                                    port=settings.REDIS_PORT, db=0,
-#                                    )
+api_key = config("AIRTABLE_API_KEY")
+base_id = "appGriluJUAMFaUlp"
+table_name = "DataTable"
+emails_table = Table(api_key, base_id, table_name)
 
+
+@api_view(['POST'])
+def addEmail(request):
+    email = request.data.get('email')
+    if email:
+        record = {"Name": email}
+        emails_table.create(record)
+        return Response({'status': 'Email added successfully'}, status=200)
+    else:
+        return Response({'status': 'Bad request'}, status=400)
+    
 @api_view(['GET'])
 def CacheView(request):
     if request.method == 'GET':
