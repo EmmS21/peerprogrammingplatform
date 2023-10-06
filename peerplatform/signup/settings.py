@@ -72,7 +72,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ORIGIN_WHITELIST = (
     "localhost",
-    "aicoder.onrender.com,
+    "aicoder.onrender.com",
     "https://aicoder.onrender.com",
     "https://peerprogrammingplatform.vercel.app"
 )
