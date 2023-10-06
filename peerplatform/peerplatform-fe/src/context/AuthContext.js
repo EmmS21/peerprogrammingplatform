@@ -60,8 +60,6 @@ export const AuthProvider = ({children}) => {
     const [challengeInState, setChallengeInState] = useState({});
     const [codeHelpState, setCodeHelpState] = useState(null); // New state for Code Help
 
-
-
     const history = useHistory();
 
     //we are going to pass this information down to login page

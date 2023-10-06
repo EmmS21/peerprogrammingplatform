@@ -91,7 +91,6 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-
 ROOT_URLCONF = 'signup.urls'
 
 TEMPLATES = [
