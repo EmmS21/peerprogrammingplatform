@@ -66,13 +66,16 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "https://peerprogrammingplatform.vercel.app",
+    "aicoder.onrender.com",
+    "https://aicoder.onrender.com",
 ]
 
-# CORS_ORIGIN_WHITELIST = (
-#     "localhost",
-#     "https://codesquad.onrender.com",
-#     "https://peerprogrammingplatform.vercel.app"
-# )
+CORS_ORIGIN_WHITELIST = (
+    "localhost",
+    "aicoder.onrender.com,
+    "https://aicoder.onrender.com",
+    "https://peerprogrammingplatform.vercel.app"
+)
 
 CORS_ALLOW_METHODS = [
     "DELETE",
