@@ -265,8 +265,17 @@ const CodeEditor = () => {
                 }
             </Menu.Item>
             <Menu.Item> 
-                <div className='clockItem'>
-                    <ClockCounter timer={timer} key={key} handleComplete={handleComplete} index={index} Result={Result} Button={Button} />
+                <div className="select-dropdown">
+                    <select
+                        aria-label="Default select example"
+                        onChange={changeLanguageHandler}
+                    >
+                        <option selected value="">Select language</option>
+                        <option value="70">Python</option>
+                        <option value="63">Javascript</option>
+                        <option value="62">Java</option>
+                    </select>
+                    {showCodeHelp && <Button className="Code-Help-Button" onClick={() => handleBtnUpdate(challengeInState[0].title, query)}>{codeHelpBtn}</Button>}
                 </div>
             </Menu.Item>
             <Menu.Item>
@@ -285,7 +294,7 @@ const CodeEditor = () => {
         <div className="row">
         { contextHolder }
         { sidebar ? (
-            <div className={ visible ? "col-2 whiteCol my-0" : "col-3 whiteCol my-0" } style={{ overflow:'scroll', height:400, marginLeft: !visible ? -60 : -20}}>
+            <div className={ visible ? "col-2 whiteCol my-0" : "col-3 whiteCol my-0" } style={{ overflow:'scroll', height:400, marginLeft: !visible ? 10 : 20}}>
                 <Tabs type="card">
                     <TabPane tab="Stages" key="1">
                         <ProfileTabs index={index}/>
@@ -307,20 +316,8 @@ const CodeEditor = () => {
             </div>
             ): null
         }
-           <div className="col-4" style={{ marginTop: -20 }}>
-            <div className="select-dropdown">
-                <select
-                    aria-label="Default select example"
-                    onChange={changeLanguageHandler}
-                 >
-                    <option selected value="">Select language</option>
-                    <option value="70">Python</option>
-                    <option value="63">Javascript</option>
-                    <option value="62">Java</option>
-                </select>
-                {showCodeHelp && <Button className="Code-Help-Button" onClick={() => handleBtnUpdate(challengeInState[0].title, query)}>{codeHelpBtn}</Button>}
-            </div>
-            <div className="my-0" style={{ marginLeft: !visible && !sidebar ? -200 : visible && !sidebar ? -100 : sidebar && !visible ? -200 : -100 }}>
+           <div className="col-4" style={{ marginTop: -20, marginLeft: 10 }}>
+            <div className="my-0" style={{ marginLeft: !visible && !sidebar ? -50 : visible && !sidebar ? -10 : sidebar && !visible ? 0 : 100 }}>
                 <Modal
                     title="Code Help"
                     visible={isCodeHelpModalVisible}
@@ -368,7 +365,7 @@ const CodeEditor = () => {
            </div>
            {
             visible ? (
-           <div className ="col-2">
+           <div className ="col-2" style={{ marginLeft: visible ? 300 : null }}>
                 <CloseOutlined onClick={()=> setVisible(false)}/>
                 <Spinner on={spinnerOn} Spin={Spin}/>
                 <p className="line1"> { resp } </p>
@@ -381,4 +378,3 @@ const CodeEditor = () => {
 }
 
 export default CodeEditor;
-
