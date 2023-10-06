@@ -10,3 +10,4 @@ selenium==4.11.2
 six==1.16.0
 stripe==6.6.0
 daphne
+corsheaders
