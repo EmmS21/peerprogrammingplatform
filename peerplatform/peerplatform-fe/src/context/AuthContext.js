@@ -309,7 +309,7 @@ export const AuthProvider = ({children}) => {
             leetObj['opt'] = opt
         }
 
-        const res = await axios.post(`${profileURL}/code_help/get`, leetObj)
+        const res = await axios.post(`${profileURL}code_help/get`, leetObj)
         const content = res.data;
         if(query){
             console.log('content', content)
