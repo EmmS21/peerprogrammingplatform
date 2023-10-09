@@ -9,3 +9,7 @@
   overflow-x: auto;
   tab-size: 4;
 }
+
+.name {
+  color: white;
+}

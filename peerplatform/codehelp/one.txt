@@ -1,0 +1,2 @@
+Return the optimal Javascript solution for this question with no comments:
+

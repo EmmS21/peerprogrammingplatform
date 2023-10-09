@@ -16,12 +16,12 @@ import PrivateRoute from './utils/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
 //we can probably deconstruct these to a one-liner
 import { RoomContextProvider, useGlobalState } from './context/RoomContextProvider';
-import WaitingRoom from './components/code/WaitingRoom';
 import Room from './components/code/Room';
 
 import CheckoutForm from './components/payments/CheckoutForm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js/pure';
+import TestComponent from './components/code/Test';
 
 
 // Initialize Google Analytics
@@ -60,6 +60,7 @@ const App = () => {
                 <AppRoute exact path="/" component={Home} layout={LayoutDefault} />
                 <AppRoute exact path="/login" component={Login} />
                 <AppRoute exact path="/code_editor" component={CodeEditor} />
+                <AppRoute exact path="/tester" component={TestComponent} />
                 <AppRoute exact path="/timer" component={Timer} />
                 <Elements stripe={stripePromise}>
                     <AppRoute exact path="/payments" component={CheckoutForm} options={options}/>

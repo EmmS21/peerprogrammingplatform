@@ -13,24 +13,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'signup.settings')
 import django
 django.setup()
 
-from django.core.management import call_command
 
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
-from django.urls import re_path, path
-from channels.http import AsgiHandler
-from .routing import websocket_urlpatterns
 from .consumers import *
-from channels.security.websocket import AllowedHostsOriginValidator
-from .middleware import JwtAuthMiddlewareStack
-from channels.auth import AuthMiddlewareStack
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
-    "websocket": AllowedHostsOriginValidator(
-            JwtAuthMiddlewareStack(
-                URLRouter(websocket_urlpatterns)
-            )
-    )
 })

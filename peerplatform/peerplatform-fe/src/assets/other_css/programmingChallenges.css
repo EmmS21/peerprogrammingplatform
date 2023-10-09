@@ -9,3 +9,7 @@
 .p {
   color: black;
 }
+
+.site-page-header .ant-page-header-heading-sub-title {
+  color: #ffffff !important;
+}

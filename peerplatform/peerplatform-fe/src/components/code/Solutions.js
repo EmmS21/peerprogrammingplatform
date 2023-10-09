@@ -1,24 +1,31 @@
 import React, { useContext, useEffect, useState } from 'react';
-import JSON5 from 'json5';
+import JSON5, { parse } from 'json5';
 import AuthContext from '../../context/AuthContext';
 import "../../assets/other_css/response.css";
 
 
-function Solutions() {
+function Solutions({ challengeInState, query }) {
   let { gptresp, openModal, 
-        getSolution, challengeInState 
+        getSolution 
       } = useContext(AuthContext);
   const [solution, setSolution] = useState(null); 
   const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const fetchSolution = async () => {
-      const fetchedSolution = await getSolution(challengeInState[0].title);
-      const cleanedString = JSON.stringify(fetchedSolution).replace(/\\n/g, '');
+      console.log('fetchedSolution', challengeInState[0].title)
+      const fetchedSolution = await getSolution(challengeInState[0].title, null, null);
+      let cleanedString = fetchedSolution.replace(/\\n/g, '').replace(/0\\\\2/g, '0.2');
+      cleanedString = cleanedString.trim();
+      if (cleanedString[0] !== '{') {
+          cleanedString = cleanedString.substring(cleanedString.indexOf('{'));
+      }            
+
       let parsedSolution;
       if (typeof fetchedSolution === 'string') {
         try {
-          parsedSolution = JSON5.parse(JSON5.parse(cleanedString));
+          parsedSolution = JSON5.parse(cleanedString);
+          console.log('data', parsedSolution)
         } catch (e) {
           console.error("Failed to parse JSON:", e);
         }
@@ -30,19 +37,10 @@ function Solutions() {
       setLoading(false);
     };
     fetchSolution();
-  }, [solution, challengeInState]);
+  }, []);
   
-  // useEffect(() => {
-  //   if(solution && Object.keys(solution).length){
-  //     console.log('sol', solution["Leetcode Question"], '*****')
-  //     console.log('sol', solution["Algorithm"]["Technical Explanation"], '&&&')
-
-  //   }
-  // },[solution])
-
-
   return (
-    <div style={{ zIndex: 2, position: 'relative' }}>
+    <div style={{ zIndex: 2, position: 'relative', color: 'white' }}>
       {loading ? (
         "Loading..."
       ) : (
@@ -55,25 +53,22 @@ function Solutions() {
             <h5>Simplified Explanation</h5>
               {solution["Algorithm"]["Simplified Explanation"]}
             <h4>Example</h4>
-              {solution["Example"]["Example Text"]}
-            <code>{solution["Example"]["Pseudo-code"]}</code>
-            <h5>Logic + Comments:</h5>
-            <code className="code-block">{solution["Example"]["Pseudo-code/logic + line by line comments"]}</code>
-            <h5>Step By Step Breakdown</h5>
+              {solution["Simplified Question"]}
+            <strong>Explanation:</strong>
+            <code className='code-block'>{solution["Pseudo-code Solution"]}</code>
+            {/* <h5>Step By Step Breakdown</h5>
             <ul>
-              {solution["Step By Step Breakdown"] && solution["Step By Step Breakdown"].map((item, index) => (
+              {solution["Step By Step"] && Object.entries(solution["Step By Step"]).map(([key, value], index) => (
                 <li key={index}>
-                  {item.Question}
+                  {key}
                   <ul>
-                    <li><strong>Clue: </strong>{item.Clue}</li>
-                    <li><strong>Alternative: </strong>{item.Alternative}</li>
-                    <li><strong>Link to Article:</strong>{item["Link to Article"]}</li>
+                    <li><strong>Clue: </strong>{value["Clue"]}</li>
+                    <li><strong>Alternative: </strong>{value["Alternative"]}</li>
+                    <li><strong>Link to Article:</strong>{value["Article Link"]}</li>
                   </ul>
                 </li>
               ))}
-            </ul>
-            <h5>Summary</h5>
-            {solution.Summary}
+            </ul> */}
           </div>
         ) : (
           "Please wait for your clue to be updated"

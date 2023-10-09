@@ -38,6 +38,7 @@ emails_table = Table(api_key, base_id, table_name)
 
 @api_view(['POST'])
 def addEmail(request):
+    print('test')
     email = request.data.get('email')
     if email:
         record = {"Name": email}

@@ -1,9 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-//import { split as SplitEditor } from 'react-ace';
 import AceEditor from 'react-ace';
-//import scss styling
-import "../../assets/other_css/codeeditor.css";
-//import languages
+
 import 'brace/mode/python';
 import 'brace/mode/javascript';
 import 'brace/mode/sql';
@@ -12,13 +9,9 @@ import Spinner from './Spinner';
 //import themes
 import 'brace/theme/monokai';
 //import tabs components
-import ProfileTabs from '../profile_tabs/ProfileTab';
 import "antd/dist/antd.css";
-import { Steps, Result, 
-         Button, Spin, 
-         Tabs, Modal } from 'antd'
+import { Button, Spin, Tabs  } from 'antd'
 import { CloseOutlined } from '@ant-design/icons';
-import ClockCounter from '../profile_tabs/ClockCounter';
 import ProgrammingChallenge from './ProgrammingChallenges';
 import SelectDifficulty from './SelectDifficulty';
 import AuthContext from '../../context/AuthContext';
@@ -26,33 +19,57 @@ import 'semantic-ui-css/semantic.min.css'
 import { Menu } from 'semantic-ui-react';
 import Solutions from './Solutions';
 import { useHistory } from 'react-router-dom';
+import "../../assets/other_css/sidebar.css";
+import { throttle } from 'lodash';
+
 
 
 //change language based on map
 const CodeEditor = () => {
     const { TabPane } = Tabs;
-    const [visible, setVisible] = useState(false);
+    const [isRightSidebarVisible, setRightSidebarVisible] = useState(false);
     const selectLang = useRef(0);
-    const [sidebar, setSidebar] = useState(true)
+    const [isSidebarVisible, setSidebarVisible] = useState(true);
     let {  
-          matchedUserState, getSolution,
+          getSolution,
           sendCodeJudge0, spinnerOn, 
-          setSpinnerOn, resp, 
-          setResp, setChallengeInState,
-          setOpenModal, setCurrentLanguage, currentLanguage, 
+          setSpinnerOn, resp,setCodeResp,
+          setResp, codeResp, setOpenModal,  
           contextHolder, challengeInState, codeHelpState,
-          formattedChallengeName, inputArr,
-          outputArr, showNextChallengeButton, setShowNextChallengeButton
+          showNextChallengeButton, setShowNextChallengeButton
          } = useContext(AuthContext)
     // let photoURL = user.photo.split('"').join('');
     const [query, setQuery] = useState('');
-    const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
     // checks to see if select or programming challenge should be shown;
     const [showSelect, setShowSelect] = useState(true)
     const [showCodeHelp, setShowCodeHelp] = useState(false);
     const [isCodeHelpModalVisible, setIsCodeHelpModalVisible] = useState(false);
+    const [typedText, setTypedText] = useState('');
+    const [charIndex, setCharIndex] = useState(0); // Index for the current character to type
+    const [localChallengeInState, setLocalChallengeInState] = useState([]);
+    const [editorValue, setEditorValue] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [currentColorIndex, setCurrentColorIndex] = useState(0);
+
+    const colors = ['color-red', 'color-blue', 'color-black', 'color-purple'];
+
+
     const history = useHistory();
+    const editorRef = useRef(null);
+
+    useEffect(() => {
+        // Function to change the current color index randomly
+        const changeColor = () => {
+          setCurrentColorIndex(Math.floor(Math.random() * colors.length));
+        };
+    
+        // Set an interval to change the color every 2 seconds
+        const interval = setInterval(changeColor, 2000);
+    
+        // Clean up the interval when the component unmounts
+        return () => clearInterval(interval);
+      }, []);
 
 
     //change language in select options
@@ -68,19 +85,64 @@ const CodeEditor = () => {
           setIsCodeHelpModalVisible(true);
         }
       }, [codeHelpState]);
+
       
 
-    useEffect(() => {
+      useEffect(() => {
         const savedChallenge = localStorage.getItem('challenge');
+        const savedCodeResp = localStorage.getItem('codeResp');
+        console.log('Saved Challenge from localStorage:', savedChallenge);
         if (savedChallenge) {
-        setShowSelect(false);  
-        setChallengeInState(JSON.parse(savedChallenge))
-        setShowNextChallengeButton(true)
-        getSolution(JSON.parse(savedChallenge)[0].title)
-        // console.log('ch', JSON.parse(savedChallenge),'434')
-        // console.log(challengeInState)
+            const parsedChallenge = JSON.parse(savedChallenge);
+            if (parsedChallenge.length > 0) {
+                setLocalChallengeInState(parsedChallenge);
+                console.log('Setting localChallengeInState from localStorage:', parsedChallenge);
+                setShowSelect(false);
+                setShowNextChallengeButton(true);
+            }
+        // Check if the current challenge title is different from the one in localStorage
+        if (challengeInState.length > 0 && savedChallenge) {
+            const currentChallengeTitle = challengeInState[0].title;
+            const parsedSavedChallenge = JSON.parse(savedChallenge);
+            const savedChallengeTitle = parsedSavedChallenge[0].title;
+            console.log('Current Challenge Title:', currentChallengeTitle);
+            console.log('Saved Challenge Title from localStorage:', savedChallengeTitle);
+    
+
+            if (currentChallengeTitle !== savedChallengeTitle) {
+                // Update localStorage with the new challenge
+                localStorage.setItem('challenge', JSON.stringify(challengeInState));
+                console.log('Updating localStorage with new challenge:', challengeInState);
+
+                setLocalChallengeInState(challengeInState);
+                console.log('Setting localChallengeInState with the new challenge:', challengeInState);
+
+            } else {
+                setLocalChallengeInState(challengeInState);
+                console.log('Setting localChallengeInState from challengeInState:', challengeInState);
+
+            }
+        }            // Avoid setting challengeInState here to prevent overwriting it
+            // setChallengeInState(parsedChallenge);
+            // You can uncomment this line if necessary, but make sure it doesn't
+            // overwrite the correct value of challengeInState.
+        }
+        if (savedCodeResp) {
+            // codeResp.current = savedCodeResp; // Assuming setCodeResp is available in context
+            setCodeResp(savedCodeResp)
+            console.log('Setting codeResp from localStorage:', savedCodeResp);
         }
     }, []);
+    
+    const challengeInStateToUse = localChallengeInState.length > 0 ? localChallengeInState : challengeInState;
+
+    useEffect(() => {
+        // Save challengeInState to local storage when it changes
+        if (localChallengeInState.length > 0) {
+            localStorage.setItem('challenge', JSON.stringify(localChallengeInState));
+        }
+    }, [localChallengeInState]);
+    
   
     
     let requestBody = {
@@ -101,114 +163,60 @@ const CodeEditor = () => {
         "enable_network": null
     }
     
-    const changeLanguageHandler = (e) => {
-        selectLang.current = e.target.value
-        setCurrentLanguage(languageMap[selectLang.current])
-    }
+    // const changeLanguageHandler = (e) => {
+    //     selectLang.current = e.target.value
+    //     setCurrentLanguage(languageMap[selectLang.current])
+    // }
     //handle submission
     const makeSubmission = (e) => {
         e.preventDefault();
         requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
-        requestBody.language_id = selectLang.current
+        console.log('resq', requestBody.source_code)
+        requestBody.language_id = "63"
+        console.log('body', requestBody)
         setSpinnerOn(true)
         setResp('')
-        setVisible(true)
+        toggleRightSidebar()
         sendCodeJudge0(requestBody)
     }
 
-    // const runTest = () => {
-    //     const challengeName = formattedChallengeName;
-    //     let codeFromEditor = document.getElementsByClassName('ace_content')[0].innerText;
-    //     const examples = inputArr.map((example) => example.replace(/\n/g, ''))
-    //                             .map((example) => example.split(/,\s(?![^[\]{}()]*\))/))
-    //                             .map((argsArray) => {
-    //                                 const argNames = [];
-    //                                 const argValues = [];
-    //                                 argsArray.forEach((arg) => {
-    //                                     const [name, value] = arg.split('=');
-    //                                     argNames.push(name.trim());
-    //                                     argValues.push(parseValue(value.trim())); // Trim whitespace around the argument value
-    //                                 });
-    //                                 return { argNames, argValues };
-    //                             });
-    //     const outputExamples = outputArr.map((output) => {
-    //                                 // Remove newline characters and extra single quotes
-    //                                 const cleanedOutput = output.replace(/\n|'|"|:| /g, '');
-    //                                 // Remove the colon and space after it before splitting
-    //                                 const cleanedOutputWithoutColon = cleanedOutput.replace(/:\s/g, '');
-    //                                 return cleanedOutputWithoutColon.split(/,\s(?![^[\]{}()]*\))/);
-    //                             }).map((argsArray) => {
-    //                                 const outputVals = argsArray.map((arg) => parseValue(arg.trim())); // Trim whitespace and parse values
-    //                                 return { outputVals };
-    //                             });
-    //     examples.forEach((example, index) => {
-    //                                 const testArguments = example.argNames.map((argName, argIndex) => `${argName}=${JSON.stringify(example.argValues[argIndex])}`).join(', ');
-    //                                 const testFunctionCall = `console.log(${challengeName}(${testArguments}))`;
-    //                                 codeFromEditor += '\n' + testFunctionCall;
-    //                             });      
-    //     console.log('code****', codeFromEditor)                        
-    
-    //     // console.log('examples inside Code Editor', examples, 'type', typeof examples);
-    //     //  console.log('outputExamples inside Code Editor', outputExamples, 'type', typeof outputExamples);
-                                
-    //     // // Iterate through examples and log argNames and argValues separately
-    //     // examples.forEach((example, index) => {
-    //     //     console.log(`Example ${index + 1}:`);
-    //     //     console.log('argNames:', example.argNames);
-    //     //     console.log('argValues:', example.argValues);
-    //     // });
-    //     // outputExamples.forEach((outputExample, index) => {
-    //     //     console.log(`Output Example ${index + 1}:`);
-    //     //     console.log('outputVals:', outputExample.outputVals);
-    //     // });
-    // }
-    
-    // function parseValue(value) {
-    //     if (typeof value === 'undefined') {
-    //         return undefined; // Handle the case where value is undefined
-    //     }
-    //     value = value.replace(/"/g, '');
+    const toggleSidebar = () => {
+        setSidebarVisible(!isSidebarVisible);
+    };
 
-    //     if (value.startsWith('[') && value.endsWith(']')) {
-    //         // Value is wrapped in square brackets, possibly an array
-    //         try {
-    //             const parsedValue = JSON.parse(value);
-    //             if (Array.isArray(parsedValue)) {
-    //                 return parsedValue.map(parseValue); // Recursively parse values within the array
-    //             } else {
-    //                 return parsedValue;
-    //             }
-    //         } catch (error) {
-    //             // Handle parsing error (e.g., if the input is not valid JSON)
-    //             return value; // Return the original value as a string
-    //         }
-    //     } else if (value.startsWith('{') && value.endsWith('}')) {
-    //         // Value is wrapped in curly braces, possibly an object
-    //         try {
-    //             const parsedValue = JSON.parse(value);
-    //             if (typeof parsedValue === 'object') {
-    //                 // Recursively parse values within the object
-    //                 const result = {};
-    //                 for (const key in parsedValue) {
-    //                     result[key] = parseValue(parsedValue[key]);
-    //                 }
-    //                 return result;
-    //             } else {
-    //                 return parsedValue;
-    //             }
-    //         } catch (error) {
-    //             // Handle parsing error (e.g., if the input is not valid JSON)
-    //             return value; // Return the original value as a string
-    //         }
-    //     } else if (!isNaN(value)) {
-    //         // Value is a number
-    //         return parseFloat(value);
-    //     } else {
-    //         // Value is not wrapped in [], {}, or a number, treat it as a string
-    //         return value;
-    //     }
-    // }
-    
+    const toggleRightSidebar = () => {
+        setRightSidebarVisible(!isRightSidebarVisible);
+        if (!isRightSidebarVisible) {
+            setTypedText('');
+            setCharIndex(0)
+        }
+    };
+
+    useEffect(() => {
+        let timeoutId;
+        console.log('resp', resp)
+        if (isRightSidebarVisible && charIndex < resp.length) {
+          timeoutId = setTimeout(() => {
+            setTypedText((prevTypedText) => prevTypedText + resp[charIndex]);
+            setCharIndex((prevCharIndex) => prevCharIndex + 1);
+            console.log("TypedText value: ", typedText);  // Debugging line
+          }, 5);
+        }
+        return () => {
+          clearTimeout(timeoutId);
+        };
+    }, [isRightSidebarVisible, charIndex]);
+
+    const editorWidth = () => {
+        let width = '100%';
+        if (isSidebarVisible && isRightSidebarVisible) {
+          width = 'calc(100% - 60%)'; // 30% for each sidebar
+        } else if (isSidebarVisible || isRightSidebarVisible) {
+          width = 'calc(100% - 30%)'; // 30% for one sidebar
+        }
+        return width;
+    };
+
     //handles changing clock timer
     const array = [10,11,12,13];
     const [key, setKey] = useState(1);
@@ -216,42 +224,69 @@ const CodeEditor = () => {
     const [timer, setTimer] = useState(array[0]);
     const [codeHelpBtn, setCodeHelpBtn] = useState("Code Help")
     
-    //event handler to change clock timer based on index
-    const handleComplete = () => {
-        setIndex(index + 1);
-        setTimer(array[index]);
-        setKey(key+1)
-    }
-
-    useEffect((() => {
-        const codeOutput = setTimeout(() => onChange(query), 1500);
-        return () => clearTimeout(codeOutput)
-    }), [query])
 
     useEffect(() => {
-        // Function to handle updates to resize event
-        function handleResize() {
-          setWindowHeight(window.innerHeight);
-        }
-        // Attach the event listener
-        window.addEventListener('resize', handleResize);
-        // Detach the event listener on cleanup
-        return () => {
-          window.removeEventListener('resize', handleResize);
-        };
-      }, []); 
+        setEditorValue(codeResp);
+    }, [codeResp]);
 
-    function onChange(code){
-        const dataToBeSent = {}
-        dataToBeSent['type'] = "send.message"
-        dataToBeSent['user'] = matchedUserState.current
-        dataToBeSent['data'] = code        
+    function handleOnChange(newValue){
+        setEditorValue(newValue)
     }
+    
 
-    function handleBtnUpdate(title, query){
-        getSolution(challengeInState[0].title,query)
+    function handleBtnUpdate(){
+        setIsLoading(true)
+        getSolution(localChallengeInState[0].title, editorValue)
+            .then(() => {
+
+            })
+            .catch((error) => {
+                console.error('error', error)
+            })
+            .finally(() => {
+                setIsLoading(false)
+            })
         setCodeHelpBtn("Please wait...")
     }
+
+    const onLoad = (editor) => {
+        editorRef.current = editor;
+        console.log("Editor Ref: ", editorRef.current);  // Log the ref object
+        const session = editor.getSession();
+        console.log('session', session)
+    
+        editor.on('click', function(e) {
+            const cursor = editor.getCursorPosition();
+            const lines = session.getDocument().getAllLines();
+    
+            let withinPair = false;
+            let afterLastPair = false;
+    
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].includes('//add code here')) {
+                    withinPair = true;
+                } else if (lines[i].includes('//**')) {
+                    withinPair = false;
+                    afterLastPair = true;
+                }
+    
+                if (withinPair && cursor.row === i) {
+                    console.log("Clicked between // add code and //**");
+                    editor.setReadOnly(false);
+                    console.log('***', editor['$readOnly'])
+                } else if (!withinPair && cursor.row === i) {
+                    console.log("Clicked outside of // add code and //**");
+                    editor.setReadOnly(true);
+                    console.log('***2', editor['$readOnly'])
+                }
+                if (afterLastPair && cursor.row >=i) {
+                    console.log("End");
+                    editor.setReadOnly(false);
+                }
+            }
+        });
+    };
+        
 
         return (
         <>
@@ -261,46 +296,68 @@ const CodeEditor = () => {
             </Menu.Item>
             <Menu.Item>
                 {
-                    <Button onClick={()=> setSidebar(!sidebar)}>{ sidebar ? "Hide Sidebar" : "Show Sidebar" }</Button>
+                    <Button onClick={()=> setSidebarVisible(!isSidebarVisible)}>{ isSidebarVisible ? "Hide Sidebar" : "Show Sidebar" }</Button>
                 }
             </Menu.Item>
-            <Menu.Item> 
-                <div className="select-dropdown">
-                    <select
-                        aria-label="Default select example"
-                        onChange={changeLanguageHandler}
+            <Menu.Item>
+            {isLoading ? (
+                <span>
+                Please Wait
+                <span className="bouncing-dots">
+                    {Array.from({ length: 4 }, (_, index) => (
+                    <span
+                        key={index}
+                        className={`dot ${colors[(currentColorIndex + index) % colors.length]}`}
+                        style={{ animationDelay: `${0.5 * index}s` }}
                     >
-                        <option selected value="">Select language</option>
-                        <option value="70">Python</option>
-                        <option value="63">Javascript</option>
-                        <option value="62">Java</option>
-                    </select>
-                    {showCodeHelp && <Button className="Code-Help-Button" onClick={() => handleBtnUpdate(challengeInState[0].title, query)}>{codeHelpBtn}</Button>}
-                </div>
+                        .
+                    </span>
+                    ))}
+                </span>
+                </span>
+                ) : (
+                <Button onClick={handleBtnUpdate}>Help me</Button>
+            )}
+            </Menu.Item>
+            <Menu.Item>
+                {
+                    showNextChallengeButton ? (
+                        <SelectDifficulty 
+                            showSelect={showSelect} 
+                            setShowSelect={setShowSelect}
+                            placeholderText="Next Challenge"
+                            onNewChallengeFetched={(newChallenge) => setLocalChallengeInState(newChallenge)}
+                        /> 
+                    ): null
+                }
             </Menu.Item>
             <Menu.Item>
                 <Button className="btn btn-primary" onClick={makeSubmission}> Run Code</Button>
             </Menu.Item>
-            {
-                showNextChallengeButton ? (
-                    <SelectDifficulty 
-                        showSelect={showSelect} 
-                        setShowSelect={setShowSelect}
-                        placeholderText="Next Challenge"
-                    /> 
-                ): null
-            }
         </Menu>
         <div className="row">
         { contextHolder }
-        { sidebar ? (
-            <div className={ visible ? "col-2 whiteCol my-0" : "col-3 whiteCol my-0" } style={{ overflow:'scroll', height:400, marginLeft: !visible ? 10 : 20}}>
-                <Tabs type="card">
-                    <TabPane tab="Stages" key="1">
-                        <ProfileTabs index={index}/>
-                    </TabPane>
-                    <TabPane tab="Coding Challenge" key="2">
-                        <ProgrammingChallenge query={query}/>
+        <div className={`col-4 code-editor-col ${isCodeHelpModalVisible ? 'code-help-visible' : ''}`} style={{ marginTop: -20, marginLeft: 10 }}>
+          <div className="my-0 code-help-div">
+            <div className="code-help-header">
+              <Button
+                key="close"
+                onClick={() => {
+                  setIsCodeHelpModalVisible(false);
+                  setOpenModal(false);
+                  setCodeHelpBtn("Code Help");
+                }}
+              >
+                Close
+              </Button>
+            </div>
+            <pre style={{ color: 'white' }}>{codeHelpState}</pre>
+          </div>
+          </div>
+        <div className={`col-2 whiteCol my-0 ${!isSidebarVisible ? 'hidden' : ''}`}>
+            <Tabs type="card">
+                    <TabPane tab="Coding Challenge" key="1">
+                        {challengeInStateToUse.length > 0 && <ProgrammingChallenge query={query} challengeInState={challengeInStateToUse}/>}
                         <div style={{ display: showSelect ? 'block' : 'none' }}>
                             <SelectDifficulty 
                                 showSelect={showSelect} 
@@ -309,69 +366,40 @@ const CodeEditor = () => {
                             /> 
                         </div>
                     </TabPane> 
-                    <TabPane tab="Your Clue" key="3">
-                        <Solutions/>
+                    <TabPane tab="Your Clue" key="2">
+                    {challengeInStateToUse.length > 0 && <Solutions challengeInState={challengeInStateToUse} query={editorValue}/>}
                     </TabPane>
-                </Tabs>
-            </div>
-            ): null
-        }
+            </Tabs>
+        </div>
            <div className="col-4" style={{ marginTop: -20, marginLeft: 10 }}>
-            <div className="my-0" style={{ marginLeft: !visible && !sidebar ? -50 : visible && !sidebar ? -10 : sidebar && !visible ? 0 : 100 }}>
-                <Modal
-                    title="Code Help"
-                    visible={isCodeHelpModalVisible}
-                    onCancel={() => {
-                        setIsCodeHelpModalVisible(false);
-                        setOpenModal(false); 
-                        setCodeHelpBtn("Code Help")
-                    }}
-                    footer={[
-                        <Button
-                        key="close"
-                        onClick={() => {
-                            setIsCodeHelpModalVisible(false);
-                            setOpenModal(false); 
-                            setCodeHelpBtn("Code Help")
-                        }}
-                        >
-                        Close
-                        </Button>,
-                    ]}
-                    width="100%"  
-                    style={{ maxWidth: '100vw' }} 
-                    >
-                    <pre style={{ color: 'white' }}>{codeHelpState}</pre>
-                </Modal>
+            <div className="my-0" style={{ marginLeft: !isRightSidebarVisible && !isSidebarVisible ? -50 : isRightSidebarVisible && !isSidebarVisible ? -10 : isSidebarVisible && !isRightSidebarVisible ? 0 : 100 }}>
                 <AceEditor
-                    mode={currentLanguage}
+                    ref={editorRef}
+                    style={{ position: 'fixed', top: '3.5rem', left: isSidebarVisible ? '30%' : '0', width: editorWidth(), height: 'calc(100% - 3.5rem)' }}
+                    mode={'javascript'}
+                    onChange={handleOnChange}
                     theme="monokai"
                     name="code_editor"
-                    onChange={(newCode) => {
-                        setQuery(newCode)
-                        if(newCode.trim() !== ''){
-                            setShowCodeHelp(true)
-                        } else {
-                            setShowCodeHelp(false)
-                        }
-                    }}
-                    editorProps={{ $blockScrolling: true }}
-                    enableLiveAutocompletion={true}
-                    width={!visible && !sidebar ? 1200 : visible && !sidebar ? 700 : sidebar && !visible ? 900 : 600}
-                    height={windowHeight}
+                    editorProps={{ $blockScrolling: Infinity }}
+                    setOptions={{
+                        enableBasicAutocompletion: true,
+                        enableLiveAutocompletion: false,
+                        enableSnippets: true,
+                        animatedScroll: false,
+                        useWorker: true, // Autocompletion
+                    }} 
                     tabSize={3}
+                    wrapEnabled={true}
+                    value={editorValue}
+                    onLoad={editor => onLoad(editor)}
                 />
             </div>
            </div>
-           {
-            visible ? (
-           <div className ="col-2" style={{ marginLeft: visible ? 300 : null }}>
-                <CloseOutlined onClick={()=> setVisible(false)}/>
+           <div className={`col-2 rightCol ${!isRightSidebarVisible ? 'hidden' : ''}`}>
+                <CloseOutlined onClick={()=> setRightSidebarVisible(false)}/>
                 <Spinner on={spinnerOn} Spin={Spin}/>
                 <p className="line1"> { resp } </p>
            </div>
-            ) : null
-           }
         </div>
         </>
         )

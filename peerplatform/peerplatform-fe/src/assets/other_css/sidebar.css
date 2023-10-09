@@ -1,0 +1,167 @@
+.whiteCol {
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  top: 3.5rem; /* Set this to the height of your Menu component in rem */
+  left: 0;
+  height: calc(100% - 3.5rem); /* Full height minus the height of the Menu */
+  width: 30%; /* Set the width of the sidebar */
+  background-color: #111; /* Black */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+  transition: all 0.3s ease-in-out; /* Add transition */
+}
+
+.whiteCol.hidden {
+  left: -100%; /* Hide by moving to the left */
+}
+
+/* Right sidebar */
+.rightCol {
+  position: fixed;
+  top: 3.5rem;
+  right: 0;
+  height: calc(100% - 3.5rem);
+  width: 30%;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 1.25rem;
+  transition: all 0.3s ease-in-out;
+  background-color: #000;
+  color: #0f0;
+  font-family: "Courier New", monospace;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.line1 {
+  white-space: normal;
+  font-size: 0.8em;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.rightCol.hidden {
+  right: -100%;
+}
+
+.select-dropdown,
+.select-dropdown * {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  box-sizing: border-box;
+  width: 70%;
+  text-align: center;
+}
+.select-dropdown {
+  position: relative;
+  background-color: #e6e6e6;
+  border-radius: 4px;
+}
+.select-dropdown select {
+  font-size: 1rem;
+  font-weight: normal;
+  max-width: 100%;
+  padding: 8px 24px 8px 10px;
+  border: none;
+  background-color: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.select-dropdown select:active,
+.select-dropdown select:focus {
+  outline: none;
+  box-shadow: none;
+}
+.select-dropdown:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 0;
+  height: 0;
+  margin-top: -2px;
+  border-top: 5px solid #aaa;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+}
+
+/* Animation for sliding up the code help div */
+.code-help-div {
+  display: none;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0; /* Place the div at the bottom of the page */
+  max-height: 70vh; /* Set a maximum height for the div */
+  overflow-y: auto; /* Enable vertical scrolling if the content exceeds the max height */
+  background-color: #333; /* Adjust the background color as needed */
+  transition: transform 0.3s ease, bottom 0.5s ease-in-out; /* Animation duration and easing */
+  z-index: 1000; /* Adjust the z-index as needed */
+}
+
+.code-help-visible .code-help-div {
+  display: block;
+  transform: translateY(0);
+  transition: transform 0.3s ease, bottom 0.5s ease-in-out;
+}
+
+.code-help-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #222; /* Header background color */
+  padding: 10px;
+}
+
+.code-help-header h3 {
+  margin: 0;
+  color: white;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(-5px) scale(1.2);
+  }
+  50% {
+    transform: translateY(0) scale(1);
+  }
+  75% {
+    transform: translateY(-5px) scale(1.2);
+  }
+}
+
+.bouncing-dots {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.dot {
+  display: inline-block;
+  animation: bounce 2s infinite;
+  animation-fill-mode: both;
+  transition: color 2s; /* Transition for color change */
+  font-size: 25px; /* Increase the font size to make the dots bigger */
+}
+
+.dot.color-red {
+  color: red;
+}
+
+.dot.color-blue {
+  color: blue;
+}
+
+.dot.color-black {
+  color: black;
+}
+
+.dot.color-purple {
+  color: purple;
+}

@@ -46,19 +46,22 @@ export const AuthProvider = ({children}) => {
     const driverInState = useRef([])
     const room_name = useRef([])
     const participants = useRef([])
-    //  const profileURL = 'http://127.0.0.1:8000/'
-    const profileURL = 'https://aicoder.onrender.com/'
+     const profileURL = 'http://127.0.0.1:8000/'
+    // const profileURL = 'https://aicoder.onrender.com/'
     const difficultySelected = useRef([])
     const [openModal, setOpenModal] = useState(true);
     const [gptresp, setGptResp] = useState({})
     const [api, contextHolder] = notify.useNotification();
-    const [currentLanguage, setCurrentLanguage] = useState('');
+    const [currentLanguage, setCurrentLanguage] = useState('63');
     const [formattedChallengeName, setFormattedChallengeName] = useState('')
     const [inputArr, setInputArr] = useState([])
     const [outputArr, setOutputArr] = useState([])
     const [showNextChallengeButton, setShowNextChallengeButton] = useState(false);
     const [challengeInState, setChallengeInState] = useState({});
     const [codeHelpState, setCodeHelpState] = useState(null); // New state for Code Help
+    const [loadingCode, setLoadingCode] = useState(false);
+    const [codeResp, setCodeResp] = useState("Please wait for code to load....");
+    // const codeResp = useRef('')
 
 
 
@@ -204,6 +207,7 @@ export const AuthProvider = ({children}) => {
                     headers
                 })
                 .then((res) => {
+                    console.log('res', res)
                     setSpinnerOn(false)
                     !res.data.stdout ? setResp(res.data.stderr)
                         : setResp(res.data.stdout)
@@ -291,19 +295,33 @@ export const AuthProvider = ({children}) => {
         }
     }
 
-    async function getSolution(title, query = null){
-        const num = title?.match(/[\d\.]+/g)
-        const leetTitleNum = parseInt(num[0].replace('.','')+' ')
-        const leetObj = { data: leetTitleNum };
+    async function getSolution(title, query = null, opt=null){
+        console.log('trigg', query)
+        if(opt){
+            setCodeResp("Please wait for code to load....");
+        }
+        // codeResp.current = "Please wait for code to load....";
+        const leetObj = { data: title };
         if (query) {
           leetObj['query'] = query; 
         }
+        if(opt){
+            leetObj['opt'] = opt
+        }
+
         const res = await axios.post(`${profileURL}/code_help/get`, leetObj)
         const content = res.data;
         if(query){
+            console.log('content', content)
             setCodeHelpState(content)
-        } else {
+        } else if(opt) {
             setGptResp(content)
+            setCodeResp(content)
+            // codeResp.current = content
+            localStorage.setItem('codeResp', content)
+            console.log('resp', codeResp, '***')
+        } else{
+            return content
         }
         setOpenModal(true)
         return content
@@ -331,7 +349,6 @@ export const AuthProvider = ({children}) => {
             duration: 0,
         })
     }
-
 
     let contextData = {
         user:user,
@@ -403,7 +420,11 @@ export const AuthProvider = ({children}) => {
         setOutputArr: setOutputArr,
         showNextChallengeButton: showNextChallengeButton, 
         setShowNextChallengeButton: setShowNextChallengeButton,
-        codeHelpState: codeHelpState
+        codeHelpState: codeHelpState,
+        codeResp: codeResp,
+        setCodeResp: setCodeResp,
+        loadingCode: loadingCode, 
+        setLoadingCode: setLoadingCode
     }
 
     //so we refresh our refresh token and update state every 4 minutes

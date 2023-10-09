@@ -1,0 +1,27 @@
+Generate pseudo code for a Leetcode question following these guidelines:
+
+1. State the name of most optimal algorithm that can be used to solve this question.
+2. Summarize the most optimal algorithm to solve this. Start off by giving a technical definition of how this algorithm works and why it would work on this question. After this provide a more simplified explanation (Explain this algorithm back to me like I am 5 and have never written any code).
+3. Provide step-by-step breakdown of the optimal solution for the main Leetcode question not the simpler question. This should be a high- level breakdown of things I would need to implement to solve the leetcode question and reasons why. For each step include: a Clue: detailing why this step is important in simple terms, "Alternative": providing an alternative to this solution step and what problems this could present and "Article Link" with an link to an article explaining whatever concept is covered by this particular step.
+4. Suggest a simpler question similar to the Leetcode one, and provide a pseudo-code solution for this question - explain what is happening at each step.
+5. Include relevant article links for each concept.
+
+Use this format:
+Leetcode Question: [Title]
+
+Algorithm:
+- Technical Explanation
+- Simplified Explanation
+
+Step By Step:
+- Question
+  - Clue
+  - Alternative
+  - Article Link
+
+Example:
+- Simple Question Text
+- Pseudo-code with comments
+
+
+Return as a nested JSON. Keep the response under approximately 700 words for compatibility. Ensure your response does not contain any invalid JSON characters

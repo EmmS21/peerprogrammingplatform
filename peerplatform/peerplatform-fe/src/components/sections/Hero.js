@@ -8,6 +8,11 @@ import { Modal, Input } from 'antd';
 import {Alert} from 'antd';
 import { useHistory } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
+import "../../assets/demo/buttonsflash.css";
+import axios from 'axios';
+import ClockLoader from "react-spinners/ClockLoader";
+
+
 
 
 const propTypes = {
@@ -34,11 +39,57 @@ const Hero = ({
   const history = useHistory();
   const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
   const [email, setEmail] = useState('');
-  let { profileURL } = useContext(AuthContext)
+  const [clockSpin, setClockSpin] = useState(false)
+  let { profileURL, setChallengeInState, setShowNextChallengeButton, getSolution } = useContext(AuthContext)
 
   const handleGetStarted = () => {
     setIsEmailModalVisible(true);
   };
+
+  function handleSelect(e, data){
+    e.preventDefault()
+    setClockSpin(true)
+    let selection;
+    console.log('data', data)
+    if(data === 'Easy'){
+        selection = 'get_easy'
+    }
+    else if(data === 'Medium'){
+        selection = 'get_medium'
+    }
+    else {
+        selection = 'get_hard'
+    }
+    console.log('selection', selection)
+    const base_url = `${profileURL}programming_challenge/${selection}` 
+    axios.get(base_url)
+    .then(async (res)=>{
+        setChallengeInState(res.data)
+        console.log('res.data', res.data)
+        setShowNextChallengeButton(true)
+        if(res.data[0] && res.data.length > 0){
+          let opt = "one"
+          const challengeName = res.data[0].title
+          localStorage.setItem('challenge', JSON.stringify(res.data));
+          let result = await getSolutionHandler(challengeName, null, opt)
+          console.log('result', result)
+          setClockSpin(false);
+          history.push("/rooms")
+        }
+    })
+    .catch(err=> {
+        console.log(err)
+        setClockSpin(false);
+    })  
+  }
+
+  async function getSolutionHandler(challengeName, query=null, opt=null){
+    try {
+        return await getSolution(challengeName, query, opt)
+    } catch(error){
+        return console.error('Error fetching the solution:', error)
+    } 
+  }
 
   const handleEmailSubmit = async () => {
     // Make API call to store email in the backend
@@ -107,20 +158,42 @@ const Hero = ({
                     Get started
                   </Button>
                   <Modal
-                    title="Enter your email"
+                    className="my-custom-modal"
+                    title={
+                      <div style={{ textAlign: 'center' }}>
+                        {clockSpin ? (
+                          <>
+                            Please Wait
+                            <span className="bouncing-dot"></span>
+                            <span className="bouncing-dot"></span>
+                            <span className="bouncing-dot"></span>
+                          </>
+                        ) : (
+                          "Select Challenge Difficulty"
+                        )}
+                      </div>
+                    }                    
                     visible={isEmailModalVisible}
                     onCancel={() => setIsEmailModalVisible(false)}
-                    footer={[
-                      <Button key="submit" type="primary" onClick={handleEmailSubmit}>
-                        Submit
-                      </Button>,
-                    ]}
+                    footer={null}
                   >
-                    <Input
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
+                    {clockSpin ? (
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                        <ClockLoader color="#36d7b7" />
+                      </div>
+                    ): (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+                      <Button className="flash-on-hover" type="primary" onClick={(e) => handleSelect(e, e.currentTarget.innerText)} style={{ marginBottom: '10px' }}>
+                        Easy
+                      </Button>
+                      <Button className="flash-on-hover" type="primary" onClick={(e) => handleSelect(e, e.currentTarget.innerText)} style={{ marginBottom: '10px' }}>
+                        Medium
+                      </Button>
+                      <Button className="flash-on-hover" type="primary" onClick={(e) => handleSelect(e, e.currentTarget.innerText)}>
+                        Hard
+                      </Button>
+                    </div>
+                    )}
                   </Modal>
               </div>
             </div>

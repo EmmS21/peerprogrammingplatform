@@ -1,12 +1,16 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import AuthContext from '../../context/AuthContext';
-import { Select, Label } from 'semantic-ui-react';
+import { Button, Select } from 'antd'
 import axios from 'axios';
 
-const SelectDifficulty = ({setShowSelect, showSelect, placeholderText}) => {
+const SelectDifficulty = ({setShowSelect, showSelect, placeholderText, onNewChallengeFetched}) => {
     const { difficultySelected, getSolution, 
-        challengeInState, setChallengeInState, profileURL, setShowNextChallengeButton
+        challengeInState, setChallengeInState, 
+        profileURL, setShowNextChallengeButton,
+        setLoadingCode
      } = useContext(AuthContext)
+    const [selectedDifficulty, setSelectedDifficulty] = useState(''); // <-- New state variable
+
 
 
      useEffect(() => {
@@ -22,27 +26,36 @@ const SelectDifficulty = ({setShowSelect, showSelect, placeholderText}) => {
         { key: 'm', value: 'medium', text: 'Medium' },
         { key: 'h', value: 'hard', text: 'Hard' },
     ]
-    function handleOnChange(e, data){
-        difficultySelected.current = data.value
+    function handleOnChange(){
         let selection = null
-        if(data.value === 'easy'){
+        if(selectedDifficulty === 'easy'){
             selection = 'get_easy'
         }
-        else if(data.value === 'medium'){
+        else if(selectedDifficulty === 'medium'){
             selection = 'get_medium'
         }
         else {
             selection = 'get_hard'
         }
-        const base_url = `${profileURL}programming_challenge/${selection}` 
+        const base_url = `${profileURL}programming_challenge/${selection}`
+        setLoadingCode(true) 
         axios.get(base_url)
         .then(res=>{
+            console.log('res', res.data)
             setChallengeInState(res.data)
+            if (onNewChallengeFetched){
+                onNewChallengeFetched(res.data)
+                getSolution(res.data[0].title, null, "one")
+            }
+            console.log('challengIn', challengeInState)
             setShowSelect(false)
             setShowNextChallengeButton(true)
+            setLoadingCode(false)
+            setSelectedDifficulty('')
         })
         .catch(err=> {
             setShowSelect(true)
+            setLoadingCode(false)
             console.log(err)
         })
     }
@@ -54,15 +67,14 @@ const SelectDifficulty = ({setShowSelect, showSelect, placeholderText}) => {
         } 
     }
     return (
-    <div>
-        <Label color='blue' horizontal>
-            {placeholderText}:
-        </Label>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
         <Select
             placeholder={placeholderText}
             options={difficultyLevels}
-            onChange={handleOnChange}
-            /> 
+            onChange={(e, data) => setSelectedDifficulty(data.value)}
+            style={{ width: '50%' }} 
+        /> 
+        <Button onClick={handleOnChange}>{placeholderText}</Button>
     </div>
   )
 }

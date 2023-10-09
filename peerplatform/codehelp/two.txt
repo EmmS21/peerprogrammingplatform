@@ -1,0 +1,33 @@
+Randomly omit between 40-50% of the code in the solution I sent. The objective is to give me a portion of the solution with the aforementioned percentage of code missing so that I can use it to try to figure out what code should be there, myself. To help me figure this out, replace the missing code with questions to help me figure out the purpose of this missing code. 
+This should be a descriptive question and also include a clue regarding what this code should do. 
+The question should not reference any variables used.
+Include test cases and a console.log calling the function with the test cases 
+
+Individually Insert each question related to missing code between these two lines:
+//add code here
+//**
+
+Do not omit the function definition or return statement. Return the basic structure of the solution 
+An example of the basic structure would be:
+function funtionName(argOne, argTwo){
+    let res = Infinity
+    //add code here
+    //How do you loop through an array
+    //How do you check the maximum between two variables? We need to do this to compare one and two
+    //**
+    if(one === true){
+        //add code here
+        //Consider why we need to check if one is true
+        <br>
+        <br>
+        //**
+    }
+    return res
+}
+//test cases
+//1
+//2
+console.log(functionName(argOne, argTwo))
+
+
+Notice how in the above example a lot of the logic is ommitted and replaced with questions. Notice how the questions are wrapped within //add code here and //** and notice how I included the line with the name of the function and return statement. Return only the version with the omitted code, you don't need to show me the complete solution.

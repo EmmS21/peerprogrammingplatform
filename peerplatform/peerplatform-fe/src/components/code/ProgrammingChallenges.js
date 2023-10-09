@@ -5,9 +5,8 @@ import "../../assets/other_css/programmingChallenges.css";
 import "../../assets/other_css/codeeditor.css";
 import Spinner from './Spinner';
 
-export default function ProgrammingChallenge({ query }) {
+export default function ProgrammingChallenge({ query, challengeInState }) {
   const {
-    challengeInState,
     getSolution,
     currentLanguage,
     openNotification,
@@ -19,20 +18,49 @@ export default function ProgrammingChallenge({ query }) {
     setInputArr,
     setOutputArr
   } = useContext(AuthContext);
+  const [challengeData, setChallengeData] = useState({
+    name: '',
+    difficulty: '',
+    description: '',
+    examples: [],
+  });
 
-  const challengeName = challengeInState[0].title;
-  const challengeDifficulty = challengeInState[0].difficulty;
-  const exampleOne = challengeInState[0].Example2;
-  const exampleTwo = challengeInState[0].Example3 || challengeInState[0].Example3; 
-  const challengeDescription = challengeInState[0].place || challengeInState[0].place;
-  const formattedDescription = formatCode(challengeDescription) 
-  const arrExamples = [exampleOne, exampleTwo]
+
+
+  // let challengeName = '';
+  // let challengeDifficulty = '';
+  // let formattedDescription = '';
+  // let arrExamples = [];
+
+
+  // const challengeName = challengeInState[0].title;
+  // const challengeDifficulty = challengeInState[0].difficulty;
+  // const exampleOne = challengeInState[0].Example2;
+  // const exampleTwo = challengeInState[0].Example3 || challengeInState[0].Example3; 
+  // const challengeDescription = challengeInState[0].place || challengeInState[0].place;
+  // const formattedDescription = formatCode(challengeDescription) 
+  // const arrExamples = [exampleOne, exampleTwo]
   const headers = ["Input","Output","Explanation"]
+  // console.log('in', challengeInState)
 
   function formatCode(description) {
     const newDescription= description.split("\n").join(" ")
     return newDescription;
   }
+
+
+  useEffect(() => {
+    if (challengeInState && challengeInState.length > 0) {
+      const challenge = challengeInState[0];
+      setChallengeData({
+        name: challenge.title,
+        difficulty: challenge.difficulty,
+        description: challenge.place || challenge.place,
+        examples: [challenge.Example2, challenge.Example3 || challenge.Example3],
+      });
+    }
+  }, [challengeInState]);
+
 
   useEffect(() => {    
     // Create an array to hold the input values
@@ -40,7 +68,7 @@ export default function ProgrammingChallenge({ query }) {
     const outputArr = []
 
     // Iterate through arrExamples to extract "Input" values and add them to inputArr
-    arrExamples.forEach((example) => {
+    challengeData.examples.forEach((example) => {
       const constraintsIdx = example?.indexOf("Constraints");
       const cleanExample = example?.slice(0, constraintsIdx);
       const tempArr = cleanExample?.slice(3).split(/\S+(?=: )/g);
@@ -57,7 +85,7 @@ export default function ProgrammingChallenge({ query }) {
     setInputArr(inputArr);
     setOutputArr(outputArr)
 
-  }, [challengeName, currentLanguage, setInputArr, setOutputArr]);
+  }, [challengeData, setInputArr, setOutputArr]);
 
   useEffect(() => {
     if(challengeInState[0].length > 0){
@@ -66,6 +94,7 @@ export default function ProgrammingChallenge({ query }) {
     }
   }, [challengeInState])
 
+  
   function getConstraints(examples){
     const constraintsIdx = examples.indexOf("Constraints")
     return examples.slice(constraintsIdx+12, examples.length)
@@ -88,19 +117,19 @@ export default function ProgrammingChallenge({ query }) {
   // }
 
   return (
-    <div className='challenge'>
+    <div className='challenge' style={{ color: 'white' }}>
       <PageHeader
         className="site-page-header"
         onBack={()=> null}
-        subTitle={challengeName}
+        subTitle={challengeData.name}
       />
-      <center><Tag color="cyan">{challengeDifficulty}</Tag></center>
-      <div className='problem-container'>{formattedDescription} </div>
+      <center><Tag color="cyan">{challengeData.difficulty}</Tag></center>
+      <div className='problem-container'>{challengeData.description} </div>
 
       <div className="examples">
         <h5> Examples: </h5>
         <ol> 
-          {arrExamples.map((example, idx) => {
+          {challengeData.examples.map((example, idx) => {
             // Process the example directly here
             const constraintsIdx = example?.indexOf("Constraints");
             const cleanExample = example?.slice(0, constraintsIdx);
@@ -121,7 +150,7 @@ export default function ProgrammingChallenge({ query }) {
           })}
         </ol>
         <div><strong>Constraints:</strong>
-          {getConstraints(arrExamples.join(''))}
+          {getConstraints(challengeData.examples.join(''))}
         </div>
       </div>
     </div>
