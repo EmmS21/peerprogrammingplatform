@@ -12,30 +12,41 @@ from rest_framework.response import Response
 from django.views.decorators.cache import never_cache
 import requests
 import time
+import logging
 
 openai.api_key = config('OPEN_AI_API_KEY')
 
 @api_view(['GET', 'POST'])
 @never_cache
 def get_help(request):
+    print('request', request)
     data = request.data
-    question_id = data['data']
+    print('data', data)
+    challenge_name = data.get('title')
+    challenge_description = data.get('description')
+    # question_id = data['data']
     query =  data.get('query', None)
     opt = data.get('opt', None)
-    print('opt****', question_id)
+    print('opt****', opt)
+    print('name', challenge_name)
+    print('description', challenge_description)
     if opt == 'one':
         file_name = 'one.txt'
+    elif opt == 'two':
+        file_name = 'mainclue.txt'
     elif query:
         file_name = 'second.txt'
-    else:
-        file_name = 'mainclue.txt'    
-    prompt_file_path = os.path.join(os.path.dirname(__file__), file_name)
+    try:
+        prompt_file_path = os.path.join(os.path.dirname(__file__), file_name)
+    except UnboundLocalError as e:
+        logging.error(f'file_name is not defined: {str(e)}')
+        return Response({'error': 'Internal server error'}, status=500)
 
     # Read the selected prompt text from your prompt.txt file
     with open(prompt_file_path, 'r') as file:
         prompt_text = file.read()
         # selected_prompt_text = prompts[prompt_levels.index(selected_prompt)]
-    final_prompt = f"{prompt_text} Question: {question_id}"
+    final_prompt = f"{prompt_text} Question: {challenge_name} Description: {challenge_description}"
     if query:
         final_prompt += f"Code: {query}"
     response = openai.ChatCompletion.create(

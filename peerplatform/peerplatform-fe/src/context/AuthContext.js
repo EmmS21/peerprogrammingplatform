@@ -46,8 +46,8 @@ export const AuthProvider = ({children}) => {
     const driverInState = useRef([])
     const room_name = useRef([])
     const participants = useRef([])
-    //  const profileURL = 'http://127.0.0.1:8000/'
-    const profileURL = 'https://aicoder.onrender.com/'
+     const profileURL = 'http://127.0.0.1:8000/'
+    // const profileURL = 'https://aicoder.onrender.com/'
     const difficultySelected = useRef([])
     const [openModal, setOpenModal] = useState(true);
     const [gptresp, setGptResp] = useState({})
@@ -295,13 +295,15 @@ export const AuthProvider = ({children}) => {
         }
     }
 
-    async function getSolution(title, query = null, opt=null){
-        console.log('trigg', query)
-        if(opt){
+    async function getSolution(challenge, query = null, opt=null){
+        // console.log('trigg', query)
+        console.log('****getSolution****', opt)
+        if(opt === 'one'){
             setCodeResp("Please wait for code to load....");
         }
-        // codeResp.current = "Please wait for code to load....";
-        const leetObj = { data: title };
+        const leetObj = { title: challenge['challengeName'],
+                          description: challenge['challengeDescription']
+                        };
         if (query) {
           leetObj['query'] = query; 
         }
@@ -314,13 +316,13 @@ export const AuthProvider = ({children}) => {
         if(query){
             console.log('content', content)
             setCodeHelpState(content)
-        } else if(opt) {
+        } else if(opt === 'one') {
             setGptResp(content)
             setCodeResp(content)
             // codeResp.current = content
             localStorage.setItem('codeResp', content)
             console.log('resp', codeResp, '***')
-        } else{
+        } else {
             return content
         }
         setOpenModal(true)

@@ -13,3 +13,29 @@
 .site-page-header .ant-page-header-heading-sub-title {
   color: #ffffff !important;
 }
+
+/* styles.css or your CSS file */
+
+.custom-table .ant-table {
+  background-color: black;
+}
+
+.custom-table .ant-table td,
+.custom-table .ant-table th {
+  color: white;
+  border-color: white;
+}
+
+.custom-table .ant-table-thead > tr > th {
+  background-color: black;
+  color: white;
+}
+
+/* Override hover effect */
+.custom-table .ant-table-tbody > tr:hover {
+  background-color: #222; /* Less dark shade of black */
+}
+
+.custom-table .ant-table-tbody > tr:hover > td {
+  background-color: #222; /* Less dark shade of black */
+}

@@ -14,7 +14,7 @@ function Solutions({ challengeInState, query }) {
   useEffect(() => {
     const fetchSolution = async () => {
       console.log('fetchedSolution', challengeInState[0].title)
-      const fetchedSolution = await getSolution(challengeInState[0].title, null, null);
+      const fetchedSolution = await getSolution(challengeInState[0].title, null, 'two');
       let cleanedString = fetchedSolution.replace(/\\n/g, '').replace(/0\\\\2/g, '0.2');
       cleanedString = cleanedString.trim();
       if (cleanedString[0] !== '{') {

@@ -1,2 +1,13 @@
-Return the optimal Javascript solution for this question with no comments:
+Return the optimal Javascript solution for this question with no comments. Optimal is defined in this context as;
+- optimal time complexity
+- optimal space complexity
+- easily readable
+- easy to remember and learn this solution
+Look at pre-existing solutions for this problem, based on:
+- this information provided
+- how the function is defined on Leetcode
+- the examples used on Leetcode
 
+Use this combined information to complete this question. Ensure to include all function arguments and a function name that is consistently used in passing solutions on Leetcode. Use whatever information you have available to you to complete this task.
+
+Include JSDoc comments to document the code:

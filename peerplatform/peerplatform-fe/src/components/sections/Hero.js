@@ -50,7 +50,7 @@ const Hero = ({
     e.preventDefault()
     setClockSpin(true)
     let selection;
-    console.log('data', data)
+    // console.log('data', data)
     if(data === 'Easy'){
         selection = 'get_easy'
     }
@@ -60,19 +60,22 @@ const Hero = ({
     else {
         selection = 'get_hard'
     }
-    console.log('selection', selection)
+    // console.log('selection', selection)
     const base_url = `${profileURL}programming_challenge/${selection}` 
     axios.get(base_url)
     .then(async (res)=>{
         setChallengeInState(res.data)
-        console.log('res.data', res.data)
+        // console.log('res.data', res.data)
         setShowNextChallengeButton(true)
         if(res.data[0] && res.data.length > 0){
           let opt = "one"
+          // console.log('res', res.data)
           const challengeName = res.data[0].title
+          const challengeDescription = res.data[0].place
+          const challenge = {challengeName, challengeDescription}
           localStorage.setItem('challenge', JSON.stringify(res.data));
-          let result = await getSolutionHandler(challengeName, null, opt)
-          console.log('result', result)
+          let result = await getSolutionHandler(challenge, null, opt)
+          // console.log('result', result)
           setClockSpin(false);
           history.push("/rooms")
         }
@@ -83,9 +86,9 @@ const Hero = ({
     })  
   }
 
-  async function getSolutionHandler(challengeName, query=null, opt=null){
+  async function getSolutionHandler(challenge, query=null, opt){
     try {
-        return await getSolution(challengeName, query, opt)
+        return await getSolution(challenge, query, opt)
     } catch(error){
         return console.error('Error fetching the solution:', error)
     } 

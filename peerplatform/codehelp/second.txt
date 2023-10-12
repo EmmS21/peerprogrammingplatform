@@ -1,7 +1,9 @@
-For this question, please give me a breakdown of questions I should consider in order for my code to correctly solve this leetcode question.
-
 Please:
 - breakdown the accuracy of my code. Specify how close I am to having a passing solution
+- point out what my code is supposed to do
+- walk me through what algorithm I am trying to implement and why this will work on this leetcode question. Explain this to me as though I am 5 years old.
 - identify flaws in my logic without providing me the correct code answer.
-- Tell me what I am doing correctly
 - Point out any inefficiencies in my code
+
+For each point, do not restate the question, give me a heading instead. For example for this:
+breakdown the accuracy of my code. Specify how close I am to having a passing solution, the appropriate heading would be: How close are you to getting the solution?

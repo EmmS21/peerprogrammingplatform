@@ -13,13 +13,13 @@ const SelectDifficulty = ({setShowSelect, showSelect, placeholderText, onNewChal
 
 
 
-     useEffect(() => {
-        if(challengeInState[0] && challengeInState.length > 0){
-            const challengeName = challengeInState[0].title
-            localStorage.setItem('challenge', JSON.stringify(challengeInState));
-            getSolutionHandler(challengeName)
-        }
-    }, [challengeInState]);
+    //  useEffect(() => {
+    //     if(challengeInState[0] && challengeInState.length > 0){
+    //         const challengeName = challengeInState[0].title
+    //         localStorage.setItem('challenge', JSON.stringify(challengeInState));
+    //         getSolutionHandler(challengeName)
+    //     }
+    // }, [challengeInState]);
 
     const difficultyLevels = [
         { key: 'e', value: 'easy', text: 'Easy' },
