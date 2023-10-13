@@ -48,10 +48,12 @@ const CodeEditor = () => {
     const [typedText, setTypedText] = useState('');
     const [charIndex, setCharIndex] = useState(0); // Index for the current character to type
     const [localChallengeInState, setLocalChallengeInState] = useState([]);
-    const [editorValue, setEditorValue] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [pseudoCode, setPseudoCode] = useState('');
+    const [editorVal, setEditorVal] = useState(() => {
+        const savedEditorVal = localStorage.getItem('editorVal');
+        return savedEditorVal ? savedEditorVal : ""; // Initialize to empty string
+      });    const [isLoading, setIsLoading] = useState(false);
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
-
     const colors = ['color-red', 'color-blue', 'color-black', 'color-purple'];
 
 
@@ -72,13 +74,13 @@ const CodeEditor = () => {
       }, []);
 
 
-    //change language in select options
-    //map language id to language
-    const languageMap = {
-        70: "python",
-        63: "javascript",
-        62: "java"
-    }
+    // //change language in select options
+    // //map language id to language
+    // const languageMap = {
+    //     70: "python",
+    //     63: "javascript",
+    //     62: "java"
+    // }
 
     useEffect(() => {
         if (codeHelpState) {
@@ -91,7 +93,7 @@ const CodeEditor = () => {
       useEffect(() => {
         const savedChallenge = localStorage.getItem('challenge');
         const savedCodeResp = localStorage.getItem('codeResp');
-        console.log('Saved Challenge from localStorage:', savedChallenge);
+        // console.log('Saved Challenge from localStorage:', savedChallenge);
         if (savedChallenge) {
             const parsedChallenge = JSON.parse(savedChallenge);
             if (parsedChallenge.length > 0) {
@@ -105,21 +107,21 @@ const CodeEditor = () => {
             const currentChallengeTitle = challengeInState[0].title;
             const parsedSavedChallenge = JSON.parse(savedChallenge);
             const savedChallengeTitle = parsedSavedChallenge[0].title;
-            console.log('Current Challenge Title:', currentChallengeTitle);
-            console.log('Saved Challenge Title from localStorage:', savedChallengeTitle);
+            // console.log('Current Challenge Title:', currentChallengeTitle);
+            // console.log('Saved Challenge Title from localStorage:', savedChallengeTitle);
     
 
             if (currentChallengeTitle !== savedChallengeTitle) {
                 // Update localStorage with the new challenge
                 localStorage.setItem('challenge', JSON.stringify(challengeInState));
-                console.log('Updating localStorage with new challenge:', challengeInState);
+                // console.log('Updating localStorage with new challenge:', challengeInState);
 
                 setLocalChallengeInState(challengeInState);
-                console.log('Setting localChallengeInState with the new challenge:', challengeInState);
+                // console.log('Setting localChallengeInState with the new challenge:', challengeInState);
 
             } else {
                 setLocalChallengeInState(challengeInState);
-                console.log('Setting localChallengeInState from challengeInState:', challengeInState);
+                // console.log('Setting localChallengeInState from challengeInState:', challengeInState);
 
             }
         }            // Avoid setting challengeInState here to prevent overwriting it
@@ -130,7 +132,7 @@ const CodeEditor = () => {
         if (savedCodeResp) {
             // codeResp.current = savedCodeResp; // Assuming setCodeResp is available in context
             setCodeResp(savedCodeResp)
-            console.log('Setting codeResp from localStorage:', savedCodeResp);
+            // console.log('Setting codeResp from localStorage:', savedCodeResp);
         }
     }, []);
     
@@ -171,9 +173,9 @@ const CodeEditor = () => {
     const makeSubmission = (e) => {
         e.preventDefault();
         requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
-        console.log('resq', requestBody.source_code)
+        // console.log('resq', requestBody.source_code)
         requestBody.language_id = "63"
-        console.log('body', requestBody)
+        // console.log('body', requestBody)
         setSpinnerOn(true)
         setResp('')
         toggleRightSidebar()
@@ -194,12 +196,12 @@ const CodeEditor = () => {
 
     useEffect(() => {
         let timeoutId;
-        console.log('resp', resp)
+        // console.log('resp', resp)
         if (isRightSidebarVisible && charIndex < resp.length) {
           timeoutId = setTimeout(() => {
             setTypedText((prevTypedText) => prevTypedText + resp[charIndex]);
             setCharIndex((prevCharIndex) => prevCharIndex + 1);
-            console.log("TypedText value: ", typedText);  // Debugging line
+            // console.log("TypedText value: ", typedText);  // Debugging line
           }, 5);
         }
         return () => {
@@ -225,18 +227,35 @@ const CodeEditor = () => {
     const [codeHelpBtn, setCodeHelpBtn] = useState("Code Help")
     
 
+    //save typed in code to localStorage
     useEffect(() => {
-        setEditorValue(codeResp);
+        localStorage.setItem('editorVal', editorVal);
+    }, [editorVal]);
+
+    //fetch above code from localStorage
+    useEffect(() => {
+        const savedEditorVal = localStorage.getItem('editorVal');
+        if (savedEditorVal) {
+            setEditorVal(savedEditorVal);
+        } else if (pseudoCode) {
+            setEditorVal(pseudoCode)
+        }
+    }, [pseudoCode]);
+    
+    useEffect(() => {
+        console.log('code', codeResp)
+        setPseudoCode(codeResp);
     }, [codeResp]);
 
+
     function handleOnChange(newValue){
-        setEditorValue(newValue)
+        setEditorVal(newValue)
     }
     
 
     function handleBtnUpdate(){
         setIsLoading(true)
-        getSolution(localChallengeInState[0].title, editorValue)
+        getSolution(localChallengeInState[0].title, pseudoCode)
             .then(() => {
 
             })
@@ -247,52 +266,20 @@ const CodeEditor = () => {
                 setIsLoading(false)
             })
         setCodeHelpBtn("Please wait...")
+    }  
+    
+    function resetHandler(){
+        setEditorVal(pseudoCode)
     }
-
-    const onLoad = (editor) => {
-        editorRef.current = editor;
-        console.log("Editor Ref: ", editorRef.current);  // Log the ref object
-        const session = editor.getSession();
-        console.log('session', session)
-    
-        editor.on('click', function(e) {
-            const cursor = editor.getCursorPosition();
-            const lines = session.getDocument().getAllLines();
-    
-            let withinPair = false;
-            let afterLastPair = false;
-    
-            for (let i = 0; i < lines.length; i++) {
-                if (lines[i].includes('//add code here')) {
-                    withinPair = true;
-                } else if (lines[i].includes('//**')) {
-                    withinPair = false;
-                    afterLastPair = true;
-                }
-    
-                if (withinPair && cursor.row === i) {
-                    console.log("Clicked between // add code and //**");
-                    editor.setReadOnly(false);
-                    console.log('***', editor['$readOnly'])
-                } else if (!withinPair && cursor.row === i) {
-                    console.log("Clicked outside of // add code and //**");
-                    editor.setReadOnly(true);
-                    console.log('***2', editor['$readOnly'])
-                }
-                if (afterLastPair && cursor.row >=i) {
-                    console.log("End");
-                    editor.setReadOnly(false);
-                }
-            }
-        });
-    };
-        
 
         return (
         <>
-        <Menu class="w-full" pointing widths={ 5 } size={"tiny"} style={{ marginTop:0 }}>
+        <Menu class="w-full" pointing widths={ 6 } size={"medium"} style={{ marginTop:0 }}>
             <Menu.Item>
                 <Button onClick={() => history.push(history.location.pathname.replace('/rooms', ''))}>Back</Button>
+            </Menu.Item>
+            <Menu.Item>
+                <Button onClick={()=> resetHandler()}>Reset</Button>
             </Menu.Item>
             <Menu.Item>
                 {
@@ -300,24 +287,24 @@ const CodeEditor = () => {
                 }
             </Menu.Item>
             <Menu.Item>
-            {isLoading ? (
-                <span>
-                Please Wait
-                <span className="bouncing-dots">
-                    {Array.from({ length: 4 }, (_, index) => (
-                    <span
-                        key={index}
-                        className={`dot ${colors[(currentColorIndex + index) % colors.length]}`}
-                        style={{ animationDelay: `${0.5 * index}s` }}
-                    >
-                        .
+                {isLoading ? (
+                    <span>
+                    Please Wait
+                    <span className="bouncing-dots">
+                        {Array.from({ length: 4 }, (_, index) => (
+                        <span
+                            key={index}
+                            className={`dot ${colors[(currentColorIndex + index) % colors.length]}`}
+                            style={{ animationDelay: `${0.5 * index}s` }}
+                        >
+                            .
+                        </span>
+                        ))}
                     </span>
-                    ))}
-                </span>
-                </span>
-                ) : (
-                <Button onClick={handleBtnUpdate}>Help me</Button>
-            )}
+                    </span>
+                    ) : (
+                    <Button onClick={handleBtnUpdate}>Help me</Button>
+                )}
             </Menu.Item>
             <Menu.Item>
                 {
@@ -347,8 +334,9 @@ const CodeEditor = () => {
                   setOpenModal(false);
                   setCodeHelpBtn("Code Help");
                 }}
-              >
-                Close
+                className="close-button"
+                >
+                X
               </Button>
             </div>
             <pre style={{ color: 'white' }}>{codeHelpState}</pre>
@@ -367,15 +355,15 @@ const CodeEditor = () => {
                         </div>
                     </TabPane> 
                     <TabPane tab="Your Clue" key="2">
-                    {challengeInStateToUse.length > 0 && <Solutions challengeInState={challengeInStateToUse} query={editorValue}/>}
+                        {challengeInStateToUse.length > 0 && <Solutions challengeInState={challengeInStateToUse} query={editorVal}/>}
                     </TabPane>
             </Tabs>
         </div>
-           <div className="col-4" style={{ marginTop: -20, marginLeft: 10 }}>
-            <div className="my-0" style={{ marginLeft: !isRightSidebarVisible && !isSidebarVisible ? -50 : isRightSidebarVisible && !isSidebarVisible ? -10 : isSidebarVisible && !isRightSidebarVisible ? 0 : 100 }}>
+           <div className="col-4 ace-editor-container" style={{ marginTop: -20, marginLeft: 10 }}>
+            <div className="my-0" style={{ width: editorWidth() }}>
                 <AceEditor
                     ref={editorRef}
-                    style={{ position: 'fixed', top: '3.5rem', left: isSidebarVisible ? '30%' : '0', width: editorWidth(), height: 'calc(100% - 3.5rem)' }}
+                    style={{ position: 'fixed', top: '3.5rem', left: isSidebarVisible ? '30%' : '0', width: editorWidth(), height: '100%' }}
                     mode={'javascript'}
                     onChange={handleOnChange}
                     theme="monokai"
@@ -390,8 +378,7 @@ const CodeEditor = () => {
                     }} 
                     tabSize={3}
                     wrapEnabled={true}
-                    value={editorValue}
-                    onLoad={editor => onLoad(editor)}
+                    value={editorVal} //pseudoCode
                 />
             </div>
            </div>

@@ -21,7 +21,7 @@ openai.api_key = config('OPEN_AI_API_KEY')
 def get_help(request):
     print('request', request)
     data = request.data
-    print('data', data)
+    print('data',)
     challenge_name = data.get('title')
     challenge_description = data.get('description')
     # question_id = data['data']
@@ -65,22 +65,6 @@ def get_help(request):
         # Access the 'content' of the last message
         last_message_content = response["choices"][-1]["message"]["content"].replace("<p>", "").replace("</p>", "")
         print('***', last_message_content, '****')
-        if opt == 'one':
-            second_prompt_file_path = os.path.join(os.path.dirname(__file__), 'two.txt')
-            with open(second_prompt_file_path, 'r') as second_file:
-                second_prompt_text = second_file.read()
-                combined_prompt = f"{last_message_content}\n\n{second_prompt_text}"
-                response2 = openai.Completion.create(
-                        engine="text-davinci-003",
-                        prompt=combined_prompt,
-                        max_tokens=2048,
-                        temperature=0,
-                )
-            if "choices" in response2 and len(response2["choices"]) > 0:
-                    last_message_content2 = response2["choices"][0]["text"]
-                    return Response(last_message_content2)
-
-
         return Response(last_message_content)
 
     # Handle the case where there is no valid response
@@ -92,4 +76,3 @@ class receive_response(View):
         user_input = self.request.POST["user_input"]
         response = get_help(user_input)
         return HttpResponse(response)
-

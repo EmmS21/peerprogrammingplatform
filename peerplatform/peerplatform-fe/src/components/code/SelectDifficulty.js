@@ -69,7 +69,7 @@ const SelectDifficulty = ({setShowSelect, showSelect, placeholderText, onNewChal
     return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
         <Select
-            placeholder={placeholderText}
+            placeholder={'Select'}
             options={difficultyLevels}
             onChange={(e, data) => setSelectedDifficulty(data.value)}
             style={{ width: '50%' }} 

@@ -95,7 +95,7 @@
   left: 0;
   right: 0;
   bottom: 0; /* Place the div at the bottom of the page */
-  max-height: 70vh; /* Set a maximum height for the div */
+  max-height: 20vh; /* Set a maximum height for the div */
   overflow-y: auto; /* Enable vertical scrolling if the content exceeds the max height */
   background-color: #333; /* Adjust the background color as needed */
   transition: transform 0.3s ease, bottom 0.5s ease-in-out; /* Animation duration and easing */
@@ -114,6 +114,9 @@
   align-items: center;
   background-color: #222; /* Header background color */
   padding: 10px;
+  position: sticky; /* Make this header sticky */
+  top: 0; /* Stick to the top of the container */
+  z-index: 1;
 }
 
 .code-help-header h3 {
@@ -164,4 +167,13 @@
 
 .dot.color-purple {
   color: purple;
+}
+
+.close-button {
+  font-size: 16px;
+  font-weight: bold;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  justify-content: center;
 }

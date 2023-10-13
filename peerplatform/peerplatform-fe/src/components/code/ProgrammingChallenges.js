@@ -24,7 +24,7 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
     description: '',
     examples: [],
   });
-  console.log('challege', challengeData, '########')
+  // console.log('challege', challengeData, '########')
 
   const headers = ["Input","Output","Explanation"]
 
@@ -102,7 +102,7 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
 
   function parseTableData(data) {
     if (!data) return null;
-    console.log("Input data:", data);  // Check the input data
+    // console.log("Input data:", data);  // Check the input data
 
 
     const lines = data.split("\n");
@@ -150,7 +150,7 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
 
   function RenderTableOrText({ data }) {
     const tableData = useMemo(() => parseTableData(data), [data]);
-    console.log('**', tableData?.textDataAfterTable, '!!!')
+    // console.log('**', tableData?.textDataAfterTable, '!!!')
     
     if (tableData) {
         return (

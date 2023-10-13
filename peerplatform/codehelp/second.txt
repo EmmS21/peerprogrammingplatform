@@ -7,3 +7,6 @@ Please:
 
 For each point, do not restate the question, give me a heading instead. For example for this:
 breakdown the accuracy of my code. Specify how close I am to having a passing solution, the appropriate heading would be: How close are you to getting the solution?
+
+
+If I have not submitted any code and just pseudo-logic. I did not write this pseudo-code so encourage me to start solving the problem and give me extra guidance without giving me the answer based on whatever logic/pseudo-code you received. Explain things as simply as possible, use everyday anologies and even give an example of how I could solve a simpler problem similar to this one to help me understand better
