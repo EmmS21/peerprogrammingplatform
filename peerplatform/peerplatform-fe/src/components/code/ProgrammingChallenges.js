@@ -29,6 +29,7 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
   const headers = ["Input","Output","Explanation"]
 
   function formatCode(description) {
+    if (!description) return "";
     const newDescription= description.split("\n").join(" ")
     return newDescription;
   }

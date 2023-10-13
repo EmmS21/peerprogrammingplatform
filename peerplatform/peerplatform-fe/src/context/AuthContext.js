@@ -46,8 +46,8 @@ export const AuthProvider = ({children}) => {
     const driverInState = useRef([])
     const room_name = useRef([])
     const participants = useRef([])
-     const profileURL = 'http://127.0.0.1:8000/'
-    // const profileURL = 'https://aicoder.onrender.com/'
+    // const profileURL = 'http://127.0.0.1:8000/'
+    const profileURL = 'https://aicoder.onrender.com/'
     const difficultySelected = useRef([])
     const [openModal, setOpenModal] = useState(true);
     const [gptresp, setGptResp] = useState({})
