@@ -64,7 +64,6 @@ export const AuthProvider = ({children}) => {
     // const codeResp = useRef('')
 
 
-
     const history = useHistory();
 
     //we are going to pass this information down to login page

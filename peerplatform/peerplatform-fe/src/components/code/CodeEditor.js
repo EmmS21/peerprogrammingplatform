@@ -74,28 +74,21 @@ const CodeEditor = () => {
       }, []);
 
 
-    // //change language in select options
-    // //map language id to language
-    // const languageMap = {
-    //     70: "python",
-    //     63: "javascript",
-    //     62: "java"
-    // }
-
     useEffect(() => {
         if (codeHelpState) {
           setIsCodeHelpModalVisible(true);
         }
       }, [codeHelpState]);
 
-      
 
       useEffect(() => {
         const savedChallenge = localStorage.getItem('challenge');
+        // console.log('savedChallenge*', savedChallenge, '***')
         const savedCodeResp = localStorage.getItem('codeResp');
         // console.log('Saved Challenge from localStorage:', savedChallenge);
         if (savedChallenge) {
             const parsedChallenge = JSON.parse(savedChallenge);
+            // console.log('parsedChallenge', parsedChallenge, '***')
             if (parsedChallenge.length > 0) {
                 setLocalChallengeInState(parsedChallenge);
                 console.log('Setting localChallengeInState from localStorage:', parsedChallenge);
@@ -104,14 +97,14 @@ const CodeEditor = () => {
             }
         // Check if the current challenge title is different from the one in localStorage
         if (challengeInState.length > 0 && savedChallenge) {
+            console.log('if', challengeInState, '*****')
             const currentChallengeTitle = challengeInState[0].title;
             const parsedSavedChallenge = JSON.parse(savedChallenge);
             const savedChallengeTitle = parsedSavedChallenge[0].title;
             // console.log('Current Challenge Title:', currentChallengeTitle);
-            // console.log('Saved Challenge Title from localStorage:', savedChallengeTitle);
-    
-
+            // console.log('curr', currentChallengeTitle, 'saved', savedChallengeTitle)
             if (currentChallengeTitle !== savedChallengeTitle) {
+                console.log('****', challengeInState, '****')
                 // Update localStorage with the new challenge
                 localStorage.setItem('challenge', JSON.stringify(challengeInState));
                 // console.log('Updating localStorage with new challenge:', challengeInState);
@@ -137,6 +130,7 @@ const CodeEditor = () => {
     }, []);
     
     const challengeInStateToUse = localChallengeInState.length > 0 ? localChallengeInState : challengeInState;
+    console.log('challengeToUse', challengeInStateToUse, '****')
 
     useEffect(() => {
         // Save challengeInState to local storage when it changes

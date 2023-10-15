@@ -45,7 +45,7 @@ const SelectDifficulty = ({setShowSelect, showSelect, placeholderText, onNewChal
             setChallengeInState(res.data)
             if (onNewChallengeFetched){
                 onNewChallengeFetched(res.data)
-                getSolution(res.data[0].title, null, "one")
+                getSolution(res.data[0].title, null, "three")
             }
             console.log('challengIn', challengeInState)
             setShowSelect(false)

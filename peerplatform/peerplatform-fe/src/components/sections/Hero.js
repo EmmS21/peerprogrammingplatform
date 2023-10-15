@@ -40,7 +40,8 @@ const Hero = ({
   const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [clockSpin, setClockSpin] = useState(false)
-  let { profileURL, setChallengeInState, setShowNextChallengeButton, getSolution } = useContext(AuthContext)
+  let { profileURL, setChallengeInState, setShowNextChallengeButton, 
+        getSolution } = useContext(AuthContext)
 
   const handleGetStarted = () => {
     setIsEmailModalVisible(true);
@@ -64,21 +65,29 @@ const Hero = ({
     const base_url = `${profileURL}programming_challenge/${selection}` 
     axios.get(base_url)
     .then(async (res)=>{
-        setChallengeInState(res.data)
-        // console.log('res.data', res.data)
-        setShowNextChallengeButton(true)
-        if(res.data[0] && res.data.length > 0){
-          let opt = "one"
-          // console.log('res', res.data)
-          const challengeName = res.data[0].title
-          const challengeDescription = res.data[0].place
-          const challenge = {challengeName, challengeDescription}
-          localStorage.setItem('challenge', JSON.stringify(res.data));
-          let result = await getSolutionHandler(challenge, null, opt)
-          // console.log('result', result)
-          setClockSpin(false);
-          history.push("/rooms")
-        }
+      let opt = "three"
+      const challengeName = res.data[0].title
+      const challengeDescription = res.data[0].place
+      const challenge = {challengeName, challengeDescription}
+      let result = await getSolutionHandler(challenge, null, opt)
+      result = result.replace(/\n/g, ' ');
+      result = JSON.stringify(result)
+      res.data[0].extra_explain = JSON.parse(result);
+      // console.log('res', res.data)
+      setChallengeInState(res.data)
+      //   // console.log('res.data', res.data)
+      setShowNextChallengeButton(true)
+      if(res.data[0] && res.data.length > 0){
+        let opt = "one"
+        // console.log('res', res.data)
+        // console.log('challenge', res.data)
+        // console.log('before setting to local', JSON.stringify(res.data))
+        localStorage.setItem('challenge', JSON.stringify(res.data));
+        let result = await getSolutionHandler(challenge, null, opt)
+        // console.log('result', result)
+        setClockSpin(false);
+        history.push("/rooms")
+      }
     })
     .catch(err=> {
         console.log(err)

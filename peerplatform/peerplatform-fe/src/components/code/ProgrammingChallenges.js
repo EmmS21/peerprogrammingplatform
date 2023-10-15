@@ -46,13 +46,18 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
 
 
   useEffect(() => {
+    console.log('programmingchallenge')
     if (challengeInState && challengeInState.length > 0) {
+      console.log('challenge', challengeInState)
       const challenge = challengeInState[0];
+      const { explanation, exampleData } = parseExplanationAndExamples(challenge.extra_explain);
       setChallengeData({
         name: challenge.title,
         difficulty: challenge.difficulty,
         description: challenge.place || challenge.place,
         examples: [challenge.Example2, challenge.Example3 || challenge.Example3].filter(Boolean),
+        explanation,
+        exampleData,
       });
     }
   }, [challengeInState]);
@@ -200,6 +205,17 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
   
     return <Table className="custom-table" dataSource={dataSource} columns={columns} pagination={false} />;
   }
+
+  function parseExplanationAndExamples(data) {
+    const explanationStart = data.indexOf("Simplified Explanation:");
+    const exampleStart = data.indexOf("An Example:");
+
+    const explanation = data.substring(explanationStart, exampleStart).replace("Simplified Explanation:", "").trim();
+    const exampleData = data.substring(exampleStart + "An Example:".length).trim();
+  
+    return { explanation, exampleData };
+    }
+
   const tableData = useMemo(() => parseTableData(challengeData.description), [challengeData.description]);
 
 
@@ -237,6 +253,10 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
             );
           })}
         </ol>
+        <h5>Simplified Explanation</h5>
+        <div>{challengeData.explanation}</div>
+        <h6>Additional Examples</h6>
+        <div>{challengeData.exampleData}</div>
         <div><strong>Constraints:</strong>
           {getConstraints(challengeData.examples.join(''))}
         </div>

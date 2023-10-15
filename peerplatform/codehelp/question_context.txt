@@ -1,0 +1,9 @@
+Give a very detailed explanation what this question is asking me to do as though I have never written a line of code or learnt any computer science in my life. Explain any complex or technical language used by breaking it down into very simplistic terms. Give 2 simple examples to support your explanation
+
+Return the output in this format
+
+Simplified Explanation
+[your explanation]
+
+Some Simple Examples
+[some examples]

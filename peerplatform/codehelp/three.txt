@@ -1,1 +1,9 @@
-Look at the output you generate, compare it with the complete solution. Have you completed the task from the previous prompt. If not please return only a code snippet of the solution following the rules laid out in the previous prompt
+Give a very detailed explanation what this question is asking me to do as though I have never written a line of code or learnt any computer science in my life. Explain any complex or technical language used by breaking it down into very simplistic terms. Give a simple everyday example to support your explanation
+
+Return the output in this format
+
+Simplified Explanation
+[your explanation]
+
+An Example
+[some examples]
