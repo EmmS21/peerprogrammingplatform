@@ -177,3 +177,90 @@
   display: flex;
   justify-content: center;
 }
+
+.full-height-button {
+  height: 100% !important;
+  width: 50% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.menu-item-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex;
+}
+
+.single-full-height-button {
+  height: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.single-menu-item-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex;
+}
+
+.select-full-width {
+  width: 100% !important;
+}
+
+.select-half-width {
+  width: 50% !important;
+}
+
+.full-height-container {
+  height: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex;
+  align-items: stretch; /* ensures child elements take up full height */
+}
+
+.testcases-container {
+  background-color: black;
+  width: 20vw;
+  height: 60vh;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.child-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  color: white; /* Initial text color */
+  position: relative;
+  overflow: hidden;
+}
+
+.child-div:hover::before {
+  background-color: white; /* Change background color on hover */
+}
+
+.child-div:hover {
+  color: black;
+  background-color: white;
+}
+.child-div::after {
+  content: "⬇";
+  margin-left: 5px;
+  color: black; /* Make the content white */
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.3s; /* Smooth transition for the arrow */
+}
+
+.child-div:hover::after {
+  opacity: 1; /* Show the arrow on hover */
+}

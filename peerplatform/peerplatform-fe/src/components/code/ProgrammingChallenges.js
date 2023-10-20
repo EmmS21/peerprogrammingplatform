@@ -48,7 +48,7 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
   useEffect(() => {
     console.log('programmingchallenge')
     if (challengeInState && challengeInState.length > 0) {
-      console.log('challenge', challengeInState)
+      // console.log('challenge', challengeInState)
       const challenge = challengeInState[0];
       const { explanation, exampleData } = parseExplanationAndExamples(challenge.extra_explain);
       setChallengeData({
@@ -207,6 +207,7 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
   }
 
   function parseExplanationAndExamples(data) {
+    // console.log('dataParseExplanation', data)
     const explanationStart = data.indexOf("Simplified Explanation:");
     const exampleStart = data.indexOf("An Example:");
 

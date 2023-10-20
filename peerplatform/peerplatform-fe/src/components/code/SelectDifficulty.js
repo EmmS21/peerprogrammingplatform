@@ -1,25 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import AuthContext from '../../context/AuthContext';
 import { Button, Select } from 'antd'
 import axios from 'axios';
+import "../../assets/other_css/sidebar.css";
 
-const SelectDifficulty = ({setShowSelect, showSelect, placeholderText, onNewChallengeFetched}) => {
-    const { difficultySelected, getSolution, 
-        challengeInState, setChallengeInState, 
+
+const SelectDifficulty = ({setShowSelect, newAnswerFetched, placeholderText, onNewChallengeFetched}) => {
+    const { getSolution, 
         profileURL, setShowNextChallengeButton,
         setLoadingCode
      } = useContext(AuthContext)
     const [selectedDifficulty, setSelectedDifficulty] = useState(''); // <-- New state variable
+    const selectWidth = selectedDifficulty ? '50%' : '100%';
 
-
-
-    //  useEffect(() => {
-    //     if(challengeInState[0] && challengeInState.length > 0){
-    //         const challengeName = challengeInState[0].title
-    //         localStorage.setItem('challenge', JSON.stringify(challengeInState));
-    //         getSolutionHandler(challengeName)
-    //     }
-    // }, [challengeInState]);
 
     const difficultyLevels = [
         { key: 'e', value: 'easy', text: 'Easy' },
@@ -40,14 +33,21 @@ const SelectDifficulty = ({setShowSelect, showSelect, placeholderText, onNewChal
         const base_url = `${profileURL}programming_challenge/${selection}`
         setLoadingCode(true) 
         axios.get(base_url)
-        .then(res=>{
+        .then( async (res)=>{
             console.log('res', res.data)
-            setChallengeInState(res.data)
             if (onNewChallengeFetched){
+                console.log('resData SelectDiff', res.data)
+                let explanationRes = await getSolution(res.data[0].title, null, "three")
+                explanationRes = explanationRes.replace(/\n/g, ' ');
+                explanationRes = JSON.stringify(explanationRes)
+                console.log('explanationRes***', explanationRes)
+                res.data[0].extra_explain = JSON.parse(explanationRes);
+                let answerRes = await getSolution(res.data[0], null, "one")   
+                console.log('resData', res.data)
+                console.log('answerRes', answerRes)    
                 onNewChallengeFetched(res.data)
-                getSolution(res.data[0].title, null, "three")
+                newAnswerFetched(answerRes)
             }
-            console.log('challengIn', challengeInState)
             setShowSelect(false)
             setShowNextChallengeButton(true)
             setLoadingCode(false)
@@ -59,22 +59,16 @@ const SelectDifficulty = ({setShowSelect, showSelect, placeholderText, onNewChal
             console.log(err)
         })
     }
-    async function getSolutionHandler(challengeName){
-        try {
-            await getSolution(challengeName)
-        } catch(error){
-            console.error('Error fetching the solution:', error)
-        } 
-    }
+
     return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'center', height: '100%' }} className="full-height-container">
         <Select
             placeholder={'Select'}
             options={difficultyLevels}
             onChange={(e, data) => setSelectedDifficulty(data.value)}
-            style={{ width: '50%' }} 
+            style={{ width: selectWidth}} 
         /> 
-        <Button onClick={handleOnChange}>{placeholderText}</Button>
+          {selectedDifficulty && <Button className="select-half-width" onClick={handleOnChange}>{placeholderText}</Button>}
     </div>
   )
 }

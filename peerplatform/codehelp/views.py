@@ -36,6 +36,8 @@ def get_help(request):
         file_name = 'mainclue.txt'
     elif opt == 'three':
         file_name = 'three.txt'
+    elif opt == 'four':
+        file_name = 'test_cases.txt'
     elif query:
         file_name = 'second.txt'
     try:
@@ -48,7 +50,12 @@ def get_help(request):
     with open(prompt_file_path, 'r') as file:
         prompt_text = file.read()
         # selected_prompt_text = prompts[prompt_levels.index(selected_prompt)]
-    final_prompt = f"{prompt_text} Question: {challenge_name} Description: {challenge_description}"
+    if(opt == 'four'):
+        final_prompt = f"{prompt_text} Question: {challenge_name} Description: {challenge_description} testCases:{data.get('query')}"
+        # print('data', data)
+        # print('prompt', final_prompt)
+    else:
+        final_prompt = f"{prompt_text} Question: {challenge_name} Description: {challenge_description}"
     if opt == 'three':
         print('final', final_prompt)
     if query:
@@ -68,7 +75,6 @@ def get_help(request):
     if "choices" in response and len(response["choices"]) > 0:
         # Access the 'content' of the last message
         last_message_content = response["choices"][-1]["message"]["content"].replace("<p>", "").replace("</p>", "")
-        # print('***', last_message_content, '****')
         return Response(last_message_content)
 
     # Handle the case where there is no valid response

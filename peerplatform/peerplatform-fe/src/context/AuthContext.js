@@ -9,6 +9,7 @@ import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../context/RoomContextProvider';
 import WebSocketInstance from '../websocket/Connect';
 import { notification as notify } from 'antd';
+import { result } from 'lodash';
 
 
 const AuthContext = createContext()
@@ -195,6 +196,71 @@ export const AuthProvider = ({children}) => {
     const headers = {
             'X-RapidAPI-Key': 'bcc33499f9msh5f6c898ed17eea7p121b52jsn76ceee08eab4'
     }
+
+    const submitJudge0 = (requestBody) => {
+    return new Promise((resolve, reject) => {
+        let compareArr = requestBody.expected_output
+        console.log('compareArr', compareArr)
+        let emptyArr = new Array(requestBody.expected_output.length).fill(false);
+        // console.log('expected', requestBody.expected_output);
+        axios
+        .post(`${baseURL}`, requestBody, {
+            headers,
+        })
+        .then((res) => {
+            threeSecondWait().then(() => {
+            axios
+                .get(`${baseURL}/${res.data.token}`, {
+                headers,
+                })
+                .then((res) => {
+                let resultsOutput = res.data.stdout;
+                // console.log('resp', resultsOutput)
+                resultsOutput = resultsOutput.trim()
+                // console.log('resOutStripped', resultsOutput)
+                let resultsArr = resultsOutput.split("\n")
+                console.log('outputProduced****', resultsArr)
+                for (let i = 0; i < resultsArr.length; i++) {
+                    let resultValue = resultsArr[i];
+                    let expectedValue = compareArr[i];
+                    if(typeof expectedValue === 'boolean'){
+                        expectedValue = String(expectedValue)
+                    }
+                    // console.log('result', resultValue, 'exp', expectedValue, '==', resultValue == expectedValue);
+                    if (resultValue == expectedValue) {
+                    console.log('changedTrue');
+                    emptyArr[i] = true;
+                    }
+                }
+                console.log('respArr***', emptyArr);
+                resolve(emptyArr); // Resolve the promise with the resultArr
+                })
+                .catch((err) => {
+                console.error('Error fetching result:', err);
+                setResp(
+                    'An error occurred while fetching the result. Please try again.'
+                );
+                reject(err); // Reject the promise with the error
+                });
+            });
+        })
+        .catch((err) => {
+            if (err.response && err.response.status === 422) {
+            console.error('Unprocessable Content:', err.response.data);
+            setResp(
+                'It seems you have not selected a programming language or used an incorrect language selection. Please check and try again.'
+            );
+            } else {
+            setSpinnerOn(false);
+            console.error('An error occurred:', err);
+            setResp('An unknown error occurred. Please try again.');
+            }
+            reject(err); // Reject the promise with the error
+        });
+    });
+    };
+
+
     //send code and required data to Judge0API
     const sendCodeJudge0 = (requestBody) => {
         axios.post(`${baseURL}`, requestBody, {
@@ -296,13 +362,21 @@ export const AuthProvider = ({children}) => {
 
     async function getSolution(challenge, query = null, opt=null){
         // console.log('trigg', query)
-        console.log('****getSolution****', opt)
+        console.log('challe', challenge)
         if(opt === 'one'){
             setCodeResp("Please wait for code to load....");
         }
-        const leetObj = { title: challenge['challengeName'],
-                          description: challenge['challengeDescription']
-                        };
+        let leetObj = {}
+        if(opt !== 'four'){
+            leetObj = { title: challenge['challengeName'],
+                        description: challenge['challengeDescription'],
+                    };
+        } else {
+            leetObj = { title: challenge['title'],
+                        description: challenge['place'],
+                        testCases: query
+                    }
+        }
         if (query) {
           leetObj['query'] = query; 
         }
@@ -313,15 +387,21 @@ export const AuthProvider = ({children}) => {
         const res = await axios.post(`${profileURL}code_help/get`, leetObj)
         const content = res.data;
         if(query){
-            console.log('content', content)
-            setCodeHelpState(content)
+            if(opt === 'four'){
+                // console.log('auth', content)
+                return content
+            } else {
+                // console.log('content', content)
+                setCodeHelpState(content)
+            }
         } else if(opt === 'one') {
             setGptResp(content)
             setCodeResp(content)
             // codeResp.current = content
             localStorage.setItem('codeResp', content)
             console.log('resp', codeResp, '***')
-        } else {
+        } 
+        else {
             return content
         }
         setOpenModal(true)
@@ -425,7 +505,8 @@ export const AuthProvider = ({children}) => {
         codeResp: codeResp,
         setCodeResp: setCodeResp,
         loadingCode: loadingCode, 
-        setLoadingCode: setLoadingCode
+        setLoadingCode: setLoadingCode,
+        submitJudge0: submitJudge0
     }
 
     //so we refresh our refresh token and update state every 4 minutes

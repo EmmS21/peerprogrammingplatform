@@ -20,8 +20,7 @@ import { Menu } from 'semantic-ui-react';
 import Solutions from './Solutions';
 import { useHistory } from 'react-router-dom';
 import "../../assets/other_css/sidebar.css";
-import { throttle } from 'lodash';
-
+import TestCases from './TestCases';
 
 
 //change language based on map
@@ -32,11 +31,11 @@ const CodeEditor = () => {
     const [isSidebarVisible, setSidebarVisible] = useState(true);
     let {  
           getSolution,
-          sendCodeJudge0, spinnerOn, 
+          sendCodeJudge0, spinnerOn, submitJudge0,
           setSpinnerOn, resp,setCodeResp,
           setResp, codeResp, setOpenModal,  
           contextHolder, challengeInState, codeHelpState,
-          showNextChallengeButton, setShowNextChallengeButton
+          showNextChallengeButton, setShowNextChallengeButton, setChallengeInState
          } = useContext(AuthContext)
     // let photoURL = user.photo.split('"').join('');
     const [query, setQuery] = useState('');
@@ -52,13 +51,21 @@ const CodeEditor = () => {
     const [editorVal, setEditorVal] = useState(() => {
         const savedEditorVal = localStorage.getItem('editorVal');
         return savedEditorVal ? savedEditorVal : ""; // Initialize to empty string
-      });    const [isLoading, setIsLoading] = useState(false);
+      });    
+    const [isLoading, setIsLoading] = useState(false);
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
     const colors = ['color-red', 'color-blue', 'color-black', 'color-purple'];
+    const [testResults, setTestResults] = useState([]); // Add this line to create the state
 
 
     const history = useHistory();
     const editorRef = useRef(null);
+    const [showTestCases, setShowTestCases] = useState(false);
+    const [submitButtonText, setSubmitButtonText] = useState(
+        showTestCases ? 'Close Tests' : 'Submit Code'
+    );
+    
+      
 
     useEffect(() => {
         // Function to change the current color index randomly
@@ -91,20 +98,20 @@ const CodeEditor = () => {
             // console.log('parsedChallenge', parsedChallenge, '***')
             if (parsedChallenge.length > 0) {
                 setLocalChallengeInState(parsedChallenge);
-                console.log('Setting localChallengeInState from localStorage:', parsedChallenge);
+                // console.log('Setting localChallengeInState from localStorage:', parsedChallenge);
                 setShowSelect(false);
                 setShowNextChallengeButton(true);
             }
         // Check if the current challenge title is different from the one in localStorage
         if (challengeInState.length > 0 && savedChallenge) {
-            console.log('if', challengeInState, '*****')
+            // console.log('if', challengeInState, '*****')
             const currentChallengeTitle = challengeInState[0].title;
             const parsedSavedChallenge = JSON.parse(savedChallenge);
             const savedChallengeTitle = parsedSavedChallenge[0].title;
             // console.log('Current Challenge Title:', currentChallengeTitle);
             // console.log('curr', currentChallengeTitle, 'saved', savedChallengeTitle)
             if (currentChallengeTitle !== savedChallengeTitle) {
-                console.log('****', challengeInState, '****')
+                // console.log('****', challengeInState, '****')
                 // Update localStorage with the new challenge
                 localStorage.setItem('challenge', JSON.stringify(challengeInState));
                 // console.log('Updating localStorage with new challenge:', challengeInState);
@@ -117,11 +124,7 @@ const CodeEditor = () => {
                 // console.log('Setting localChallengeInState from challengeInState:', challengeInState);
 
             }
-        }            // Avoid setting challengeInState here to prevent overwriting it
-            // setChallengeInState(parsedChallenge);
-            // You can uncomment this line if necessary, but make sure it doesn't
-            // overwrite the correct value of challengeInState.
-        }
+        }}
         if (savedCodeResp) {
             // codeResp.current = savedCodeResp; // Assuming setCodeResp is available in context
             setCodeResp(savedCodeResp)
@@ -129,8 +132,8 @@ const CodeEditor = () => {
         }
     }, []);
     
-    const challengeInStateToUse = localChallengeInState.length > 0 ? localChallengeInState : challengeInState;
-    console.log('challengeToUse', challengeInStateToUse, '****')
+    let challengeInStateToUse = localChallengeInState.length > 0 ? localChallengeInState : challengeInState;
+    // console.log('challengeToUse', challengeInStateToUse, )
 
     useEffect(() => {
         // Save challengeInState to local storage when it changes
@@ -138,8 +141,62 @@ const CodeEditor = () => {
             localStorage.setItem('challenge', JSON.stringify(localChallengeInState));
         }
     }, [localChallengeInState]);
-    
+
+    const toggleTestCases = async () => {
+        // console.log("function");
+        setRightSidebarVisible(false)
+        requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
+        requestBody.language_id = "63"
+
+        setShowTestCases((prevShow) => {
+          const newShow = !prevShow;
+          localStorage.setItem('showTestCases', newShow);
+          return newShow;
+        });
+
+        setSubmitButtonText((prevText) =>
+        showTestCases ? 'Submit Code' : 'Close Tests'
+        );  
   
+        // Match and store the comments in an array
+        const regex = /\/\/ Test cases([\s\S]*)/g;
+        const matches = editorVal.match(regex);
+
+        // Extract the matched text
+        if (matches && matches.length > 0) {
+          const textAfterTestCases = matches[0].replace("// Test cases", "").trim();
+        //   console.log("Text after // Test cases:", textAfterTestCases);
+      
+          // Save the extracted text in the variable savedStr
+          const savedStr = textAfterTestCases;
+          const res = await getSolution(challengeInStateToUse[0], savedStr, 'four')
+          const resObj = JSON.parse(res)
+          const dataType = resObj.dataType
+          const testCases = resObj.output;
+        //   console.log('res', testCases)
+        //   console.log('type', dataType)
+          const valuesArray = testCases.map((testCase) => {
+            if (dataType === 'string') {
+              return String(testCase);
+            } else if (dataType === 'number') {
+              return Number(testCase);
+            } else if (dataType === 'boolean') {
+              return Boolean(testCase);
+            } else {
+              // Handle other data types as needed
+              return testCase; // By default, return the value as is
+            }
+          });
+          requestBody.expected_output = valuesArray
+
+          submitJudge0(requestBody).then((response) => {
+            setTestResults(response)
+          })
+        } else {
+        //   console.log("No text found after // Test cases.");
+        }              
+    };
+      
     
     let requestBody = {
         "source_code": "",
@@ -166,6 +223,7 @@ const CodeEditor = () => {
     //handle submission
     const makeSubmission = (e) => {
         e.preventDefault();
+        setShowTestCases(false)
         requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
         // console.log('resq', requestBody.source_code)
         requestBody.language_id = "63"
@@ -181,6 +239,7 @@ const CodeEditor = () => {
     };
 
     const toggleRightSidebar = () => {
+        // console.log('triggered')
         setRightSidebarVisible(!isRightSidebarVisible);
         if (!isRightSidebarVisible) {
             setTypedText('');
@@ -237,7 +296,7 @@ const CodeEditor = () => {
     }, [pseudoCode]);
     
     useEffect(() => {
-        console.log('code', codeResp)
+        // console.log('code', codeResp)
         setPseudoCode(codeResp);
     }, [codeResp]);
 
@@ -260,27 +319,68 @@ const CodeEditor = () => {
                 setIsLoading(false)
             })
         setCodeHelpBtn("Please wait...")
-    }  
+    }
+    
+    function extractFunctionInfo(code) {
+        // Regular expression to match function definitions
+        const regex = /function\s+([\w\$]+)?\s*\(([^\)]*)\)|const\s+([\w\$]+)\s*=\s*function\s*\(([^\)]*)\)|([\w\$]+)\s*=\s*\(([^)]*)\)|const\s+([\w\$]+)\s*=\s*\(([^)]*)\)|\(\s*function\s*([^\)]*)\)|([\w\$]+)\s*=\s*([^\(]*)\s*\=>|function\*?\s*([\w\$]+)?\s*\(([^\)]*)\)|\(\s*([^)]*)\s*\)\s*\=\>\s*\{|([\w\$]+)\s*=\s*\(([^)]*)\)\s*\=\>\s*\{/gm;
+      
+        // Execute the regular expression on the code
+        const matches = [];
+        let match;
+        while ((match = regex.exec(code)) !== null) {
+          const functionName = match[1] || match[3] || match[5] || match[7] || match[9] || match[11] || match[13] || match[15];
+          const argumentsList = match[2] || match[4] || match[6] || match[8] || match[10] || match[12] || match[14] || match[16];
+          if (functionName) {
+            matches.push({ functionName, argumentsList });
+          }
+        }
+        return matches;
+    }
+
+    const handleCloseTests = () => {
+        setShowTestCases(false)
+        setSubmitButtonText('Submit Code')        
+    }
     
     function resetHandler(){
+        console.log('de', codeResp)
         setEditorVal(pseudoCode)
     }
 
         return (
         <>
         <Menu class="w-full" pointing widths={ 6 } size={"medium"} style={{ marginTop:0 }}>
-            <Menu.Item>
-                <Button onClick={() => history.push(history.location.pathname.replace('/rooms', ''))}>Back</Button>
+            <Menu.Item className="single-menu-item-container">
+                <Button className="btn btn-primary single-full-height-button" 
+                        onClick={() => history.push(history.location.pathname.replace('/rooms', ''))}>
+                        Back
+                </Button>
             </Menu.Item>
-            <Menu.Item>
-                <Button onClick={()=> resetHandler()}>Reset</Button>
+            <Menu.Item className="single-menu-item-container">
+                <Button className="btn btn-primary single-full-height-button" onClick={resetHandler}>
+                    Refresh
+                </Button>
             </Menu.Item>
             <Menu.Item>
                 {
-                    <Button onClick={()=> setSidebarVisible(!isSidebarVisible)}>{ isSidebarVisible ? "Hide Sidebar" : "Show Sidebar" }</Button>
+                    showNextChallengeButton ? (
+                        <SelectDifficulty 
+                            showSelect={showSelect} 
+                            setShowSelect={setShowSelect}
+                            placeholderText="Next Challenge"
+                            onNewChallengeFetched={(newChallenge) => setLocalChallengeInState(newChallenge)}
+                            newAnswerFetched={(newAnswer) => setEditorVal(newAnswer)}
+                        />
+                    ): null
                 }
             </Menu.Item>
-            <Menu.Item>
+            <Menu.Item className="single-menu-item-container">
+                {
+                    <Button className="btn btn-primary single-full-height-button" onClick={()=> setSidebarVisible(!isSidebarVisible)}>{ isSidebarVisible ? "Hide Sidebar" : "Show Sidebar" }</Button>
+                }
+            </Menu.Item>
+            <Menu.Item className="single-menu-item-container">
                 {isLoading ? (
                     <span>
                     Please Wait
@@ -297,23 +397,16 @@ const CodeEditor = () => {
                     </span>
                     </span>
                     ) : (
-                    <Button onClick={handleBtnUpdate}>Help me</Button>
+                    <Button className="btn btn-primary single-full-height-button" onClick={handleBtnUpdate}>Help me</Button>
                 )}
             </Menu.Item>
-            <Menu.Item>
-                {
-                    showNextChallengeButton ? (
-                        <SelectDifficulty 
-                            showSelect={showSelect} 
-                            setShowSelect={setShowSelect}
-                            placeholderText="Next Challenge"
-                            onNewChallengeFetched={(newChallenge) => setLocalChallengeInState(newChallenge)}
-                        /> 
-                    ): null
-                }
-            </Menu.Item>
-            <Menu.Item>
-                <Button className="btn btn-primary" onClick={makeSubmission}> Run Code</Button>
+            <Menu.Item className="menu-item-container">
+                <Button className="btn btn-primary full-height-button" onClick={makeSubmission} disabled={isRightSidebarVisible}>
+                    Run Code
+                </Button>
+                <Button className="btn btn-primary full-height-button" onClick={showTestCases ? handleCloseTests : toggleTestCases}>
+                    {submitButtonText}
+                </Button>
             </Menu.Item>
         </Menu>
         <div className="row">
@@ -340,17 +433,10 @@ const CodeEditor = () => {
             <Tabs type="card">
                     <TabPane tab="Coding Challenge" key="1">
                         {challengeInStateToUse.length > 0 && <ProgrammingChallenge query={query} challengeInState={challengeInStateToUse}/>}
-                        <div style={{ display: showSelect ? 'block' : 'none' }}>
-                            <SelectDifficulty 
-                                showSelect={showSelect} 
-                                setShowSelect={setShowSelect}
-                                placeholderText="Select Difficulty"
-                            /> 
-                        </div>
                     </TabPane> 
-                    <TabPane tab="Your Clue" key="2">
+                    {/* <TabPane tab="Your Clue" key="2">
                         {challengeInStateToUse.length > 0 && <Solutions challengeInState={challengeInStateToUse} query={editorVal}/>}
-                    </TabPane>
+                    </TabPane> */}
             </Tabs>
         </div>
            <div className="col-4 ace-editor-container" style={{ marginTop: -20, marginLeft: 10 }}>
@@ -376,10 +462,13 @@ const CodeEditor = () => {
                 />
             </div>
            </div>
+           {showTestCases && <TestCases testResults={testResults}/>}
            <div className={`col-2 rightCol ${!isRightSidebarVisible ? 'hidden' : ''}`}>
                 <CloseOutlined onClick={()=> setRightSidebarVisible(false)}/>
                 <Spinner on={spinnerOn} Spin={Spin}/>
-                <p className="line1"> { resp } </p>
+                {resp.split('\n').map((line, index) => (
+                    <p key={index} className="line1"> { line } </p>
+                ))}
            </div>
         </div>
         </>

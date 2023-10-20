@@ -84,7 +84,7 @@ const Hero = ({
         // console.log('before setting to local', JSON.stringify(res.data))
         localStorage.setItem('challenge', JSON.stringify(res.data));
         let result = await getSolutionHandler(challenge, null, opt)
-        // console.log('result', result)
+        // console.log('Hero **** result', result)
         setClockSpin(false);
         history.push("/rooms")
       }

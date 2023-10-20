@@ -1,0 +1,11 @@
+Return the expected output for each of these test cases for this leetcode question.
+
+Return only one JSON for the expected output with a structure exactly like:
+
+{
+    output: []
+    dataType: return the data type for each answer
+}
+
+Retain the key values defined explicitly, do not include input for output
+
