@@ -47,7 +47,10 @@ class RoomView(View):
             start_conference_on_enter=is_moderator,
         )
         response.append(dial)
-        return JsonResponse({'room_name': unique_room_name, 'twiml': response.to_xml()}, content_type="application/json")
+        http_response = HttpResponse(response.to_xml(), content_type='application/xml')
+        # http_response['X-Unique-Room-Name'] = unique_room_name
+        return http_response
+        # return JsonResponse({'room_name': unique_room_name, 'twiml': response.to_xml()}, content_type="application/xml")
     
     def selectModerator(self, users, current_user):
         curr_len = len(current_user)

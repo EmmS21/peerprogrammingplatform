@@ -94,7 +94,7 @@ const Hero = ({
         if(shareableLink.length > 0){
           history.push(`/rooms/${roomName}`)
         } else {
-          history.push(`/rooms${generateRandomString(5)}`)
+          history.push(`/rooms/${generateRandomString(5)}`)
         }
       }
     })
@@ -131,6 +131,7 @@ const Hero = ({
       .then(response => response.json())
       .then(data => {
         const twilioToken = JSON.parse(data).token
+        console.log('twilioToken', twilioToken)
         const device = new Device(twilioToken)
         device.updateOptions(twilioToken, {
           codecPreferences: ['opus', 'pcmu'],
