@@ -42,7 +42,7 @@ const Hero = ({
   const [clockSpin, setClockSpin] = useState(false);
   const [stage, setStage] = useState(0);
   let { profileURL, setChallengeInState, setShowNextChallengeButton, 
-        getSolution, setRoomName, username, setUserName } = useContext(AuthContext);
+        getSolution, setRoomName, username, setUserName, roomName } = useContext(AuthContext);
   const [roomState, setRoomState] = useGlobalState();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [shareableLink, setShareableLink] = useState("")
@@ -92,7 +92,7 @@ const Hero = ({
         // console.log('Hero **** result', result)
         setClockSpin(false);
         if(shareableLink.length > 0){
-          history.push(`/rooms/${shareableLink}`)
+          history.push(`/rooms/${roomName}`)
         } else {
           history.push(`/rooms${generateRandomString(5)}`)
         }
@@ -149,9 +149,9 @@ const Hero = ({
       console.log('inside if')
       axios.post(`${profileURL}voice_chat/rooms`)
         .then(res => {
-          const roomName = res.data.room_name
-          setRoomName(roomName)
-          const linkToShare = `${window.location.origin}/join/${roomName}?username=${username}`
+          const nameRoom = res.data.room_name
+          setRoomName(nameRoom)
+          const linkToShare = `${window.location.origin}/join/${nameRoom}?username=${username}`
           setShareableLink(linkToShare)
           setIsModalVisible(true)
           console.log('Shareable Link:', linkToShare)
