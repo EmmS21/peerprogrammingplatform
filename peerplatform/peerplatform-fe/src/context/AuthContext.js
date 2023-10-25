@@ -62,6 +62,8 @@ export const AuthProvider = ({children}) => {
     const [codeHelpState, setCodeHelpState] = useState(null); // New state for Code Help
     const [loadingCode, setLoadingCode] = useState(false);
     const [codeResp, setCodeResp] = useState("Please wait for code to load....");
+    const [roomName, setRoomName] = useState("")
+    const [username, setUserName] = useState("")
     // const codeResp = useRef('')
 
 
@@ -506,7 +508,11 @@ export const AuthProvider = ({children}) => {
         setCodeResp: setCodeResp,
         loadingCode: loadingCode, 
         setLoadingCode: setLoadingCode,
-        submitJudge0: submitJudge0
+        submitJudge0: submitJudge0,
+        roomName: roomName, 
+        setRoomName: setRoomName,
+        username: username,
+        setUserName: setUserName
     }
 
     //so we refresh our refresh token and update state every 4 minutes

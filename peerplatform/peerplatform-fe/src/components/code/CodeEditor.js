@@ -21,6 +21,8 @@ import Solutions from './Solutions';
 import { useHistory } from 'react-router-dom';
 import "../../assets/other_css/sidebar.css";
 import TestCases from './TestCases';
+import { Device } from '@twilio/voice-sdk';
+import { useGlobalState } from '../../context/RoomContextProvider';
 
 
 //change language based on map
@@ -30,7 +32,7 @@ const CodeEditor = () => {
     const selectLang = useRef(0);
     const [isSidebarVisible, setSidebarVisible] = useState(true);
     let {  
-          getSolution,
+          getSolution, roomName, username,
           sendCodeJudge0, spinnerOn, submitJudge0,
           setSpinnerOn, resp,setCodeResp,
           setResp, codeResp, setOpenModal,  
@@ -64,8 +66,11 @@ const CodeEditor = () => {
     const [submitButtonText, setSubmitButtonText] = useState(
         showTestCases ? 'Close Tests' : 'Submit Code'
     );
-    
-      
+    const [roomState, setRoomState] = useGlobalState()
+    const [call, setCall] = useState()
+    const [callConnected, setCallConnected] = useState(false)
+    const { device } = roomState
+    let checkCall = false
 
     useEffect(() => {
         // Function to change the current color index randomly
@@ -141,6 +146,25 @@ const CodeEditor = () => {
             localStorage.setItem('challenge', JSON.stringify(localChallengeInState));
         }
     }, [localChallengeInState]);
+
+    useEffect(() => {
+        if(username.length > 0){
+            const params = {
+                roomName, participantLabel: username
+            }
+            if(checkCall === false){
+                if(!call) {
+                    const callPromise = device.connect({ params })
+                    callPromise.then((twilioCall) => {
+                        console.log('****call', twilioCall)
+                        setCall((prev) => twilioCall)
+                        setCallConnected(true)
+                    })
+                }
+            }
+            checkCall = true
+        }
+    }, [roomName, call, device])
 
     const toggleTestCases = async () => {
         // console.log("function");

@@ -11,6 +11,8 @@ import json
 import redis
 from django.conf import settings
 from django.contrib.auth.models import User
+from uuid import uuid4
+
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
@@ -33,26 +35,19 @@ class RoomView(View):
 
     def post(self, request, *args, **kwargs):
         # decode_request = request.body.decode("utf-8")
-        try:
-            request_body = json.loads(request.body)
-            room_name = request_body["roomName"]
-            participant_label = request_body["participantLabel"]
-            #select moderator
-            is_moderator = self.selectModerator(room_name, participant_label)
-        except:
-            request_body = request.POST
-            room_name = request_body.get("roomName")
-            participant_label = request_body.get("participantLabel")
-            is_moderator = self.selectModerator(room_name, participant_label)
+        unique_room_name = str(uuid4())
+        participant_label = 'User'
+        is_moderator = True
+
         response = VoiceResponse()
         dial = Dial()
         dial.conference(
-            name=room_name,
+            name=unique_room_name,
             participant_label=participant_label,
-            start_conference_on_enter=True if is_moderator == True else False,
+            start_conference_on_enter=is_moderator,
         )
         response.append(dial)
-        return HttpResponse(response.to_xml(), content_type="text/xml")
+        return JsonResponse({'room_name': unique_room_name, 'twiml': response.to_xml()}, content_type="application/json")
     
     def selectModerator(self, users, current_user):
         curr_len = len(current_user)

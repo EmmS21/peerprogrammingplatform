@@ -11,9 +11,9 @@ import AuthContext from '../../context/AuthContext';
 import "../../assets/demo/buttonsflash.css";
 import axios from 'axios';
 import ClockLoader from "react-spinners/ClockLoader";
-
-
-
+import { useGlobalState } from '../../context/RoomContextProvider';
+import { Device } from '@twilio/voice-sdk';
+import ShareLink from './ShareLink';
 
 const propTypes = {
   ...SectionProps.types
@@ -35,13 +35,18 @@ const Hero = ({
 }) => {
 
   const [videoModalActive, setVideomodalactive] = useState(false);
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
   const history = useHistory();
   const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
   const [email, setEmail] = useState('');
-  const [clockSpin, setClockSpin] = useState(false)
+  const [clockSpin, setClockSpin] = useState(false);
+  const [stage, setStage] = useState(0);
   let { profileURL, setChallengeInState, setShowNextChallengeButton, 
-        getSolution } = useContext(AuthContext)
+        getSolution, setRoomName, username, setUserName } = useContext(AuthContext);
+  const [roomState, setRoomState] = useGlobalState();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [shareableLink, setShareableLink] = useState("")
+
 
   const handleGetStarted = () => {
     setIsEmailModalVisible(true);
@@ -86,7 +91,11 @@ const Hero = ({
         let result = await getSolutionHandler(challenge, null, opt)
         // console.log('Hero **** result', result)
         setClockSpin(false);
-        history.push("/rooms")
+        if(shareableLink.length > 0){
+          history.push(`/rooms/${shareableLink}`)
+        } else {
+          history.push(`/rooms${generateRandomString(5)}`)
+        }
       }
     })
     .catch(err=> {
@@ -95,12 +104,61 @@ const Hero = ({
     })  
   }
 
+  function generateRandomString(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    
+    return result;
+  }
+
   async function getSolutionHandler(challenge, query=null, opt){
     try {
         return await getSolution(challenge, query, opt)
     } catch(error){
         return console.error('Error fetching the solution:', error)
     } 
+  }
+
+  function handleStageSet(bttn, nickname){
+    console.log('bttn', bttn)
+    if(bttn === 'pair'){
+      fetch(`${profileURL}voice_chat/token/${nickname}`)
+      .then(response => response.json())
+      .then(data => {
+        const twilioToken = JSON.parse(data).token
+        const device = new Device(twilioToken)
+        device.updateOptions(twilioToken, {
+          codecPreferences: ['opus', 'pcmu'],
+          fakeLocalDTMF: true,
+          maxAverageBitrate: 16000,
+          maxCallSignalingTimeoutMs: 30000
+        });
+        device.on('error', (device) => {
+          console.log('error', device)
+        })
+        setRoomState({ ...roomState, device, twilioToken, nickname })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+      console.log('inside if')
+      axios.post(`${profileURL}voice_chat/rooms`)
+        .then(res => {
+          const roomName = res.data.room_name
+          setRoomName(roomName)
+          const linkToShare = `${window.location.origin}/join/${roomName}?username=${username}`
+          setShareableLink(linkToShare)
+          setIsModalVisible(true)
+          console.log('Shareable Link:', linkToShare)
+          console.log('twilio call created', res.data)
+        })
+    }
+    setStage(2)
   }
 
   const handleEmailSubmit = async () => {
@@ -119,12 +177,12 @@ const Hero = ({
   };
 
 
-  const openModal = (e) => {
+  function openModal (e) {
     e.preventDefault();
     setVideomodalactive(true);
   }
 
-  const closeModal = (e) => {
+  function closeModal (e) {
     e.preventDefault();
     setVideomodalactive(false);
   }   
@@ -137,8 +195,6 @@ const Hero = ({
     invertColor && 'invert-color',
     className
   );
-
-
 
   const innerClasses = classNames(
     'hero-inner section-inner',
@@ -160,6 +216,11 @@ const Hero = ({
             <div className="container-xs">
               <p className="m-0 mb-32 reveal-from-bottom" data-reveal-delay="400">
               </p>
+              <ShareLink 
+                visible={isModalVisible} 
+                onCancel={()=> setIsModalVisible(false)} 
+                shareableLink={shareableLink}
+              />
               <div className="reveal-from-bottom" data-reveal-delay="600">
                   { visible ?
                     (
@@ -180,20 +241,57 @@ const Hero = ({
                             <span className="bouncing-dot"></span>
                             <span className="bouncing-dot"></span>
                           </>
-                        ) : (
+                        ) : stage === 0 ? (
+                          "Choose Mode"
+                        ): stage === 1 ? (
+                          "Pick a nickname"
+                        ):
+                        (
                           "Select Challenge Difficulty"
                         )}
                       </div>
                     }                    
                     visible={isEmailModalVisible}
-                    onCancel={() => setIsEmailModalVisible(false)}
+                    onCancel={() => {
+                      setIsEmailModalVisible(false)
+                      setStage(0)
+                    }}
                     footer={null}
                   >
                     {clockSpin ? (
                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                         <ClockLoader color="#36d7b7" />
                       </div>
-                    ): (
+                    ): stage === 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+                      <Button type="primary" onClick={() => setStage(2)} style={{ marginBottom: '10px' }}>
+                        Solo
+                      </Button>
+                      <Button type="primary" onClick={() => setStage(1)}>
+                        Pair Program
+                      </Button>
+                    </div>            
+                    ): stage === 1 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+                          <Input
+                            placeholder="Enter your username"
+                            value={username}
+                            onChange={e => setUserName(e.target.value)}
+                            style={{ marginBottom: '10px' }}
+                          />
+                          <Button 
+                            type="primary"
+                            disabled={!username} 
+                            onClick={() => {
+                            if (username) {
+                              handleStageSet('pair', username);  
+                            }
+                          }}>
+                            Submit
+                          </Button>
+                      </div>          
+                    ):
+                    (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
                       <Button className="flash-on-hover" type="primary" onClick={(e) => handleSelect(e, e.currentTarget.innerText)} style={{ marginBottom: '10px' }}>
                         Easy
