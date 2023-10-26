@@ -10,7 +10,7 @@ import { useHistory } from 'react-router-dom';
 
 const JoinRoom = () => {
     let {  username, setUserName, profileURL } = useContext(AuthContext)
-    const [inputValue, setInputValue] = useState('');
+    const [currentUser, setCurrentUser] = useState('');
     const [roomState, setRoomState] = useGlobalState()
     const { roomName } = useParams()
     const location = useLocation()
@@ -20,13 +20,15 @@ const JoinRoom = () => {
  
 
     const handleInputChange = (event) => {
-        setInputValue(event.target.value);
+        setCurrentUser(event.target.value);
     };
+    // fetch(`${profileURL}voice_chat/token/${nickname}`)
 
     const handleFormSubmit = () => {
-        if (inputValue) { 
-            setUserName(inputValue);
-            fetch(`${profileURL}voice_chat/token/${username}`)
+        if (currentUser) { 
+            setUserName(currentUser);
+            console.log('currUser', currentUser)
+            fetch(`${profileURL}voice_chat/token/${currentUser}`)
                 .then(response => response.json())
                 .then(data => {
                     const twilioToken = JSON.parse(data).token
@@ -41,6 +43,7 @@ const JoinRoom = () => {
                         console.log('error', device)
                     })
                     setRoomState(roomName)
+                    console.log('roomName', roomName)
                     setRoomState({ ...roomState, device, twilioToken, username})
                     history.push(`/rooms/${roomName}`)
 
@@ -64,11 +67,11 @@ const JoinRoom = () => {
                 placeholder="Enter your username" 
                 style={{ width: '50%' }} 
                 onChange={handleInputChange} 
-                value={inputValue}
+                value={currentUser}
             />
             <Button 
                 onClick={handleFormSubmit}
-                disabled={!inputValue} 
+                disabled={!currentUser} 
             >
                 Submit
             </Button>
