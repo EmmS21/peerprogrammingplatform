@@ -40,6 +40,7 @@ const JoinRoom = () => {
                     device.on('error', (device) => {
                         console.log('error', device)
                     })
+                    setRoomState(roomName)
                     setRoomState({ ...roomState, device, twilioToken, username})
                     history.push(`/rooms/${roomName}`)
 
