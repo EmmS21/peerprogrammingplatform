@@ -57,7 +57,7 @@ def get_help(request):
     else:
         final_prompt = f"{prompt_text} Question: {challenge_name} Description: {challenge_description}"
     if opt == 'three':
-        print('final', final_prompt)
+        print('final')
     if query:
         final_prompt += f"Code: {query}"
     response = openai.ChatCompletion.create(

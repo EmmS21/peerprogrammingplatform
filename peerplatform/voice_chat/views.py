@@ -35,6 +35,7 @@ class RoomView(View):
 
     def post(self, request, *args, **kwargs):
         # decode_request = request.body.decode("utf-8")
+        print('req',request)
         unique_room_name = str(uuid4())
         participant_label = 'User'
         is_moderator = True
@@ -47,10 +48,12 @@ class RoomView(View):
             start_conference_on_enter=is_moderator,
         )
         response.append(dial)
-        http_response = HttpResponse(response.to_xml(), content_type='application/xml')
-        # http_response['X-Unique-Room-Name'] = unique_room_name
-        return http_response
-        # return JsonResponse({'room_name': unique_room_name, 'twiml': response.to_xml()}, content_type="application/xml")
+        xml_data = response.to_xml()
+        response_data = {
+            'room_name': unique_room_name,
+            'response_xml': xml_data
+        }
+        return JsonResponse(response_data)
     
     def selectModerator(self, users, current_user):
         curr_len = len(current_user)
@@ -73,6 +76,7 @@ class TokenView(View):
         )
         access_token.add_grant(voice_grant)
         jwt_token = access_token.to_jwt()
+        # print(f"JWT Token: {jwt_token}") 
         if isinstance(jwt_token, str):
             result_token = jwt_token
         else:

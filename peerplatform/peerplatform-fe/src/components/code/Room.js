@@ -16,6 +16,7 @@ const Room = () => {
     useEffect(() => {
         console.log('inside use Effect')
         if(username.length > 0){
+            console.log('username', username, 'roomName', roomName)
             const params = {
                 roomName, participantLabel: username
             }

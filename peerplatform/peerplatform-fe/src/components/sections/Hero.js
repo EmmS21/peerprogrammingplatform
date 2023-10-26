@@ -285,7 +285,7 @@ const Hero = ({
                             disabled={!username} 
                             onClick={() => {
                             if (username) {
-                              handleStageSet('pair', username);  
+                              handleStageSet('pair', username.toLowerCase());  
                             }
                           }}>
                             Submit
