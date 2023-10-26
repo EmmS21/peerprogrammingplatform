@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom';
 
 
 const JoinRoom = () => {
-    let {  username, setUserName, profileURL } = useContext(AuthContext)
+    let {  username, setUserName, profileURL, setRoomName } = useContext(AuthContext)
     const [currentUser, setCurrentUser] = useState('');
     const [roomState, setRoomState] = useGlobalState()
     const { roomName } = useParams()
@@ -42,7 +42,7 @@ const JoinRoom = () => {
                     device.on('error', (device) => {
                         console.log('error', device)
                     })
-                    setRoomState(roomName)
+                    setRoomName(roomName)
                     console.log('roomName', roomName)
                     setRoomState({ ...roomState, device, twilioToken, username})
                     history.push(`/rooms/${roomName}`)
