@@ -46,6 +46,8 @@ const Hero = ({
   const [roomState, setRoomState] = useGlobalState();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [shareableLink, setShareableLink] = useState("")
+  const { device } = roomState
+
 
 
   const handleGetStarted = () => {
@@ -126,6 +128,7 @@ const Hero = ({
 
   function handleStageSet(bttn, nickname){
     console.log('bttn', bttn)
+    console.log('nickname', nickname)
     if(bttn === 'pair'){
       fetch(`${profileURL}voice_chat/token/${nickname}`)
       .then(response => response.json())
@@ -148,15 +151,28 @@ const Hero = ({
         console.log(error)
       })
       console.log('inside if')
-      axios.post(`${profileURL}voice_chat/rooms`)
+      axios.post(`${profileURL}voice_chat/rooms`, {}, {
+        headers: {
+          'Accept': 'application/xml'
+        }
+      })
         .then(res => {
           const nameRoom = res.data.room_name
           setRoomName(nameRoom)
           const linkToShare = `${window.location.origin}/join/${nameRoom}?username=${username}`
           setShareableLink(linkToShare)
           setIsModalVisible(true)
-          console.log('Shareable Link:', linkToShare)
-          console.log('twilio call created', res.data)
+          // console.log('Shareable Link:', linkToShare)
+          const parser = new DOMParser()
+          const xmlDoc = parser.parseFromString(res.data, 'text/xml')
+          const confElement = xmlDoc.getElementsByTagName("Conference")[0]
+          const xmlVal = confElement.textContent
+          console.log('twilio call created', typeof res.data)
+          const params = {
+            roomName: xmlVal, participantLabel: username
+          }
+          console.log('params', params)
+          device.connect({ params })
         })
     }
     setStage(2)

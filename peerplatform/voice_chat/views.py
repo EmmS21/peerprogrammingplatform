@@ -35,9 +35,8 @@ class RoomView(View):
 
     def post(self, request, *args, **kwargs):
         # decode_request = request.body.decode("utf-8")
-        print('req',request)
         unique_room_name = str(uuid4())
-        participant_label = 'User'
+        participant_label = 'emm'
         is_moderator = True
 
         response = VoiceResponse()
@@ -48,12 +47,7 @@ class RoomView(View):
             start_conference_on_enter=is_moderator,
         )
         response.append(dial)
-        xml_data = response.to_xml()
-        response_data = {
-            'room_name': unique_room_name,
-            'response_xml': xml_data
-        }
-        return JsonResponse(response_data)
+        return HttpResponse(response.to_xml(), content_type="text/xml")
     
     def selectModerator(self, users, current_user):
         curr_len = len(current_user)
