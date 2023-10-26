@@ -157,22 +157,14 @@ const Hero = ({
         }
       })
         .then(res => {
-          const nameRoom = res.data.room_name
-          setRoomName(nameRoom)
-          const linkToShare = `${window.location.origin}/join/${nameRoom}?username=${username}`
-          setShareableLink(linkToShare)
-          setIsModalVisible(true)
-          // console.log('Shareable Link:', linkToShare)
           const parser = new DOMParser()
           const xmlDoc = parser.parseFromString(res.data, 'text/xml')
           const confElement = xmlDoc.getElementsByTagName("Conference")[0]
-          const xmlVal = confElement.textContent
-          console.log('twilio call created', typeof res.data)
-          const params = {
-            roomName: xmlVal, participantLabel: username
-          }
-          console.log('params', params)
-          device.connect({ params })
+          const xmlRoomNameVal = confElement.textContent
+          setRoomName(xmlRoomNameVal)
+          const linkToShare = `${window.location.origin}/join/${xmlRoomNameVal}?username=${username}`
+          setShareableLink(linkToShare)
+          setIsModalVisible(true)
         })
     }
     setStage(2)

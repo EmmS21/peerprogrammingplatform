@@ -47,14 +47,10 @@ class RoomView(View):
             start_conference_on_enter=is_moderator,
         )
         response.append(dial)
-        return HttpResponse(response.to_xml(), content_type="text/xml")
-    
-    def selectModerator(self, users, current_user):
-        curr_len = len(current_user)
-        is_first = users[0:curr_len]
-        return is_first == current_user
-
-
+        http_response = HttpResponse(response.to_xml(), content_type="text/xml")
+        return http_response
+        
+        # return HttpResponse(response.to_xml(), content_type="text/xml")
 
 class TokenView(View):
     def get(self, request, username, *args, **kwargs):
