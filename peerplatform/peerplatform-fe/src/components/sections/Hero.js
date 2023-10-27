@@ -126,49 +126,70 @@ const Hero = ({
     } 
   }
 
-  function handleStageSet(bttn, nickname){
-    console.log('bttn', bttn)
-    console.log('nickname', nickname)
-    if(bttn === 'pair'){
-      fetch(`${profileURL}voice_chat/token/${nickname}`)
-      .then(response => response.json())
-      .then(data => {
-        const twilioToken = JSON.parse(data).token
-        console.log('twilioToken', twilioToken)
-        const device = new Device(twilioToken)
+  async function handleStageSet(bttn, nickname) {
+    console.log('bttn', bttn);
+    console.log('nickname', nickname);
+    if (bttn === 'pair') {
+      try {
+        const tokenResponse = await fetch(`${profileURL}voice_chat/token/${nickname}`);
+        const tokenData = await tokenResponse.json();
+        const twilioToken = JSON.parse(tokenData).token;
+        const device = new Device(twilioToken);
         device.updateOptions(twilioToken, {
           codecPreferences: ['opus', 'pcmu'],
           fakeLocalDTMF: true,
           maxAverageBitrate: 16000,
           maxCallSignalingTimeoutMs: 30000
         });
+        console.log('token', twilioToken);
+        console.log('***device', device);
         device.on('error', (device) => {
-          console.log('error', device)
-        })
-        setRoomState({ ...roomState, device, twilioToken, nickname })
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-      console.log('inside if')
-      axios.post(`${profileURL}voice_chat/rooms`, {}, {
-        headers: {
-          'Accept': 'application/xml'
+          console.log('error', device);
+        });
+        setRoomState({ ...roomState, device, twilioToken, nickname });
+  
+        const roomResponse = await axios.post(`${profileURL}voice_chat/rooms`, {}, {
+          headers: {
+            'Accept': 'application/xml'
+          }
+        });
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(roomResponse.data, 'text/xml');
+        const confElement = xmlDoc.getElementsByTagName("Conference")[0];
+        const xmlRoomNameVal = confElement.textContent;
+        setRoomName(xmlRoomNameVal);
+        
+        // Now fetch rooms
+        await sleep(2000)
+        const roomsResponse = await fetch(`${profileURL}voice_chat/rooms`);
+        if (!roomsResponse.ok) {
+          throw new Error('Network response was not ok ' + roomsResponse.statusText);
         }
-      })
-        .then(res => {
-          const parser = new DOMParser()
-          const xmlDoc = parser.parseFromString(res.data, 'text/xml')
-          const confElement = xmlDoc.getElementsByTagName("Conference")[0]
-          const xmlRoomNameVal = confElement.textContent
-          setRoomName(xmlRoomNameVal)
-          const linkToShare = `${window.location.origin}/join/${xmlRoomNameVal}?username=${username}`
-          setShareableLink(linkToShare)
-          setIsModalVisible(true)
-        })
+        const roomsData = await roomsResponse.json();
+        console.log('rooms', roomsData);
+        console.log('rromData', roomsData.rooms);
+        // Filter for rooms where participants include username
+        const matchedRoom = roomsData.rooms.find(room => room.participants.includes(username));
+        if (matchedRoom) {
+          const matchedRoomName = matchedRoom.room_name;
+          console.log('Matched Room Name:', matchedRoomName);
+          const linkToShare = `${window.location.origin}/join/${matchedRoomName}?username=${username}`;
+          setShareableLink(linkToShare);
+          setIsModalVisible(true);
+        } else {
+          console.log('No matching room found');
+        }  
+      } catch (error) {
+        console.log(error);
+      }
+      setStage(2);
     }
-    setStage(2)
   }
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
 
   const handleEmailSubmit = async () => {
     // Make API call to store email in the backend

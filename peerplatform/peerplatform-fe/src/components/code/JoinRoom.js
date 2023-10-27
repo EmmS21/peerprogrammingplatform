@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Input, Button } from 'antd';
 import { useGlobalState } from '../../context/RoomContextProvider';
 import AuthContext from '../../context/AuthContext';
@@ -11,18 +11,37 @@ import { useHistory } from 'react-router-dom';
 const JoinRoom = () => {
     let {  username, setUserName, profileURL, setRoomName } = useContext(AuthContext)
     const [currentUser, setCurrentUser] = useState('');
-    const [roomState, setRoomState] = useGlobalState()
-    const { roomName } = useParams()
-    const location = useLocation()
-    const query = new URLSearchParams(location.search)
-    const firstUser = query.get("username")
+    const [roomState, setRoomState] = useGlobalState();
+    const { roomName } = useParams();
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    const firstUser = query.get("username");
     const history = useHistory();
+    const [rooms, setRooms] = useState([]);
  
 
     const handleInputChange = (event) => {
         setCurrentUser(event.target.value);
     };
-    // fetch(`${profileURL}voice_chat/token/${nickname}`)
+
+    const fetchRooms = async () => {
+        try {
+            const response = await fetch(`${profileURL}voice_chat/rooms`)
+            if(!response.ok){
+                throw new Error('Network response was not ok ' + response.statusText)
+            } 
+            const data = await response.json()
+            console.log('rooms', data)
+            console.log('rromData', data.rooms)
+            setRooms(data.rooms)
+        } catch (error){
+            console.error('There has been a problem with your fetch operation:', error)
+        }
+    }
+
+    useEffect(() => {
+        fetchRooms()
+    })
 
     const handleFormSubmit = () => {
         if (currentUser) { 

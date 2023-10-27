@@ -19,9 +19,8 @@ client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 @method_decorator(csrf_exempt, name="dispatch")
 class RoomView(View):
     def get(self, request, *args, **kwargs):
-        rooms = client.conferences.stream(
-            status="in-progress"
-        )
+        rooms = client.conferences.stream(status="in-progress")
+        print('rooms', rooms)
         rooms_reps = [
             {
                 "room_name": conference.friendly_name,
@@ -30,7 +29,9 @@ class RoomView(View):
                     p.label for p in conference.participants.list()
                 ],
                 "status": conference.status,
-            } for conference in rooms]
+            } for conference in rooms
+        ]
+        print(f"Queried rooms: {rooms_reps}")
         return JsonResponse({"rooms": rooms_reps})
 
     def post(self, request, *args, **kwargs):
@@ -73,4 +74,5 @@ class TokenView(View):
             result_token = jwt_token.decode("utf-8")
 
         full_data = {'token': result_token}
+        # print('full data', full_data)
         return JsonResponse(json.dumps(full_data), content_type="application/json", safe=False)
