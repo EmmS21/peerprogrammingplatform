@@ -19,7 +19,7 @@ client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 @method_decorator(csrf_exempt, name="dispatch")
 class RoomView(View):
     def get(self, request, *args, **kwargs):
-        rooms = client.conferences.stream(status="in-progress")
+        rooms = client.conferences.stream()
         print('rooms', rooms)
         rooms_reps = [
             {

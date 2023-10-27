@@ -93,11 +93,7 @@ const Hero = ({
         let result = await getSolutionHandler(challenge, null, opt)
         // console.log('Hero **** result', result)
         setClockSpin(false);
-        if(shareableLink.length > 0){
-          history.push(`/rooms/${roomName}`)
-        } else {
-          history.push(`/rooms/${generateRandomString(5)}`)
-        }
+        history.push(`/rooms/${generateRandomString(5)}`)
       }
     })
     .catch(err=> {
@@ -160,36 +156,31 @@ const Hero = ({
         setRoomName(xmlRoomNameVal);
         
         // Now fetch rooms
-        await sleep(2000)
-        const roomsResponse = await fetch(`${profileURL}voice_chat/rooms`);
-        if (!roomsResponse.ok) {
-          throw new Error('Network response was not ok ' + roomsResponse.statusText);
-        }
-        const roomsData = await roomsResponse.json();
-        console.log('rooms', roomsData);
-        console.log('rromData', roomsData.rooms);
-        // Filter for rooms where participants include username
-        const matchedRoom = roomsData.rooms.find(room => room.participants.includes(username));
-        if (matchedRoom) {
-          const matchedRoomName = matchedRoom.room_name;
-          console.log('Matched Room Name:', matchedRoomName);
-          const linkToShare = `${window.location.origin}/join/${matchedRoomName}?username=${username}`;
-          setShareableLink(linkToShare);
-          setIsModalVisible(true);
-        } else {
-          console.log('No matching room found');
-        }  
+        // await sleep(4000)
+        // const roomsResponse = await fetch(`${profileURL}voice_chat/rooms`);
+        // if (!roomsResponse.ok) {
+        //   throw new Error('Network response was not ok ' + roomsResponse.statusText);
+        // }
+        // const roomsData = await roomsResponse.json();
+        // console.log('rooms', roomsData);
+        // console.log('rromData', roomsData.rooms);
+        // // Filter for rooms where participants include username
+        // const matchedRoom = roomsData.rooms.find(room => room.participants.includes(username));
+        // if (matchedRoom) {
+        //   const matchedRoomName = matchedRoom.room_name;
+        //   console.log('Matched Room Name:', matchedRoomName);
+        //   const linkToShare = `${window.location.origin}/join/${matchedRoomName}?username=${username}`;
+        //   setShareableLink(linkToShare);
+        //   setIsModalVisible(true);
+        // } else {
+        //   console.log('No matching room found');
+        // }  
       } catch (error) {
         console.log(error);
       }
       setStage(2);
     }
-  }
-
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-  
+  }  
 
   const handleEmailSubmit = async () => {
     // Make API call to store email in the backend

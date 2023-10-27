@@ -31,17 +31,20 @@ const JoinRoom = () => {
                 throw new Error('Network response was not ok ' + response.statusText)
             } 
             const data = await response.json()
-            console.log('rooms', data)
-            console.log('rromData', data.rooms)
-            setRooms(data.rooms)
+            console.log('data', data)
+            const matchedRoom = data.rooms.find(room => 
+                room.participants.includes(firstUser) && room.status === 'in-progress'
+            )            
+            console.log('matchedRoom', matchedRoom)
+            console.log('rromData', matchedRoom.room_name)
+            setRoomName(matchedRoom.room_name)
         } catch (error){
             console.error('There has been a problem with your fetch operation:', error)
         }
     }
-
     useEffect(() => {
         fetchRooms()
-    })
+    },[])
 
     const handleFormSubmit = () => {
         if (currentUser) { 
@@ -61,8 +64,6 @@ const JoinRoom = () => {
                     device.on('error', (device) => {
                         console.log('error', device)
                     })
-                    setRoomName(roomName)
-                    console.log('roomName', roomName)
                     setRoomState({ ...roomState, device, twilioToken, username})
                     history.push(`/rooms/${roomName}`)
 
