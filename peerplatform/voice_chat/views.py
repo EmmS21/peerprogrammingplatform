@@ -20,7 +20,7 @@ client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 class RoomView(View):
     def get(self, request, *args, **kwargs):
         rooms = client.conferences.stream()
-        print('rooms', rooms)
+        # print('rooms', rooms)
         rooms_reps = [
             {
                 "room_name": conference.friendly_name,
@@ -31,7 +31,7 @@ class RoomView(View):
                 "status": conference.status,
             } for conference in rooms
         ]
-        print(f"Queried rooms: {rooms_reps}")
+        # print(f"Queried rooms: {rooms_reps}")
         return JsonResponse({"rooms": rooms_reps})
 
     def post(self, request, *args, **kwargs):
@@ -49,9 +49,20 @@ class RoomView(View):
         )
         response.append(dial)
         http_response = HttpResponse(response.to_xml(), content_type="text/xml")
+        print('http', response.to_xml())
         return http_response
         
         # return HttpResponse(response.to_xml(), content_type="text/xml")
+@method_decorator(csrf_exempt, name="dispatch")
+class JoinCoference(View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body.decode('utf-8'))
+        room_name = data.get('roomName')
+        # print('rm', room_name)
+        response = VoiceResponse()
+        with response.dial() as dial:
+            dial.conference(room_name)
+        return HttpResponse(str(response), content_type="text/xml")
 
 class TokenView(View):
     def get(self, request, username, *args, **kwargs):

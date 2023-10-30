@@ -32,6 +32,8 @@ const Room = () => {
             const callPromise = device.connect({ params });
             callPromise.then((twilioCall) => {
                 console.log('****call', twilioCall);
+                const roomName = twilioCall.customParameters.get('roomName');
+                console.log('Room Name:', roomName);            
                 setCall((prev) => twilioCall);
                 setCallConnected(true);
             });
@@ -43,7 +45,8 @@ const Room = () => {
                 }
                 const roomsData = await roomsResponse.json();
                 // console.log('rooms', roomsData);
-                // console.log('roomData', roomsData.rooms);
+                console.log('roomData', roomsData.rooms);
+                console.log('**username', username)
 
                 // Filter for rooms where participants include username
                 const matchedRoom = roomsData.rooms.find(room => room.participants.includes(username));

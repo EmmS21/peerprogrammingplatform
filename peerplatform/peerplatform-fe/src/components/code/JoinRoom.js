@@ -24,28 +24,29 @@ const JoinRoom = () => {
         setCurrentUser(event.target.value);
     };
 
-    const fetchRooms = async () => {
+    const joinRoom = async () => {
         try {
-            const response = await fetch(`${profileURL}voice_chat/rooms`)
-            if(!response.ok){
-                throw new Error('Network response was not ok ' + response.statusText)
-            } 
-            const data = await response.json()
-            console.log('data', data)
-            const matchedRoom = data.rooms.find(room => 
-                room.participants.includes(firstUser) && room.status === 'in-progress'
-            )            
-            console.log('matchedRoom', matchedRoom)
-            console.log('rromData', matchedRoom.room_name)
-            setRoomName(matchedRoom.room_name)
-        } catch (error){
-            console.error('There has been a problem with your fetch operation:', error)
+            const response = await fetch(`${profileURL}voice_chat/join_conference`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ roomName: roomName })  // assuming roomNameFromUrl is the variable holding the room name extracted from the URL
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            console.log('resp', response)
+            const data = await response.text();
+            console.log('data', data);
+            setRooms(data.room_name);  // assuming the server returns the room name in the response
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
         }
-    }
+    };
+    
     useEffect(() => {
-        fetchRooms()
-    },[])
-
+        joinRoom();
+    }, []);
+    
     const handleFormSubmit = () => {
         if (currentUser) { 
             setUserName(currentUser);
@@ -61,6 +62,10 @@ const JoinRoom = () => {
                         maxAverageBitrate: 16000,
                         maxCallSignalingTimeoutMs: 30000
                     });
+                    device.connect({ roomName: rooms })
+                    device.on('connect', (connection) => {
+                        console.log('Successfully connected', connection)
+                    })
                     device.on('error', (device) => {
                         console.log('error', device)
                     })
