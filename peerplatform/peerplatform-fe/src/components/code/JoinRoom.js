@@ -43,42 +43,37 @@ const JoinRoom = () => {
         }
     };
     
-    useEffect(() => {
-        joinRoom();
-    }, []);
-    
-    const handleFormSubmit = () => {
+    const handleFormSubmit = async () => {
         if (currentUser) { 
             setUserName(currentUser);
-            console.log('currUser', currentUser)
-            fetch(`${profileURL}voice_chat/token/${currentUser}`)
-                .then(response => response.json())
-                .then(data => {
-                    const twilioToken = JSON.parse(data).token
-                    const device = new Device(twilioToken)
-                    device.updateOptions(twilioToken, {
-                        codecPreferences: ['opus', 'pcmu'],
-                        fakeLocalDTMF: true,
-                        maxAverageBitrate: 16000,
-                        maxCallSignalingTimeoutMs: 30000
-                    });
-                    device.connect({ roomName: rooms })
-                    device.on('connect', (connection) => {
-                        console.log('Successfully connected', connection)
-                    })
-                    device.on('error', (device) => {
-                        console.log('error', device)
-                        console.error('Error message:', device.message);
-                        console.error('Error code:', device.code);
-                    
-                    })
-                    setRoomState({ ...roomState, device, twilioToken, username})
-                    history.push(`/rooms/${roomName}`)
-
+            try {
+                const response = await fetch(`${profileURL}voice_chat/token/${currentUser}`)
+                const data = await response.json()
+                const twilioToken = JSON.parse(data).token
+                await joinRoom()
+                const device = new Device(twilioToken)
+                device.updateOptions(twilioToken, {
+                    codecPreferences: ['opus', 'pcmu'],
+                    fakeLocalDTMF: true,
+                    maxAverageBitrate: 16000,
+                    maxCallSignalingTimeoutMs: 30000
+                });
+                device.connect({ roomName: rooms })
+                device.on('connect', (connection) => {
+                    console.log('Successfully connected', connection)
                 })
-                .catch((error) => {
-                    console.log(error)
+                device.on('error', (device) => {
+                    console.log('error', device)
+                    console.error('Error message:', device.message);
+                    console.error('Error code:', device.code);
+                
                 })
+                setRoomState({ ...roomState, device, twilioToken, username})
+                history.push(`/rooms/${roomName}`)
+            }
+            catch (error) {
+                console.log(error)
+            }
         }
     };
 

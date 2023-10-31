@@ -31,7 +31,6 @@ const Room = () => {
             if (!call) {
             const callPromise = device.connect({ params });
             callPromise.then((twilioCall) => {
-                console.log('****call', twilioCall);
                 const roomName = twilioCall.customParameters.get('roomName');
                 console.log('Room Name:', roomName);            
                 setCall((prev) => twilioCall);

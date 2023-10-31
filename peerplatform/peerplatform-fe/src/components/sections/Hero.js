@@ -141,6 +141,8 @@ const Hero = ({
         console.log('***device', device);
         device.on('error', (device) => {
           console.log('error', device);
+          console.log('error', device.message);
+
         });
         setRoomState({ ...roomState, device, twilioToken, nickname });
   
@@ -154,27 +156,6 @@ const Hero = ({
         const confElement = xmlDoc.getElementsByTagName("Conference")[0];
         const xmlRoomNameVal = confElement.textContent;
         setRoomName(xmlRoomNameVal);
-        
-        // Now fetch rooms
-        // await sleep(4000)
-        // const roomsResponse = await fetch(`${profileURL}voice_chat/rooms`);
-        // if (!roomsResponse.ok) {
-        //   throw new Error('Network response was not ok ' + roomsResponse.statusText);
-        // }
-        // const roomsData = await roomsResponse.json();
-        // console.log('rooms', roomsData);
-        // console.log('rromData', roomsData.rooms);
-        // // Filter for rooms where participants include username
-        // const matchedRoom = roomsData.rooms.find(room => room.participants.includes(username));
-        // if (matchedRoom) {
-        //   const matchedRoomName = matchedRoom.room_name;
-        //   console.log('Matched Room Name:', matchedRoomName);
-        //   const linkToShare = `${window.location.origin}/join/${matchedRoomName}?username=${username}`;
-        //   setShareableLink(linkToShare);
-        //   setIsModalVisible(true);
-        // } else {
-        //   console.log('No matching room found');
-        // }  
       } catch (error) {
         console.log(error);
       }
