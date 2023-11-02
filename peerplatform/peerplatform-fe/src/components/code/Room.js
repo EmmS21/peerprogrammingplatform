@@ -36,7 +36,7 @@ const Room = () => {
                 setCall((prev) => twilioCall);
                 setCallConnected(true);
             });
-            await sleep(5000);
+            await sleep(10000);
             try {
                 const roomsResponse = await fetch(`${profileURL}voice_chat/rooms`);
                 if (!roomsResponse.ok) {

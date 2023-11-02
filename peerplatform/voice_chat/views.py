@@ -56,13 +56,17 @@ class RoomView(View):
 @method_decorator(csrf_exempt, name="dispatch")
 class JoinCoference(View):
     def post(self, request, *args, **kwargs):
-        data = json.loads(request.body.decode('utf-8'))
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+        except json.JSONDecodeError as e:
+            print(f"Failed to decode JSON: {e}")
         room_name = data.get('roomName')
-        # print('rm', room_name)
+        print('rm', room_name)
         response = VoiceResponse()
         with response.dial() as dial:
             dial.conference(room_name)
-        return HttpResponse(str(response), content_type="text/xml")
+        print('sec resp', response.to_xml)
+        return HttpResponse(response.to_xml(), content_type="text/xml")
 
 class TokenView(View):
     def get(self, request, username, *args, **kwargs):
