@@ -23,6 +23,9 @@ import "../../assets/other_css/sidebar.css";
 import TestCases from './TestCases';
 import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../../context/RoomContextProvider';
+import * as esprima from 'esprima';
+import estraverse from 'estraverse';
+import escodegen from 'escodegen';
 
 
 //change language based on map
@@ -32,19 +35,18 @@ const CodeEditor = () => {
     const selectLang = useRef(0);
     const [isSidebarVisible, setSidebarVisible] = useState(true);
     let {  
-          getSolution, roomName, username,
+          getSolution, 
           sendCodeJudge0, spinnerOn, submitJudge0,
           setSpinnerOn, resp,setCodeResp,
           setResp, codeResp, setOpenModal,  
           contextHolder, challengeInState, codeHelpState,
-          showNextChallengeButton, setShowNextChallengeButton, setChallengeInState
+          showNextChallengeButton, setShowNextChallengeButton,
          } = useContext(AuthContext)
     // let photoURL = user.photo.split('"').join('');
     const [query, setQuery] = useState('');
 
     // checks to see if select or programming challenge should be shown;
     const [showSelect, setShowSelect] = useState(true)
-    const [showCodeHelp, setShowCodeHelp] = useState(false);
     const [isCodeHelpModalVisible, setIsCodeHelpModalVisible] = useState(false);
     const [typedText, setTypedText] = useState('');
     const [charIndex, setCharIndex] = useState(0); // Index for the current character to type
@@ -224,8 +226,26 @@ const CodeEditor = () => {
     const makeSubmission = (e) => {
         e.preventDefault();
         setShowTestCases(false)
-        requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
-        // console.log('resq', requestBody.source_code)
+        const uncleanedCode = document.getElementsByClassName('ace_content')[0].innerText
+        let codeWithoutComments = ''
+        try {
+            console.log('inside try')
+            const cleaningComments = esprima.parseScript(uncleanedCode, { comment: true, tokens: true })
+            estraverse.traverse(cleaningComments, {
+                enter: node => {
+                    if (node.leadingComment) {
+                        delete node.leadingComments;
+                    }
+                    if (node.trailingComments) {
+                        delete node.trailingComments
+                    }
+                }
+            })
+        codeWithoutComments = escodegen.generate(cleaningComments)
+        } catch (err) {
+            console.error("Error while parsing and cleaning the code", err)
+        }
+        requestBody.source_code =  codeWithoutComments
         requestBody.language_id = "63"
         // console.log('body', requestBody)
         setSpinnerOn(true)
@@ -233,10 +253,6 @@ const CodeEditor = () => {
         toggleRightSidebar()
         sendCodeJudge0(requestBody)
     }
-
-    const toggleSidebar = () => {
-        setSidebarVisible(!isSidebarVisible);
-    };
 
     const toggleRightSidebar = () => {
         // console.log('triggered')
@@ -321,23 +337,6 @@ const CodeEditor = () => {
         setCodeHelpBtn("Please wait...")
     }
     
-    function extractFunctionInfo(code) {
-        // Regular expression to match function definitions
-        const regex = /function\s+([\w\$]+)?\s*\(([^\)]*)\)|const\s+([\w\$]+)\s*=\s*function\s*\(([^\)]*)\)|([\w\$]+)\s*=\s*\(([^)]*)\)|const\s+([\w\$]+)\s*=\s*\(([^)]*)\)|\(\s*function\s*([^\)]*)\)|([\w\$]+)\s*=\s*([^\(]*)\s*\=>|function\*?\s*([\w\$]+)?\s*\(([^\)]*)\)|\(\s*([^)]*)\s*\)\s*\=\>\s*\{|([\w\$]+)\s*=\s*\(([^)]*)\)\s*\=\>\s*\{/gm;
-      
-        // Execute the regular expression on the code
-        const matches = [];
-        let match;
-        while ((match = regex.exec(code)) !== null) {
-          const functionName = match[1] || match[3] || match[5] || match[7] || match[9] || match[11] || match[13] || match[15];
-          const argumentsList = match[2] || match[4] || match[6] || match[8] || match[10] || match[12] || match[14] || match[16];
-          if (functionName) {
-            matches.push({ functionName, argumentsList });
-          }
-        }
-        return matches;
-    }
-
     const handleCloseTests = () => {
         setShowTestCases(false)
         setSubmitButtonText('Submit Code')        
