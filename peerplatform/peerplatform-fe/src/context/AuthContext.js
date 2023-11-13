@@ -64,10 +64,13 @@ export const AuthProvider = ({children}) => {
     const [codeResp, setCodeResp] = useState("Please wait for code to load....");
     const [roomName, setRoomName] = useState("")
     const [username, setUserName] = useState("")
+    const [isLoadingSolution, setIsLoadingSolution] = useState(false);
+
     // const codeResp = useRef('')
 
 
     const history = useHistory();
+    
 
     //we are going to pass this information down to login page
     //async function because we must wait for something to happen first
@@ -363,29 +366,24 @@ export const AuthProvider = ({children}) => {
     }
 
     async function getSolution(challenge, query = null, opt=null){
+        setIsLoadingSolution(true)
         // console.log('trigg', query)
-        console.log('challe', challenge)
+        console.log('what are we sending', challenge)
         if(opt === 'one'){
             setCodeResp("Please wait for code to load....");
         }
         let leetObj = {}
-        if(opt !== 'four'){
-            leetObj = { title: challenge['challengeName'],
-                        description: challenge['challengeDescription'],
-                    };
-        } else {
-            leetObj = { title: challenge['title'],
+        leetObj = { title: challenge['title'],
                         description: challenge['place'],
                         testCases: query
                     }
-        }
         if (query) {
           leetObj['query'] = query; 
         }
         if(opt){
             leetObj['opt'] = opt
         }
-
+        console.log('leetObj sending***', leetObj)
         const res = await axios.post(`${profileURL}code_help/get`, leetObj)
         const content = res.data;
         if(query){
@@ -401,7 +399,8 @@ export const AuthProvider = ({children}) => {
             setCodeResp(content)
             // codeResp.current = content
             localStorage.setItem('codeResp', content)
-            console.log('resp', codeResp, '***')
+            console.log('respAuth', gptresp)
+            setIsLoadingSolution(false)
         } 
         else {
             return content
@@ -512,7 +511,9 @@ export const AuthProvider = ({children}) => {
         roomName: roomName, 
         setRoomName: setRoomName,
         username: username,
-        setUserName: setUserName
+        setUserName: setUserName,
+        isLoadingSolution: isLoadingSolution, 
+        setIsLoadingSolution: setIsLoadingSolution
     }
 
     //so we refresh our refresh token and update state every 4 minutes

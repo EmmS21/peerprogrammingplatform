@@ -17,25 +17,19 @@ import SelectDifficulty from './SelectDifficulty';
 import AuthContext from '../../context/AuthContext';
 import 'semantic-ui-css/semantic.min.css'
 import { Menu } from 'semantic-ui-react';
-import Solutions from './Solutions';
 import { useHistory } from 'react-router-dom';
 import "../../assets/other_css/sidebar.css";
 import TestCases from './TestCases';
-import { Device } from '@twilio/voice-sdk';
-import { useGlobalState } from '../../context/RoomContextProvider';
-import * as esprima from 'esprima';
-import estraverse from 'estraverse';
-import escodegen from 'escodegen';
+
 
 
 //change language based on map
 const CodeEditor = () => {
     const { TabPane } = Tabs;
     const [isRightSidebarVisible, setRightSidebarVisible] = useState(false);
-    const selectLang = useRef(0);
     const [isSidebarVisible, setSidebarVisible] = useState(true);
     let {  
-          getSolution, 
+          getSolution, isLoadingSolution, 
           sendCodeJudge0, spinnerOn, submitJudge0,
           setSpinnerOn, resp,setCodeResp,
           setResp, codeResp, setOpenModal,  
@@ -49,25 +43,27 @@ const CodeEditor = () => {
     const [showSelect, setShowSelect] = useState(true)
     const [isCodeHelpModalVisible, setIsCodeHelpModalVisible] = useState(false);
     const [typedText, setTypedText] = useState('');
-    const [charIndex, setCharIndex] = useState(0); // Index for the current character to type
+    const [charIndex, setCharIndex] = useState(0); 
     const [localChallengeInState, setLocalChallengeInState] = useState([]);
     const [pseudoCode, setPseudoCode] = useState('');
     const [editorVal, setEditorVal] = useState(() => {
         const savedEditorVal = localStorage.getItem('editorVal');
-        return savedEditorVal ? savedEditorVal : ""; // Initialize to empty string
+        return savedEditorVal ? savedEditorVal : ""; 
       });    
     const [isLoading, setIsLoading] = useState(false);
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
     const colors = ['color-red', 'color-blue', 'color-black', 'color-purple'];
-    const [testResults, setTestResults] = useState([]); // Add this line to create the state
-
-
+    const [testResults, setTestResults] = useState([]);
     const history = useHistory();
     const editorRef = useRef(null);
     const [showTestCases, setShowTestCases] = useState(false);
     const [submitButtonText, setSubmitButtonText] = useState(
         showTestCases ? 'Close Tests' : 'Submit Code'
     );
+    const [waitingForChallenge, setWaitingForChallenge] = useState(false);
+    const [waitingForAnswer, setWaitingForAnswer] = useState(false);
+    const [challengeInStateToUse, setChallengeInStateToUse] = useState(challengeInState)
+
 
     useEffect(() => {
         // Function to change the current color index randomly
@@ -94,6 +90,7 @@ const CodeEditor = () => {
         const savedChallenge = localStorage.getItem('challenge');
         // console.log('savedChallenge*', savedChallenge, '***')
         const savedCodeResp = localStorage.getItem('codeResp');
+        console.log('saved in local', savedCodeResp)
         // console.log('Saved Challenge from localStorage:', savedChallenge);
         if (savedChallenge) {
             const parsedChallenge = JSON.parse(savedChallenge);
@@ -119,7 +116,7 @@ const CodeEditor = () => {
                 // console.log('Updating localStorage with new challenge:', challengeInState);
 
                 setLocalChallengeInState(challengeInState);
-                // console.log('Setting localChallengeInState with the new challenge:', challengeInState);
+                console.log('Setting localChallengeInState with the new challenge:', challengeInState);
 
             } else {
                 setLocalChallengeInState(challengeInState);
@@ -134,8 +131,11 @@ const CodeEditor = () => {
         }
     }, []);
     
-    let challengeInStateToUse = localChallengeInState.length > 0 ? localChallengeInState : challengeInState;
-    // console.log('challengeToUse', challengeInStateToUse, )
+    useEffect(() => {
+        setChallengeInStateToUse(localChallengeInState.length > 0 ? localChallengeInState : challengeInState);
+    }, [localChallengeInState, challengeInState]);
+    
+    // let challengeInStateToUse = localChallengeInState.length > 0 ? localChallengeInState : challengeInState;
 
     useEffect(() => {
         // Save challengeInState to local storage when it changes
@@ -226,28 +226,12 @@ const CodeEditor = () => {
     const makeSubmission = (e) => {
         e.preventDefault();
         setShowTestCases(false)
-        const uncleanedCode = document.getElementsByClassName('ace_content')[0].innerText
-        let codeWithoutComments = ''
-        try {
-            console.log('inside try')
-            const cleaningComments = esprima.parseScript(uncleanedCode, { comment: true, tokens: true })
-            estraverse.traverse(cleaningComments, {
-                enter: node => {
-                    if (node.leadingComment) {
-                        delete node.leadingComments;
-                    }
-                    if (node.trailingComments) {
-                        delete node.trailingComments
-                    }
-                }
-            })
-        codeWithoutComments = escodegen.generate(cleaningComments)
-        } catch (err) {
-            console.error("Error while parsing and cleaning the code", err)
-        }
-        requestBody.source_code =  codeWithoutComments
+        const code = requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
+        // const encodedSourceCode = btoa(encodeURIComponent(code))
+        requestBody.source_code = code
         requestBody.language_id = "63"
-        // console.log('body', requestBody)
+        requestBody.base64_encoded = true
+        console.log('body', requestBody.source_code)
         setSpinnerOn(true)
         setResp('')
         toggleRightSidebar()
@@ -368,8 +352,20 @@ const CodeEditor = () => {
                             showSelect={showSelect} 
                             setShowSelect={setShowSelect}
                             placeholderText="Next Challenge"
-                            onNewChallengeFetched={(newChallenge) => setLocalChallengeInState(newChallenge)}
-                            newAnswerFetched={(newAnswer) => setEditorVal(newAnswer)}
+                            onNewChallengeFetched={ async (newChallenge) => {
+                                localStorage.removeItem('challenge')
+                                setWaitingForChallenge(true)
+                                await newChallenge
+                                setLocalChallengeInState(newChallenge)
+                                setWaitingForChallenge(false)
+                            }}
+                            newAnswerFetched={ async (newAnswer) => {
+                                localStorage.removeItem('editorVal')
+                                setWaitingForAnswer(true)
+                                await newAnswer
+                                setEditorVal(newAnswer)
+                                setWaitingForAnswer(false)
+                            }}
                         />
                     ): null
                 }
@@ -431,7 +427,7 @@ const CodeEditor = () => {
         <div className={`col-2 whiteCol my-0 ${!isSidebarVisible ? 'hidden' : ''}`}>
             <Tabs type="card">
                     <TabPane tab="Coding Challenge" key="1">
-                        {challengeInStateToUse.length > 0 && <ProgrammingChallenge query={query} challengeInState={challengeInStateToUse}/>}
+                        { challengeInStateToUse.length > 0 && <ProgrammingChallenge query={query} challengeInState={challengeInStateToUse}/> }
                     </TabPane> 
                     {/* <TabPane tab="Your Clue" key="2">
                         {challengeInStateToUse.length > 0 && <Solutions challengeInState={challengeInStateToUse} query={editorVal}/>}
@@ -457,7 +453,7 @@ const CodeEditor = () => {
                     }} 
                     tabSize={3}
                     wrapEnabled={true}
-                    value={editorVal} //pseudoCode
+                    value={isLoadingSolution ? "Fetching new answer, please wait...." : editorVal} 
                 />
             </div>
            </div>

@@ -7,16 +7,10 @@ import Spinner from './Spinner';
 
 export default function ProgrammingChallenge({ query, challengeInState }) {
   const {
-    getSolution,
-    currentLanguage,
-    openNotification,
-    setSpinnerOn,
-    setOpenModal,
-    spinnerOn,
-    formattedChallengeName,
-    setFormattedChallengeName,
-    setInputArr,
-    setOutputArr
+    getSolution, isLoadingSolution,
+    currentLanguage,openNotification,setSpinnerOn,
+    setOpenModal,spinnerOn,formattedChallengeName,
+    setFormattedChallengeName,setInputArr,setOutputArr
   } = useContext(AuthContext);
   const [challengeData, setChallengeData] = useState({
     name: '',
@@ -222,46 +216,52 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
 
   return (
     <div className='challenge' style={{ color: 'white' }}>
-      <PageHeader
-        className="site-page-header"
-        onBack={()=> null}
-        subTitle={challengeData.name}
-      />
-      <center><Tag color="cyan">{challengeData.difficulty}</Tag></center>
-      <div className='problem-container'>
-        <RenderTableOrText data={challengeData.description} />
-      </div>
-      <div>
-        {tableData?.textDataAfterTable ? formatTextForJSX(tableData.textDataAfterTable) : ""}
-      </div>
+      {isLoadingSolution ? (
+        <div>Please wait for new challenge to load...</div>
+      ): (
+          <div className='challenge' style={{ color: 'white' }}>
+            <PageHeader
+              className="site-page-header"
+              onBack={()=> null}
+              subTitle={challengeData.name}
+            />
+            <center><Tag color="cyan">{challengeData.difficulty}</Tag></center>
+            <div className='problem-container'>
+              <RenderTableOrText data={challengeData.description} />
+            </div>
+            <div>
+              {tableData?.textDataAfterTable ? formatTextForJSX(tableData.textDataAfterTable) : ""}
+            </div>
 
-      <div className="examples">
-        <h5> Examples: </h5>
-        <ol>
-          {challengeData.examples && challengeData.examples.map((example, idx) => {
-            const splitExamplesData = parseExamplesData(example);
-            return (
-              <li key={idx}>
-                {headers.map((header, ind) => {
+            <div className="examples">
+              <h5> Examples: </h5>
+              <ol>
+                {challengeData.examples && challengeData.examples.map((example, idx) => {
+                  const splitExamplesData = parseExamplesData(example);
                   return (
-                    <div key={ind}>
-                      <strong>{header}:</strong>
-                      <RenderTableOrText data={splitExamplesData[header]} />
-                    </div>
+                    <li key={idx}>
+                      {headers.map((header, ind) => {
+                        return (
+                          <div key={ind}>
+                            <strong>{header}:</strong>
+                            <RenderTableOrText data={splitExamplesData[header]} />
+                          </div>
+                        );
+                      })}
+                    </li>
                   );
                 })}
-              </li>
-            );
-          })}
-        </ol>
-        <h5>Simplified Explanation</h5>
-        <div>{challengeData.explanation}</div>
-        <h6>Additional Examples</h6>
-        <div>{challengeData.exampleData}</div>
-        <div><strong>Constraints:</strong>
-          {getConstraints(challengeData.examples.join(''))}
-        </div>
-      </div>
+              </ol>
+              <h5>Simplified Explanation</h5>
+              <div>{challengeData.explanation}</div>
+              <h6>Additional Examples</h6>
+              <div>{challengeData.exampleData}</div>
+              <div><strong>Constraints:</strong>
+                {getConstraints(challengeData.examples.join(''))}
+              </div>
+            </div>
+          </div>
+      )}
     </div>
   );
 }

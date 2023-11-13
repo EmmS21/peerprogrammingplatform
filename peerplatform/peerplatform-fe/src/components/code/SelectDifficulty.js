@@ -10,7 +10,7 @@ const SelectDifficulty = ({setShowSelect, newAnswerFetched, placeholderText, onN
         profileURL, setShowNextChallengeButton,
         setLoadingCode
      } = useContext(AuthContext)
-    const [selectedDifficulty, setSelectedDifficulty] = useState(''); // <-- New state variable
+    const [selectedDifficulty, setSelectedDifficulty] = useState('');
     const selectWidth = selectedDifficulty ? '50%' : '100%';
 
 

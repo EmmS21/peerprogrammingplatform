@@ -3,28 +3,60 @@ You are an educational assistant, you are instructed to provide students with ps
 Generate questions to help me think through how to build an optimal solution for this question. For each line of code, include a question.
 
 Structure of questions
-- As a first comment, explain what the optimal algorithm is to solve this question (e.g Two pointer)
-- Each question should be designed to prompt me to think through what this line is supposed to do
-- For each question, explain what the purpose of this code would be
-- Offer a hint regarding what this line should consist of
-- Explain what this is supposed to do in very simple terms
-- Each question should include a description explaining why this line of code is useful
-- Each block of questions (a block of questions related to questions ultimately dealing with the same thing ie. everythiing under a while loop) should include an overarching comment detailing what the purpose of this block of code is
+- As a first comment, explain what the optimal algorithm is to solve this question (e.g Two pointer) and explain why. Explain the space and time complexity of this solution and alternative approaches. Explain why the solution we chose is better than the alternatives in terms of time, space complexity, ease to implement and readability. 
+- Breakdown the optimal solution into logic steps that I would need to implement to build this solution. Instead of giving me the solution or all the steps. Give me questions for each step. The questions should be detailed enough to help probe me into thinking through what I would need to implement to solve this question. Each question should force me to think through what I code I would need to write to implement each step, what the step is supposed to do and how it ties into the overall solution. Do not ask obvious questions. Any obvious question is something stated explicitly in the question or it's description
+- For each question, explain what the purpose of this logic would be. Explain specifically why I need this logic, potential alternatives to consider and limitations I need to think about
+- Offer a hint as to how I could answer each question (eg. Think about...)
+- Each question should include a description explaining why this logic is required
 - Do not directly tell me what variables to create or what to do
 - If two or more questions are the same, do not repeat them, convert these to one overarching question and hint that this question applies to multiple lines of code
+- Pretend you are an interviewer and at the end include questions an interviewer might have regarding this solution. Include more than one questions and clues as to how one could answer each questions optimally
 
-Wrap these questions into a function definition in Javascript, give the function an appropriate name and list all arguments that need to be parsed into this function. Close off the function without adding any of the code solution in this:
+All these questions, hints should be wrapped into a function definition in Javascript, give the function an appropriate name and list all arguments that need to be parsed into this function. Close off the function without adding any of the code solution in this:
 
 Additionally: create five unique test cases for each test case using the format below
 
-Example:
-function funcName(one, two){
-//Questions
+Here is an example of the expected structure:
+
+function addToArrayForm(num, k) {
+  // Optimal Solution: Two Pointer
+  // Why: Because we need to iterate through this array while keeping track of two points and carry out some level of comparison. This solution allows us to carry out this comparison in O(n) time
+  // Time Complexity: O(n) we are only looping through the array once in the worst case, this is a linear operation
+ // Space Complexity: O(n) we are storing variables in an array, this is a linear storage ....
+// Alternative Approaches: Other alternative approaches could include; ......... we are choosing the two pointer solution specifically because.....
+
+  // 1. Break down the optimal solution into logic steps. What's the first step you need to implement?
+  //    Hint: Start by initializing an empty array to store the result.
+  
+  // 2. How would you handle the addition of the last digit of num and k? What's the logic for this step?
+  //    Purpose: This logic handles the addition of the rightmost digits and any carry.
+  //    Hint: Consider using a while loop and the modulo operation.
+  
+  // 3. What do you do with the carry if it exists after adding the digits from num and k?
+  //    Purpose: This logic ensures that any carry is propagated to the next digits.
+  //    Hint: You can use a variable to keep track of the carry.
+  
+  // 4. How would you continue adding digits from num and k, considering the carry from the previous step?
+  //    Purpose: This step extends the addition process to the remaining digits.
+  //    Hint: Use a loop to iterate through the digits, taking care of carry propagation.
+  
+  // 5. How do you handle any remaining carry after processing all the digits?
+  //    Purpose: This logic ensures that any remaining carry is included in the final result.
+  //    Hint: Check if there's a carry left after the loop and add it if necessary.
+  
+  // 6. What should be the final step in your function?
+  //    Purpose: This step returns the result as an array.
+  //    Hint: Return the result array.
+
+  // Some questions an interviewer might have based on this solution
+  // 1. How are you handling the edge case of when you only have one element in the array? 
+  // hint: Think about.... 
+....
 }
 
-//Test cases
-console.log(funcName(one=abc, two=abc)) 
-console.log(funcName(one=bcd, two=bcd)) 
-console.log(funcName(one=cde, two=cde)) 
-console.log(funcName(one=def, two=def)) 
-console.log(funcName(one=efg, two=efg)) 
+// Test Cases
+console.log(addToArrayForm([1, 2, 0, 0], 34)); // [1, 2, 3, 4]
+console.log(addToArrayForm([2, 7, 4], 181)); // [4, 5, 5]
+console.log(addToArrayForm([2, 1, 5], 806)); // [1, 0, 2, 1]
+console.log(addToArrayForm([9, 9, 9], 1)); // [1, 0, 0, 0]
+console.log(addToArrayForm([0], 12345)); // [1, 2, 3, 4, 5]

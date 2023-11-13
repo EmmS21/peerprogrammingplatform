@@ -16,22 +16,26 @@ import logging
 
 openai.api_key = config('OPEN_AI_API_KEY')
 
+
 @api_view(['GET', 'POST'])
 @never_cache
 def get_help(request):
     # print('request', request)
     data = request.data
-    # print('data',)
+    # print('data', data)
     challenge_name = data.get('title')
     challenge_description = data.get('description')
+    # print('challengeName', challenge_name)
+    # print('description', challenge_description)
     # question_id = data['data']
-    query =  data.get('query', None)
+    query = data.get('query', None)
     opt = data.get('opt', None)
     # print('opt****', opt)
     # print('name', challenge_name)
     # print('description', challenge_description)
     if opt == 'one':
         file_name = 'one.txt'
+        # print('opt one', opt, 'prompt', file_name)
     elif opt == 'two':
         file_name = 'mainclue.txt'
     elif opt == 'three':
@@ -50,12 +54,13 @@ def get_help(request):
     with open(prompt_file_path, 'r') as file:
         prompt_text = file.read()
         # selected_prompt_text = prompts[prompt_levels.index(selected_prompt)]
-    if(opt == 'four'):
+    if (opt == 'four'):
         final_prompt = f"{prompt_text} Question: {challenge_name} Description: {challenge_description} testCases:{data.get('query')}"
         # print('data', data)
         # print('prompt', final_prompt)
     else:
         final_prompt = f"{prompt_text} Question: {challenge_name} Description: {challenge_description}"
+        # print('finalPrompt, one', final_prompt)
     if opt == 'three':
         print('final')
     if query:
@@ -74,11 +79,13 @@ def get_help(request):
     )
     if "choices" in response and len(response["choices"]) > 0:
         # Access the 'content' of the last message
-        last_message_content = response["choices"][-1]["message"]["content"].replace("<p>", "").replace("</p>", "")
+        last_message_content = response["choices"][-1]["message"]["content"].replace(
+            "<p>", "").replace("</p>", "")
         return Response(last_message_content)
 
     # Handle the case where there is no valid response
     return HttpResponse("No response from the AI model.")
+
 
 @api_view(['POST'])
 class receive_response(View):
