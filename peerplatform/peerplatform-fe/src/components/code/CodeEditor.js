@@ -20,6 +20,7 @@ import { Menu } from 'semantic-ui-react';
 import { useHistory } from 'react-router-dom';
 import "../../assets/other_css/sidebar.css";
 import TestCases from './TestCases';
+import TimerComponent from './TimerComponent';
 
 
 
@@ -63,7 +64,6 @@ const CodeEditor = () => {
     const [waitingForChallenge, setWaitingForChallenge] = useState(false);
     const [waitingForAnswer, setWaitingForAnswer] = useState(false);
     const [challengeInStateToUse, setChallengeInStateToUse] = useState(challengeInState)
-
 
     useEffect(() => {
         // Function to change the current color index randomly
@@ -336,7 +336,13 @@ const CodeEditor = () => {
         <Menu class="w-full" pointing widths={ 6 } size={"medium"} style={{ marginTop:0 }}>
             <Menu.Item className="single-menu-item-container">
                 <Button className="btn btn-primary single-full-height-button" 
-                        onClick={() => history.push(history.location.pathname.replace('/rooms', ''))}>
+                        onClick={() => {
+                            localStorage.removeItem('challenge');
+                            localStorage.removeItem('showTestCases');
+                            localStorage.removeItem('editorVal'); 
+                            localStorage.removeItem('codeResp');
+                            history.push('/')
+                        }}>
                         Back
                 </Button>
             </Menu.Item>

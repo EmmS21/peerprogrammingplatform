@@ -1,17 +1,11 @@
-from django.shortcuts import render
 import openai
 from decouple import config
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.views import View
 from rest_framework.decorators import api_view
-import json
-import markdown
-from .models import UserQuestionRequest
 import os
 from rest_framework.response import Response
 from django.views.decorators.cache import never_cache
-import requests
-import time
 import logging
 
 openai.api_key = config('OPEN_AI_API_KEY')
@@ -35,7 +29,7 @@ def get_help(request):
     # print('description', challenge_description)
     if opt == 'one':
         file_name = 'one.txt'
-        # print('opt one', opt, 'prompt', file_name)
+        print('opt one', opt, 'prompt', file_name)
     elif opt == 'two':
         file_name = 'mainclue.txt'
     elif opt == 'three':
@@ -81,6 +75,7 @@ def get_help(request):
         # Access the 'content' of the last message
         last_message_content = response["choices"][-1]["message"]["content"].replace(
             "<p>", "").replace("</p>", "")
+        print('****', last_message_content)
         return Response(last_message_content)
 
     # Handle the case where there is no valid response

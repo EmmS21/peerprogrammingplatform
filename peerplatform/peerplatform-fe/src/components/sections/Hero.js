@@ -75,7 +75,10 @@ const Hero = ({
       let opt = "three"
       const challengeName = res.data[0].title
       const challengeDescription = res.data[0].place
-      const challenge = {challengeName, challengeDescription}
+      // console.log('name', challengeName, 'desc', challengeDescription)
+      let challenge = { 'title': challengeName, 
+                        'place': challengeDescription
+                      }
       let result = await getSolutionHandler(challenge, null, opt)
       result = result.replace(/\n/g, ' ');
       result = JSON.stringify(result)
@@ -86,11 +89,13 @@ const Hero = ({
       setShowNextChallengeButton(true)
       if(res.data[0] && res.data.length > 0){
         let opt = "one"
+        // console.log('challenge one', challenge)
         // console.log('res', res.data)
         // console.log('challenge', res.data)
         // console.log('before setting to local', JSON.stringify(res.data))
         localStorage.setItem('challenge', JSON.stringify(res.data));
         let result = await getSolutionHandler(challenge, null, opt)
+        console.log('result******', result)
         // console.log('Hero **** result', result)
         setClockSpin(false);
         history.push(`/rooms/${generateRandomString(5)}`)
@@ -116,6 +121,7 @@ const Hero = ({
 
   async function getSolutionHandler(challenge, query=null, opt){
     try {
+      console.log('challenge inside func', challenge)
         return await getSolution(challenge, query, opt)
     } catch(error){
         return console.error('Error fetching the solution:', error)

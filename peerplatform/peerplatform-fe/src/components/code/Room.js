@@ -3,10 +3,13 @@ import CodeEditor from './CodeEditor';
 import { Device } from '@twilio/voice-sdk';
 import { useGlobalState } from '../../context/RoomContextProvider';
 import AuthContext from '../../context/AuthContext';
+import axios from 'axios';
 
 const Room = () => {
     const [roomState, setRoomState] = useGlobalState()
-    let {  roomName, username, profileURL } = useContext(AuthContext)
+    let {  roomName, username, 
+            profileURL, startTime,
+            setStartTime, elapsedTime, setElapsedTime } = useContext(AuthContext)
     const [call, setCall] = useState()
     const [callConnected, setCallConnected] = useState(false)
     const [shareableLink, setShareableLink] = useState("")

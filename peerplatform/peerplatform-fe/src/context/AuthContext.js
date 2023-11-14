@@ -65,10 +65,6 @@ export const AuthProvider = ({children}) => {
     const [roomName, setRoomName] = useState("")
     const [username, setUserName] = useState("")
     const [isLoadingSolution, setIsLoadingSolution] = useState(false);
-
-    // const codeResp = useRef('')
-
-
     const history = useHistory();
     
 
@@ -116,10 +112,8 @@ export const AuthProvider = ({children}) => {
 
     //update profile information
     const updateProfile = (userData, userID) => {
-        // console.log('userData contains', userData)
         axios.put(`${profileURL}${userID}/`, userData)
         .then(res => {
-            // console.log('profile update', res)
             setUser({ ...user, 
                         first_name:res.data.first_name,
                         last_name: res.data_last_name,
@@ -220,18 +214,14 @@ export const AuthProvider = ({children}) => {
                 })
                 .then((res) => {
                 let resultsOutput = res.data.stdout;
-                // console.log('resp', resultsOutput)
                 resultsOutput = resultsOutput.trim()
-                // console.log('resOutStripped', resultsOutput)
                 let resultsArr = resultsOutput.split("\n")
-                console.log('outputProduced****', resultsArr)
                 for (let i = 0; i < resultsArr.length; i++) {
                     let resultValue = resultsArr[i];
                     let expectedValue = compareArr[i];
                     if(typeof expectedValue === 'boolean'){
                         expectedValue = String(expectedValue)
                     }
-                    // console.log('result', resultValue, 'exp', expectedValue, '==', resultValue == expectedValue);
                     if (resultValue == expectedValue) {
                     console.log('changedTrue');
                     emptyArr[i] = true;

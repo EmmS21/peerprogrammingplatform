@@ -37,7 +37,10 @@ const SelectDifficulty = ({setShowSelect, newAnswerFetched, placeholderText, onN
             console.log('res', res.data)
             if (onNewChallengeFetched){
                 console.log('resData SelectDiff', res.data)
-                let explanationRes = await getSolution(res.data[0].title, null, "three")
+                const challenge = { 'title': res.data[0].title,
+                                    'place': res.data[0].place
+                                }
+                let explanationRes = await getSolution(challenge, null, "three")
                 explanationRes = explanationRes.replace(/\n/g, ' ');
                 explanationRes = JSON.stringify(explanationRes)
                 console.log('explanationRes***', explanationRes)

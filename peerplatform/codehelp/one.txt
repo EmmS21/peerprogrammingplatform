@@ -18,7 +18,7 @@ Additionally: create five unique test cases for each test case using the format 
 
 Here is an example of the expected structure:
 
-function addToArrayForm(num, k) {
+function exampleFunc(num, k) {
   // Optimal Solution: Two Pointer
   // Why: Because we need to iterate through this array while keeping track of two points and carry out some level of comparison. This solution allows us to carry out this comparison in O(n) time
   // Time Complexity: O(n) we are only looping through the array once in the worst case, this is a linear operation
@@ -55,8 +55,8 @@ function addToArrayForm(num, k) {
 }
 
 // Test Cases
-console.log(addToArrayForm([1, 2, 0, 0], 34)); // [1, 2, 3, 4]
-console.log(addToArrayForm([2, 7, 4], 181)); // [4, 5, 5]
-console.log(addToArrayForm([2, 1, 5], 806)); // [1, 0, 2, 1]
-console.log(addToArrayForm([9, 9, 9], 1)); // [1, 0, 0, 0]
-console.log(addToArrayForm([0], 12345)); // [1, 2, 3, 4, 5]
+console.log(exampleFunc([1, 2, 0, 0], 34)); // [1, 2, 3, 4]
+console.log(exampleFunc([2, 7, 4], 181)); // [4, 5, 5]
+console.log(exampleFunc([2, 1, 5], 806)); // [1, 0, 2, 1]
+console.log(exampleFunc([9, 9, 9], 1)); // [1, 0, 0, 0]
+console.log(exampleFunc([0], 12345)); // [1, 2, 3, 4, 5]
