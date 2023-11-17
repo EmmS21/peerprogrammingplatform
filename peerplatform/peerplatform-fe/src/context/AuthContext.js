@@ -356,16 +356,20 @@ export const AuthProvider = ({children}) => {
     }
 
     async function getSolution(challenge, query = null, opt=null){
-        setIsLoadingSolution(true)
+        console.log('getSolution', challenge)
+        console.log('query', query)
+        if(!query){
+            setIsLoadingSolution(true)
+        }
         // console.log('trigg', query)
         console.log('what are we sending', challenge)
+        // console.log('what query are we sending', query)
         if(opt === 'one'){
             setCodeResp("Please wait for code to load....");
         }
         let leetObj = {}
         leetObj = { title: challenge['title'],
                         description: challenge['place'],
-                        testCases: query
                     }
         if (query) {
           leetObj['query'] = query; 
@@ -381,7 +385,7 @@ export const AuthProvider = ({children}) => {
                 // console.log('auth', content)
                 return content
             } else {
-                // console.log('content', content)
+                console.log('content returned**', content)
                 setCodeHelpState(content)
             }
         } else if(opt === 'one') {
@@ -395,7 +399,9 @@ export const AuthProvider = ({children}) => {
         else {
             return content
         }
-        setOpenModal(true)
+        if(!query){
+            setOpenModal(true)
+        }
         return content
     }
     

@@ -21,6 +21,9 @@ import { useHistory } from 'react-router-dom';
 import "../../assets/other_css/sidebar.css";
 import TestCases from './TestCases';
 import TimerComponent from './TimerComponent';
+import * as esprima from 'esprima';
+import estraverse from 'estraverse';
+import escodegen from 'escodegen';
 
 
 
@@ -64,6 +67,12 @@ const CodeEditor = () => {
     const [waitingForChallenge, setWaitingForChallenge] = useState(false);
     const [waitingForAnswer, setWaitingForAnswer] = useState(false);
     const [challengeInStateToUse, setChallengeInStateToUse] = useState(challengeInState)
+    const [elapsedTime, setElapsedTime] = useState(0);
+    const [showTimer, setShowTimer] = useState(false);
+    const [intervalId, setIntervalId] = useState(null); 
+    const [getHelp, setGetHelp] = useState(false)
+
+
 
     useEffect(() => {
         // Function to change the current color index randomly
@@ -304,6 +313,36 @@ const CodeEditor = () => {
     function handleOnChange(newValue){
         setEditorVal(newValue)
     }
+
+    function streamHelp (challenge) {
+        console.log('streaming', challenge)
+        // console.log('challengeInState', challenge)
+        const code = document.getElementsByClassName('ace_content')[0].innerText;
+        // console.log('code', code)
+        getSolution(challenge, code, null)
+        // let codeSnapShot = ''
+        // let debounceTimer;
+        // const captureSnapshot = () => {
+        //     const code = document.getElementsByClassName('ace_content')[0].innerText;
+        //     console.log('Code Snapshot:', code)
+        //     console.log('challengeSending', challenge)
+        //     console.log('calling get solution')
+        //     getSolution(challenge, code, null)
+        // };
+        // const editor = document.getElementsByClassName('ace_editor')[0];
+        // editor.addEventListener('input', () => {
+        //     codeSnapShot = document.getElementsByClassName('ace_content')[0].innerText;
+
+        //     //Debouncing the captureSnapshot function
+        //     clearTimeout(debounceTimer);
+        //     debounceTimer = setTimeout(() => {
+        //         captureSnapshot()
+        //     }, 2000)
+        // });
+        // if(challengeInStateToUse && challengeInStateToUse.length > 0){
+        //     captureSnapshot()
+        // }
+    }
     
 
     function handleBtnUpdate(){
@@ -326,9 +365,16 @@ const CodeEditor = () => {
         setSubmitButtonText('Submit Code')        
     }
     
-    function resetHandler(){
+    function resetHandler () {
         console.log('de', codeResp)
         setEditorVal(pseudoCode)
+    }
+
+    function resetTimer () {
+        setElapsedTime(0)
+        setShowTimer(0)
+        setShowTimer(false)
+        localStorage.removeItem('elapsedTime')
     }
 
         return (
@@ -341,9 +387,10 @@ const CodeEditor = () => {
                             localStorage.removeItem('showTestCases');
                             localStorage.removeItem('editorVal'); 
                             localStorage.removeItem('codeResp');
+                            resetTimer()
                             history.push('/')
                         }}>
-                        Back
+                        Exit Session
                 </Button>
             </Menu.Item>
             <Menu.Item className="single-menu-item-container">
@@ -398,7 +445,15 @@ const CodeEditor = () => {
                     </span>
                     </span>
                     ) : (
-                    <Button className="btn btn-primary single-full-height-button" onClick={handleBtnUpdate}>Help me</Button>
+                        <TimerComponent 
+                        elapsedTime={elapsedTime} 
+                        setElapsedTime={setElapsedTime}
+                        showTimer={showTimer}
+                        setShowTimer={setShowTimer}
+                        intervalId={intervalId}
+                        setIntervalId={setIntervalId}
+                        streamHelp={streamHelp}
+                        />
                 )}
             </Menu.Item>
             <Menu.Item className="menu-item-container">
@@ -420,12 +475,16 @@ const CodeEditor = () => {
                 onClick={() => {
                   setIsCodeHelpModalVisible(false);
                   setOpenModal(false);
+                  setGetHelp(false)
                   setCodeHelpBtn("Code Help");
                 }}
                 className="close-button"
                 >
                 X
               </Button>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '10px', textAlign: 'center' }}>
+                AI Mentor Clue at {Math.floor(elapsedTime/60)} minute mark
+                </div>
             </div>
             <pre style={{ color: 'white' }}>{codeHelpState}</pre>
           </div>
@@ -455,7 +514,11 @@ const CodeEditor = () => {
                         enableLiveAutocompletion: false,
                         enableSnippets: true,
                         animatedScroll: false,
-                        useWorker: true, // Autocompletion
+                        useWorker: true, 
+                        vScrollBarAlwaysVisible: true,
+                        hScrollBarAlwaysVisible: true,
+                        autoScrollEditorIntoView: true,
+                        highlightActiveLine: true
                     }} 
                     tabSize={3}
                     wrapEnabled={true}

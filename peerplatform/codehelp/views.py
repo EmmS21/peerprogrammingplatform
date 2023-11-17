@@ -24,6 +24,7 @@ def get_help(request):
     # question_id = data['data']
     query = data.get('query', None)
     opt = data.get('opt', None)
+    print('data', data)
     # print('opt****', opt)
     # print('name', challenge_name)
     # print('description', challenge_description)
@@ -36,8 +37,8 @@ def get_help(request):
         file_name = 'three.txt'
     elif opt == 'four':
         file_name = 'test_cases.txt'
-    elif query:
-        file_name = 'second.txt'
+    else:
+        file_name = 'assistant.txt'
     try:
         prompt_file_path = os.path.join(os.path.dirname(__file__), file_name)
     except UnboundLocalError as e:
@@ -58,7 +59,7 @@ def get_help(request):
     if opt == 'three':
         print('final')
     if query:
-        final_prompt += f"Code: {query}"
+        final_prompt += f"Code: {query} Question: {challenge_name}"
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[

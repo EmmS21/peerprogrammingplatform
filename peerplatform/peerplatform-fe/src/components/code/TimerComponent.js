@@ -1,45 +1,53 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { Button } from 'antd'
 
-const TimerComponent = ({ onTimeUpdate }) => {
-    const [elapsedTime, setElapsedTime] = useState(0)
+
+const TimerComponent = ({ onTimeUpdate, streamHelp, elapsedTime, 
+                        setElapsedTime, setGetHelp
+                         }) => {
+
+
 
     useEffect(() => {
-        // Initialize elapsed time from localStorage or set it to 0 if not found
+        const challenge = JSON.parse(localStorage.getItem('challenge'));
         const storedTime = localStorage.getItem('elapsedTime');
-        const initialTime = storedTime ? parseInt(storedTime, 10) : 0;
+        const initialTime = Number.isNaN(parseInt(storedTime, 10)) ? 0 : parseInt(storedTime, 10);
         setElapsedTime(initialTime);
 
         const interval = setInterval(() => {
             setElapsedTime(prevTime => {
                 const newTime = prevTime + 1;
                 localStorage.setItem('elapsedTime', newTime.toString());
+
+                if( newTime % (4 * 60) === 0) {
+                    console.log(`Hello ${newTime}*** startStream`)
+                    console.log('sending to stream', challenge)
+                    streamHelp(challenge[0])
+                }
+
                 return newTime;
             });
         }, 1000);
 
         return () => clearInterval(interval);
     }, []);
-    
-    useEffect(() => {
-        if (elapsedTime > 0 && elapsedTime % 300 === 0) {
-            alert(`You have spent ${elapsedTime/60} minutes on this page.`)
-        }
-        if (elapsedTime === 1800) {
-            alert('You have reached 30 minutes!')
-        }
-    }, [elapsedTime])
+
 
     useEffect(() => {
         if (onTimeUpdate) {
-            onTimeUpdate(elapsedTime)
+            onTimeUpdate(elapsedTime);
         }
-    }, [elapsedTime, onTimeUpdate])
+    }, [elapsedTime, onTimeUpdate]);
+
+    function formatTime (seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    };
 
     return (
-        <div>
-            Time Elapsed {elapsedTime} seconds
-        </div>
-    )
+        <div className="btn btn-primary single-full-height-button" onClick={() => setGetHelp(true)}>{formatTime(elapsedTime)}</div>
+    );
 };
 
 export default TimerComponent;
