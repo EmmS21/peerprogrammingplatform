@@ -89,3 +89,44 @@ class receive_response(View):
         user_input = self.request.POST["user_input"]
         response = get_help(user_input)
         return HttpResponse(response)
+
+
+@api_view(['POST'])
+@never_cache
+def get_answer(request):
+    data = request.data
+    challenge_name = data.get('title')
+    challenge_description = data.get('description')
+    query = data.get('query', None)
+    file_name = 'optimalAnswer.txt'
+    try:
+        prompt_file_path = os.path.join(os.path.dirname(__file__), file_name)
+    except UnboundLocalError as e:
+        logging.error(f'file_name is not defined: {str(e)}')
+        return Response({'error': 'Internal server error'}, status=500)
+
+    # Read the selected prompt text from your prompt.txt file
+    with open(prompt_file_path, 'r') as file:
+        prompt_text = file.read()
+    final_prompt = f"{prompt_text} Code: {query} Question: {challenge_name} Description: {challenge_description}"
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that provides code help and helps explain coding questions."},
+            {"role": "user", "content": final_prompt},
+        ],
+        temperature=0,
+        max_tokens=2048,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+    )
+    if "choices" in response and len(response["choices"]) > 0:
+        # Access the 'content' of the last message
+        last_message_content = response["choices"][-1]["message"]["content"].replace(
+            "<p>", "").replace("</p>", "")
+        print('****', last_message_content)
+        return Response(last_message_content)
+
+    # Handle the case where there is no valid response
+    return HttpResponse("No response from the AI model.")

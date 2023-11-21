@@ -4,7 +4,7 @@ import { SectionProps } from '../../utils/SectionProps';
 import ButtonGroup from '../elements/ButtonGroup';
 import Button from '../elements/Button';
 import Image from '../elements/Image';
-import { Modal, Input } from 'antd';
+import { Modal, Input, Form } from 'antd';
 import {Alert} from 'antd';
 import { useHistory } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
@@ -42,12 +42,13 @@ const Hero = ({
   const [clockSpin, setClockSpin] = useState(false);
   const [stage, setStage] = useState(0);
   let { profileURL, setChallengeInState, setShowNextChallengeButton, 
-        getSolution, setRoomName, username, 
-        setUserName, roomName, getResp,
+        getSolution, setRoomName, roomName, getResp,
         setQuestion } = useContext(AuthContext);
   const [roomState, setRoomState] = useGlobalState();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [shareableLink, setShareableLink] = useState("")
+  const [username, setUsername] = useState("")
+  const [showMessage, setShowMessage] = useState("")
   const { device } = roomState
 
 
@@ -74,6 +75,7 @@ const Hero = ({
     const base_url = `${profileURL}programming_challenge/${selection}` 
     axios.get(base_url)
     .then(async (res)=>{
+      console.log('sending to funct', res.data)
       setQuestion(res.data)
       setClockSpin(false)
       history.push(`/rooms/${generateRandomString(5)}`)
@@ -147,19 +149,44 @@ const Hero = ({
   }  
 
   const handleEmailSubmit = async () => {
-    // Make API call to store email in the backend
-    console.log('handleEmailSubmit')
-    await fetch(`${profileURL}api/addEmail/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email }),
-    });
+    try {
+      // Make API call to store email in the backend
+      let sendObj = {  email, username };
+      const response = await fetch(`${profileURL}api/addEmail`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sendObj),
+      });
+  
+      if (response.status === 201) {
+        // Show success message and delay closing the modal
+        setShowMessage('Your email has not been approved, please wait for the email giving your access.');
+        setTimeout(() => {
+          setIsEmailModalVisible(false) 
+        }, 5000); 
+      } else if (response.status === 202) {
+        setShowMessage('Email has been added to the waiting list. You will receive confirmation once it has been approved.');
+        setTimeout(() => {
+          setIsEmailModalVisible(false) 
+        }, 5000); 
 
-    setIsEmailModalVisible(false);
-    history.push('/rooms');
+      }
+      
+      else if (response.status === 200) {
+        // Continue to setStage(2)
+        setStage(2);
+      } else {
+        // Handle other statuses if needed
+        console.error('Unexpected response status:', response.status);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle errors if needed
+    }
   };
+  
 
 
   function openModal (e) {
@@ -207,11 +234,6 @@ const Hero = ({
                 shareableLink={shareableLink}
               />
               <div className="reveal-from-bottom" data-reveal-delay="600">
-                  { visible ?
-                    (
-                        <Alert message="This platform is currently invite only, please subscribe to the mailing list and you will be notified when you can create a profile" type="error" showIcon closable />
-                    ): null
-                  }
                   <Button tag="a" color="primary" wideMobile onClick={handleGetStarted} id="get-started">
                     Get started
                   </Button>
@@ -227,7 +249,7 @@ const Hero = ({
                             <span className="bouncing-dot"></span>
                           </>
                         ) : stage === 0 ? (
-                          "Choose Mode"
+                          "Enter your email to join the waiting list. If you have already been approved as a beta user, you will be allowed to proceed, otherwise expect an email confirming your approval"
                         ): stage === 1 ? (
                           "Pick a nickname"
                         ):
@@ -249,11 +271,56 @@ const Hero = ({
                       </div>
                     ): stage === 0 ? (
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
-                      <Button type="primary" onClick={() => setStage(2)} style={{ marginBottom: '10px' }}>
-                        Solo
-                      </Button>
-                      <Button type="primary" onClick={() => setStage(1)}>
-                        Pair Program
+                        <Form
+                          name="wrapper"
+                        >
+                          <Form.Item
+                            label="Email"
+                            name="email"
+                            rules={[
+                              {
+                                type: 'email',
+                                message: 'Please enter a valid email address!',
+                              },
+                              {
+                                required: true,
+                                message: 'Email is required!',
+                              },
+                            ]}
+                          >
+                            <Input
+                                type="email"
+                                placeholder="Enter Email"
+                                onChange={(e) => setEmail(e.target.value)}
+                                style={{ marginBottom: '10px' }}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                              label="Name"
+                              name="username"
+                              rules={[
+                                {
+                                  min: 3,
+                                  message: 'Username must be atleast 3 characters',
+                                }
+                              ]}
+                            >
+                              <Input
+                                  type="email"
+                                  placeholder="Enter Email"
+                                  onChange={(e) => setUsername(e.target.value)}
+                                  style={{ marginBottom: '10px' }}
+                              />
+                            </Form.Item>
+                            {showMessage}
+                        </Form>
+                      <Button 
+                        type="primary" 
+                        onClick={handleEmailSubmit} 
+                        style={{ marginBottom: '10px' }}
+                        disabled={ !email }
+                      >
+                        Next
                       </Button>
                     </div>            
                     ): stage === 1 ? (
@@ -261,7 +328,7 @@ const Hero = ({
                           <Input
                             placeholder="Enter your username"
                             value={username}
-                            onChange={e => setUserName(e.target.value)}
+                            onChange={e => setUsername(e.target.value)}
                             style={{ marginBottom: '10px' }}
                           />
                           <Button 
@@ -281,12 +348,12 @@ const Hero = ({
                       <Button className="flash-on-hover" type="primary" onClick={(e) => handleSelect(e, e.currentTarget.innerText)} style={{ marginBottom: '10px' }}>
                         Easy
                       </Button>
-                      <Button className="flash-on-hover" type="primary" onClick={(e) => handleSelect(e, e.currentTarget.innerText)} style={{ marginBottom: '10px' }}>
+                      {/* <Button className="flash-on-hover" type="primary" onClick={(e) => handleSelect(e, e.currentTarget.innerText)} style={{ marginBottom: '10px' }}>
                         Medium
                       </Button>
                       <Button className="flash-on-hover" type="primary" onClick={(e) => handleSelect(e, e.currentTarget.innerText)}>
                         Hard
-                      </Button>
+                      </Button> */}
                     </div>
                     )}
                   </Modal>

@@ -90,7 +90,7 @@
 .code-help-div {
   display: none;
   transform: translateY(100%);
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease, max-height 1s ease-in-out; /* Adjusted transition duration */
   position: fixed;
   left: 0;
   right: 0;
@@ -98,14 +98,17 @@
   max-height: 20vh; /* Set a maximum height for the div */
   overflow-y: auto; /* Enable vertical scrolling if the content exceeds the max height */
   background-color: #333; /* Adjust the background color as needed */
-  transition: transform 0.3s ease, bottom 0.5s ease-in-out; /* Animation duration and easing */
   z-index: 1000; /* Adjust the z-index as needed */
+}
+
+.code-help-div.maximized {
+  max-height: 40vh;
 }
 
 .code-help-visible .code-help-div {
   display: block;
   transform: translateY(0);
-  transition: transform 0.3s ease, bottom 0.5s ease-in-out;
+  transition: transform 0.5s ease, max-height 1s ease-in-out; /* Adjusted transition duration */
 }
 
 .code-help-header {
@@ -117,6 +120,11 @@
   position: sticky; /* Make this header sticky */
   top: 0; /* Stick to the top of the container */
   z-index: 1;
+}
+
+.close-icon {
+  font-size: 150%;
+  transition: transform 0.3s ease;
 }
 
 .code-help-header h3 {
@@ -167,15 +175,6 @@
 
 .dot.color-purple {
   color: purple;
-}
-
-.close-button {
-  font-size: 16px;
-  font-weight: bold;
-  background-color: transparent;
-  border: none;
-  display: flex;
-  justify-content: center;
 }
 
 .full-height-button {
@@ -263,4 +262,24 @@
 
 .child-div:hover::after {
   opacity: 1; /* Show the arrow on hover */
+}
+
+/* Add these styles to your CSS file */
+.minimize-maximize-icon {
+  font-size: 150%;
+  transition: transform 0.3s ease;
+}
+
+.minimize-maximize-icon:hover {
+  background-color: white;
+  border-radius: 50%;
+  padding: 5px;
+  transform: rotate(360deg);
+}
+
+.close-icon:hover {
+  background-color: white;
+  border-radius: 50%;
+  padding: 5px;
+  transform: rotate(360deg);
 }

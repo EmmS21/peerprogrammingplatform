@@ -65,6 +65,7 @@ export const AuthProvider = ({children}) => {
     const [roomName, setRoomName] = useState("")
     const [username, setUserName] = useState("")
     const [isLoadingSolution, setIsLoadingSolution] = useState(false);
+    const [optimalAnswer, setOptimalAnswer] = useState()
     const history = useHistory();
     
 
@@ -355,6 +356,19 @@ export const AuthProvider = ({children}) => {
         }
     }
 
+    async function getAnswer(challenge, query){
+        // console.log('challenge', challenge)
+        let leetObj = {}
+        leetObj = {
+            title: challenge['title'],
+            description: challenge['place'],
+            query: query
+        }
+        const res = await axios.post(`${profileURL}code_help/answer`, leetObj)
+        setOptimalAnswer(res.data)
+        localStorage.setItem('answer', res.data)
+    }
+
     async function getSolution(challenge, query = null, opt=null){
         console.log('getSolution', challenge)
         console.log('query', query)
@@ -415,6 +429,7 @@ export const AuthProvider = ({children}) => {
     }
     
     function setQuestion (question) {
+        console.log('setQuestion triggered')
         let result = question[0].SimplifiedExplanation
         result = JSON.stringify(result)
         console.log('**result', question[0])
@@ -533,7 +548,9 @@ export const AuthProvider = ({children}) => {
         isLoadingSolution: isLoadingSolution, 
         setIsLoadingSolution: setIsLoadingSolution,
         getResp: getResp,
-        setQuestion: setQuestion
+        setQuestion: setQuestion,
+        getAnswer: getAnswer,
+        optimalAnswer: optimalAnswer
     }
 
     //so we refresh our refresh token and update state every 4 minutes

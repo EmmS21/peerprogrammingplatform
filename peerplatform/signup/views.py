@@ -14,7 +14,7 @@ from .models import UserEmail
 from . import settings
 from .serializers import RegisterSerializer, PasswordSerializer, UpdateUserSerializer, CustomTokenObtainPairSerializer, ProgrammingChallengeSerializer
 from rest_framework.permissions import AllowAny
-#restrict type of request that can be made to post request
+# restrict type of request that can be made to post request
 from rest_framework.decorators import api_view
 from rest_framework import generics
 from rest_framework.decorators import action
@@ -28,11 +28,10 @@ from pyairtable import Table
 from decouple import config
 
 
-
 redis_instance = caches["default"]
 api_key = config("AIRTABLE_API_KEY")
-base_id = "appGriluJUAMFaUlp"
-table_name = "DataTable"
+base_id = "appKtzYP4xyGNzTcN"
+table_name = "EmailTable"
 emails_table = Table(api_key, base_id, table_name)
 
 
@@ -40,13 +39,46 @@ emails_table = Table(api_key, base_id, table_name)
 def addEmail(request):
     print('test')
     email = request.data.get('email')
+    username = request.data.get('username')
+    print('email', email)
+    existing_recs = list(emails_table.all())
+    matching_emails = [record['fields'].get(
+        'Email') for record in existing_recs if record['fields'].get('Email') == email]
+    print('matching', matching_emails)
+
     if email:
-        record = {"Name": email}
+        # Check if the email already exists
+        existing_records = [record for record in emails_table.all(
+        ) if record['fields'].get('Email') == email]
+
+        if existing_records:
+            print('existing', existing_records)
+            # Check if the entry is approved
+            approved_value = existing_records[0]['fields'].get('Approved', '')
+            print('value', approved_value)
+
+            if approved_value == 'Yes':
+                return Response({'status': 'Email already exists and is approved'}, status=200)
+            else:
+                # Add the username to the existing record
+                existing_records[0]['fields']["Username"] = username
+                emails_table.update(
+                    existing_records[0]['id'], existing_records[0]['fields'])
+                return Response({'status': 'Email already exists but is not approved'}, status=201)
+
+        # Email does not exist, create a new entry
+        record = {"Email": email}
+
+        if username:
+            # Only add the username if provided
+            record["Username"] = username
+
         emails_table.create(record)
-        return Response({'status': 'Email added successfully'}, status=200)
+        return Response({'status': 'Email added successfully'}, status=202)
     else:
         return Response({'status': 'Bad request'}, status=400)
-    
+
+
 @api_view(['GET'])
 def CacheView(request):
     if request.method == 'GET':
@@ -55,11 +87,12 @@ def CacheView(request):
         for elem in redis_instance.smembers("pairs"):
             items.append(elem.decode("utf-8"))
         print(items)
-        #creating dict with randomly matched pairs
+        # creating dict with randomly matched pairs
         random.shuffle(items)
         item = iter(items)
         ds = dict(zip(item, item))
         return Response(ds, status=200)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
@@ -93,6 +126,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class UpdateProfileView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UpdateUserSerializer
+
     def profile(request):
         if request.method == 'PUT':
             try:
@@ -103,7 +137,6 @@ class UpdateProfileView(generics.UpdateAPIView):
                     return Response(serializer_user)
             except User.DoesNotExist:
                 return Response(data='no such user!', status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class UpdateProfileActive(generics.UpdateAPIView):
@@ -119,13 +152,14 @@ class ProgrammingChallengeView(ReadOnlyModelViewSet):
     def get_list(self, request):
         pass
 
+
 @csrf_exempt
 @api_view(('POST',))
 def usernames_to_room_id(request):
     received = request.data['data'].split(",")
     print('received', received)
     user_one = received[0]
-    user_two =  received[1]
+    user_two = received[1]
     print('one: {} two: {}'.format(user_one, user_two))
     queried_id_user_one = int((get_user_id(user_one)))
     queried_id_user_two = int((get_user_id(user_two)))
@@ -133,6 +167,7 @@ def usernames_to_room_id(request):
     max_id = max(queried_id_user_one, queried_id_user_two)
     room_id = int('{}{}'.format(min_id, max_id))
     return Response(room_id)
+
 
 def get_user_id(username):
     try:

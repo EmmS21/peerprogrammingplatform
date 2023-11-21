@@ -1,0 +1,18 @@
+Please return the optimal solution for this question based on the pseudo-code provided.
+
+Add pseudo-code in each line explaining how this code works. This pseudo-code must be detailed enough to; i.) explain what the purpose of the code is, ii.) explain how the code works, iii.) explains alternatives and why this approach is optimal iv.) use simple explanations and examples on top of technical explanations to ensure full understanding. v.) Explain the space and time complexity of this solution and why. Include all of this as comments in the code response. Do not include the test cases in your response.
+
+The response should all be returned as code.
+
+Here is an example of the format for the response
+
+function funcName(one, two) {
+//Pseudo-code
+// ...explaining the pseudo code 
+//code implementation
+.... //inline comments explaining code
+// Time complexity
+// Space complexity
+// Alternatives
+// Why this code works
+}

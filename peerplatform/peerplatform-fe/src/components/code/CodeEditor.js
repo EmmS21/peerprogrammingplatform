@@ -11,7 +11,7 @@ import 'brace/theme/monokai';
 //import tabs components
 import "antd/dist/antd.css";
 import { Button, Spin, Tabs, Radio  } from 'antd'
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, PlusCircleOutlined, MinusCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import ProgrammingChallenge from './ProgrammingChallenges';
 import SelectDifficulty from './SelectDifficulty';
 import AuthContext from '../../context/AuthContext';
@@ -21,8 +21,8 @@ import { useHistory } from 'react-router-dom';
 import "../../assets/other_css/sidebar.css";
 import TestCases from './TestCases';
 import TimerComponent from './TimerComponent';
+import OptimalSolution from './OptimalSolution';
 import axios from 'axios';
-
 
 //change language based on map
 const CodeEditor = () => {
@@ -36,7 +36,7 @@ const CodeEditor = () => {
           setResp, codeResp, setOpenModal,  
           contextHolder, challengeInState, codeHelpState,
           setShowNextChallengeButton, profileURL,
-          setQuestion
+          setQuestion, getAnswer, optimalAnswer
          } = useContext(AuthContext)
     // let photoURL = user.photo.split('"').join('');
     const [query, setQuery] = useState('');
@@ -73,8 +73,8 @@ const CodeEditor = () => {
     const [getHelp, setGetHelp] = useState(false)
     const [difficulty, setDifficulty] = useState(null); 
     const [showRadio, setShowRadio] = useState(false);
-
-
+    const [isMaximized, setIsMaximized] = useState(false);
+    
 
     useEffect(() => {
         // Function to change the current color index randomly
@@ -88,6 +88,14 @@ const CodeEditor = () => {
         // Clean up the interval when the component unmounts
         return () => clearInterval(interval);
       }, []);
+
+    useEffect(() => {
+        let query = codeResp.replace(/\/\/ Test Cases[\s\S]*/, '')
+        getAnswer(localChallengeInState, query)
+    }, [localChallengeInState])
+
+    // optimalAnswer(res.data)
+    // localStorage.setItem('answer', res.data)
 
 
     useEffect(() => {
@@ -249,7 +257,7 @@ const CodeEditor = () => {
     }, [isRightSidebarVisible, charIndex]);
 
     const editorWidth = () => {
-        let width = '100%';
+        let width = '95%';
         if (isSidebarVisible && isRightSidebarVisible) {
           width = 'calc(100% - 60%)'; // 30% for each sidebar
         } else if (isSidebarVisible || isRightSidebarVisible) {
@@ -291,8 +299,7 @@ const CodeEditor = () => {
     }
 
     function streamHelp (challenge) {
-        console.log('streaming', challenge)
-        // console.log('challengeInState', challenge)
+        console.log('challengeInState', challenge)
         const code = document.getElementsByClassName('ace_content')[0].innerText;
         getSolution(challenge, code, null)
     }
@@ -321,6 +328,8 @@ const CodeEditor = () => {
     function resetHandler () {
         console.log('de', codeResp)
         setEditorVal(pseudoCode)
+        clearInterval(0)
+        setElapsedTime(0)
     }
 
     const handleRadioChange = (e) => {
@@ -362,31 +371,6 @@ const CodeEditor = () => {
     }
 
 
-
-    //     axios.get(base_url)
-    //     .then( async (res)=>{
-    //         console.log('res', res.data)
-    //         if (onNewChallengeFetched){
-    //             console.log('resData SelectDiff', res.data)
-    //             const challenge = { 'title': res.data[0].title,
-    //                                 'place': res.data[0].place
-    //                             }
-    //             let explanationRes = await getSolution(challenge, null, "three")
-    //             explanationRes = explanationRes.replace(/\n/g, ' ');
-    //             explanationRes = JSON.stringify(explanationRes)
-    //             console.log('explanationRes***', explanationRes)
-    //             res.data[0].extra_explain = JSON.parse(explanationRes);
-    //             let answerRes = await getSolution(res.data[0], null, "one")   
-    //             console.log('resData', res.data)
-    //             console.log('answerRes', answerRes)    
-    //             onNewChallengeFetched(res.data)
-    //             newAnswerFetched(answerRes)
-    //         }
-
-
-    // }
-
-
     function resetTimer () {
         setElapsedTime(0)
         setShowTimer(0)
@@ -394,10 +378,14 @@ const CodeEditor = () => {
         localStorage.removeItem('elapsedTime')
     }
 
+    function toggleMaximize () {
+        setIsMaximized(!isMaximized)
+    }
+
 
         return (
         <>
-        <Menu class="w-full" pointing widths={ 6 } size={"medium"} style={{ marginTop:0 }}>
+        <Menu class="w-full" pointing widths={ 6 } size={"small"} style={{ marginTop:0 }}>
             <Menu.Item className="single-menu-item-container">
                 <Button className="btn btn-primary single-full-height-button" 
                         onClick={() => {
@@ -420,37 +408,14 @@ const CodeEditor = () => {
                 {showRadio ? (
                     <Radio.Group onChange={handleRadioChange} value={difficulty}>
                     <Radio.Button value="easy">Easy</Radio.Button>
-                    <Radio.Button value="medium">Medium</Radio.Button>
-                    <Radio.Button value="hard">Hard</Radio.Button>
+                    {/* <Radio.Button value="medium">Medium</Radio.Button>
+                    <Radio.Button value="hard">Hard</Radio.Button> */}
                     </Radio.Group>
                 ) : (
                     <Button className="btn btn-primary single-full-height-button" onClick={changeChallenge}>
                         Next Challenge
                     </Button>
                 )}
-                {/* {
-                    showNextChallengeButton ? (
-                        <SelectDifficulty 
-                            showSelect={showSelect} 
-                            setShowSelect={setShowSelect}
-                            placeholderText="Next Challenge"
-                            onNewChallengeFetched={ async (newChallenge) => {
-                                localStorage.removeItem('challenge')
-                                setWaitingForChallenge(true)
-                                await newChallenge
-                                setLocalChallengeInState(newChallenge)
-                                setWaitingForChallenge(false)
-                            }}
-                            newAnswerFetched={ async (newAnswer) => {
-                                localStorage.removeItem('editorVal')
-                                setWaitingForAnswer(true)
-                                await newAnswer
-                                setEditorVal(newAnswer)
-                                setWaitingForAnswer(false)
-                            }}
-                        />
-                    ): null
-                } */}
             </Menu.Item>
             <Menu.Item className="single-menu-item-container">
                 {
@@ -489,51 +454,67 @@ const CodeEditor = () => {
                 <Button className="btn btn-primary full-height-button" onClick={makeSubmission} disabled={isRightSidebarVisible}>
                     Run Code
                 </Button>
-                <Button className="btn btn-primary full-height-button" onClick={showTestCases ? handleCloseTests : toggleTestCases}>
+                {/* <Button className="btn btn-primary full-height-button" onClick={showTestCases ? handleCloseTests : toggleTestCases}>
                     {submitButtonText}
-                </Button>
+                </Button> */}
             </Menu.Item>
         </Menu>
         <div className="row">
-        { contextHolder }
-        <div className={`col-4 code-editor-col ${isCodeHelpModalVisible ? 'code-help-visible' : ''}`} style={{ marginTop: -20, marginLeft: 10 }}>
-          <div className="my-0 code-help-div">
+        <div className={`col-4 code-editor-col ${ isCodeHelpModalVisible ? 'code-help-visible' : ''}`} style={{ marginTop: isMaximized ? '-0px' : '-20px', marginLeft: 10, height: '100%' }}>
+         <div className={`my-0 code-help-div ${isMaximized ? 'maximized' : ''}`}>
             <div className="code-help-header">
-              <Button
-                key="close"
-                onClick={() => {
-                  setIsCodeHelpModalVisible(false);
-                  setOpenModal(false);
-                  setGetHelp(false)
-                  setCodeHelpBtn("Code Help");
-                }}
-                className="close-button"
-                >
-                X
-              </Button>
-              <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '10px', textAlign: 'center' }}>
-                AI Mentor Clue at {Math.floor(elapsedTime/60)} minute mark
+                <CloseCircleOutlined 
+                    onClick={() => {
+                        setIsCodeHelpModalVisible(false);
+                        setOpenModal(false);
+                        setGetHelp(false)
+                        setCodeHelpBtn("Code Help");
+                        }}
+                        className="close-icon"
+                />
+                {
+                    isMaximized ? (
+                        <MinusCircleOutlined
+                            onClick={toggleMaximize}
+                            className="minimize-maximize-icon"
+                            style={{ fontSize: '150%'}}
+                        />
+                    ) : (
+                        <PlusCircleOutlined 
+                            onClick={toggleMaximize}
+                            className="minimize-maximize-icon"
+                            style={{ fontSize: '150%'}}
+                        />
+                    )
+                }
+                <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '10px', textAlign: 'center' }}>
+                    AI Mentor Clue at {Math.floor(elapsedTime/60)} minute mark
                 </div>
             </div>
             <pre style={{ color: 'white' }}>{codeHelpState}</pre>
           </div>
-          </div>
+        </div>
         <div className={`col-2 whiteCol my-0 ${!isSidebarVisible ? 'hidden' : ''}`}>
             <Tabs type="card">
                     <TabPane tab="Coding Challenge" key="1">
                         { <ProgrammingChallenge query={query} challengeInState={localChallengeInState}/> }
                     </TabPane> 
+                    <TabPane tab="Optimal Solution" key="2">
+                        { optimalAnswer ? <OptimalSolution challenge={localStorage.getItem('answer')}/>: "Please wait for the optimal answer to be generated..." }
+                    </TabPane>
             </Tabs>
         </div>
-           <div className="col-4 ace-editor-container" style={{ marginTop: -20, marginLeft: 10 }}>
+           <div className="col-4 ace-editor-container" style={{ marginTop: -20, marginLeft: 10, height: '100%', overflow: 'hidden' }}>
             <div className="my-0" style={{ width: editorWidth() }}>
                 <AceEditor
                     ref={editorRef}
-                    style={{ position: 'fixed', top: '3.5rem', left: isSidebarVisible ? '30%' : '0', width: editorWidth(), height: '100%' }}
+                    style={{ position: 'fixed', top: '3.5rem', left: isSidebarVisible ? '30%' : '0', width: editorWidth(), height: '90%' }}
                     mode={'javascript'}
                     onChange={handleOnChange}
                     theme="monokai"
                     name="code_editor"
+                    showPrintMargin={false}
+                    highlightActiveLine={true}
                     editorProps={{ $blockScrolling: Infinity }}
                     setOptions={{
                         enableBasicAutocompletion: true,
@@ -544,7 +525,10 @@ const CodeEditor = () => {
                         vScrollBarAlwaysVisible: true,
                         hScrollBarAlwaysVisible: true,
                         autoScrollEditorIntoView: true,
-                        highlightActiveLine: true
+                        highlightActiveLine: true,
+                        wrapBehavioursEnabled: true,
+                        overflow: true,
+                        wrap: true
                     }} 
                     tabSize={3}
                     wrapEnabled={true}
@@ -566,3 +550,5 @@ const CodeEditor = () => {
 }
 
 export default CodeEditor;
+
+
