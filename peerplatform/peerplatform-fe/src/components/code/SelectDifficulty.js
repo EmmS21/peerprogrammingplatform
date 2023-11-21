@@ -64,15 +64,15 @@ const SelectDifficulty = ({setShowSelect, newAnswerFetched, placeholderText, onN
     }
 
     return (
-    <div style={{ display: 'flex', alignItems: 'center', height: '100%' }} className="full-height-container">
-        <Select
-            placeholder={'Select'}
-            options={difficultyLevels}
-            onChange={(e, data) => setSelectedDifficulty(data.value)}
-            style={{ width: selectWidth}} 
-        /> 
-          {selectedDifficulty && <Button className="select-half-width" onClick={handleOnChange}>{placeholderText}</Button>}
-    </div>
+        <Button className="btn btn-primary single-full-height-button" onClick={handleOnChange}>{placeholderText}</Button>
+    // <div style={{ display: 'flex', alignItems: 'center', height: '100%' }} className="full-height-container">
+    //     {/* <Select
+    //         placeholder={'Select'}
+    //         options={difficultyLevels}
+    //         onChange={(e, data) => setSelectedDifficulty(data.value)}
+    //         style={{ width: selectWidth}} 
+    //     />  */}
+    // </div>
   )
 }
 

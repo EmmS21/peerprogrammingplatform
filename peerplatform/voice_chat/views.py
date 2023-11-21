@@ -16,6 +16,7 @@ from uuid import uuid4
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
+
 @method_decorator(csrf_exempt, name="dispatch")
 class RoomView(View):
     def get(self, request, *args, **kwargs):
@@ -46,13 +47,17 @@ class RoomView(View):
             name=unique_room_name,
             participant_label=participant_label,
             start_conference_on_enter=is_moderator,
+            status_callback_event="start end join leave mute hold"
         )
         response.append(dial)
-        http_response = HttpResponse(response.to_xml(), content_type="text/xml")
+        http_response = HttpResponse(
+            response.to_xml(), content_type="text/xml")
         print('http', response.to_xml())
         return http_response
-        
+
         # return HttpResponse(response.to_xml(), content_type="text/xml")
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class JoinCoference(View):
     def post(self, request, *args, **kwargs):
@@ -68,6 +73,7 @@ class JoinCoference(View):
         print('sec resp', response.to_xml)
         return HttpResponse(response.to_xml(), content_type="text/xml")
 
+
 class TokenView(View):
     def get(self, request, username, *args, **kwargs):
         voice_grant = grants.VoiceGrant(
@@ -82,7 +88,7 @@ class TokenView(View):
         )
         access_token.add_grant(voice_grant)
         jwt_token = access_token.to_jwt()
-        # print(f"JWT Token: {jwt_token}") 
+        # print(f"JWT Token: {jwt_token}")
         if isinstance(jwt_token, str):
             result_token = jwt_token
         else:

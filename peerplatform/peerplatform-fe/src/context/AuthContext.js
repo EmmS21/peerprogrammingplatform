@@ -391,7 +391,6 @@ export const AuthProvider = ({children}) => {
         } else if(opt === 'one') {
             setGptResp(content)
             setCodeResp(content)
-            // codeResp.current = content
             localStorage.setItem('codeResp', content)
             console.log('respAuth', gptresp)
             setIsLoadingSolution(false)
@@ -404,7 +403,30 @@ export const AuthProvider = ({children}) => {
         }
         return content
     }
+
+    function getResp(answer, newChallengeData=null) {
+        localStorage.removeItem('codeResp')
+        setIsLoadingSolution(true)
+        setGptResp(answer)
+        setCodeResp(answer)
+        localStorage.setItem('codeResp', answer)
+        setIsLoadingSolution(false)
+        return { answer, newChallengeData }
+    }
     
+    function setQuestion (question) {
+        let result = question[0].SimplifiedExplanation
+        result = JSON.stringify(result)
+        console.log('**result', question[0])
+        question[0].extra_explain = JSON.parse(result)
+        console.log('questionJSON', question[0])
+        const challengeData = question[0]
+        const { AnswerTemplate, SimplifiedExplanation, ...newChallengeData } = challengeData;
+        setChallengeInState(newChallengeData)
+        localStorage.setItem('challenge', JSON.stringify(newChallengeData))
+        const response = getResp(AnswerTemplate, newChallengeData)
+        return response
+    }
 
     function postReview(){
         // console.log('inside postReview')
@@ -509,7 +531,9 @@ export const AuthProvider = ({children}) => {
         username: username,
         setUserName: setUserName,
         isLoadingSolution: isLoadingSolution, 
-        setIsLoadingSolution: setIsLoadingSolution
+        setIsLoadingSolution: setIsLoadingSolution,
+        getResp: getResp,
+        setQuestion: setQuestion
     }
 
     //so we refresh our refresh token and update state every 4 minutes

@@ -16,7 +16,7 @@ SECRET_KEY = '7v2g512#_rcafql%j3-8kd--2y&tjtfrybi4e#36^2+x2-2t8w'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    ".ngrok.io",
+    "06e2-67-85-185-28.ngrok-free.app",
     "127.0.0.1",
     "localhost",
     "0.0.0.0",
@@ -39,9 +39,9 @@ INSTALLED_APPS = [
     'rest_framework_api_key',
     'rest_framework.authtoken',
     'rest_auth',
-    #added simplejwt
+    # added simplejwt
     'rest_framework_simplejwt',
-    #all auth in attempt to alleviate RuntimeError: Model class allauth.account.models.EmailAddress doesn't declare an explicit app_label and isn't in an application in INSTALLED_APPS
+    # all auth in attempt to alleviate RuntimeError: Model class allauth.account.models.EmailAddress doesn't declare an explicit app_label and isn't in an application in INSTALLED_APPS
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -74,13 +74,15 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "https://peerprogrammingplatform.vercel.app",
     "https://aicoder.onrender.com",
+    "https://06e2-67-85-185-28.ngrok-free.app",
 ]
 
 CORS_ORIGIN_WHITELIST = (
     "localhost",
     "aicoder.onrender.com",
     "https://aicoder.onrender.com",
-    "https://peerprogrammingplatform.vercel.app"
+    "https://peerprogrammingplatform.vercel.app",
+    "https://06e2-67-85-185-28.ngrok-free.app",
 )
 
 CORS_ALLOW_METHODS = [
@@ -184,9 +186,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # }
 
 WEBPUSH_SETTINGS = {
-   "VAPID_PUBLIC_KEY": os.getenv('VAPID_PUBLIC_KEY'),
-   "VAPID_PRIVATE_KEY": os.getenv('VAPID_PRIVATE_KEY'),
-   "VAPID_ADMIN_EMAIL": os.getenv('VAPID_ADMIN_EMAIL')
+    "VAPID_PUBLIC_KEY": os.getenv('VAPID_PUBLIC_KEY'),
+    "VAPID_PRIVATE_KEY": os.getenv('VAPID_PRIVATE_KEY'),
+    "VAPID_ADMIN_EMAIL": os.getenv('VAPID_ADMIN_EMAIL')
 }
 
 LOGGING = {
@@ -252,7 +254,7 @@ ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_UNIQUE_EMAIL = True
 
-#Rest Framework config.
+# Rest Framework config.
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': "%m/%d/%Y %H:%M:%S",
     'DEFAULT_PERMISSION_CLASSES': (
@@ -265,7 +267,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-#Twilio Account details
+# Twilio Account details
 TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
 TWIML_APPLICATION_SID = config('TWIML_APPLICATION_SID')

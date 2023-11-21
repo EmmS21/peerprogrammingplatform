@@ -18,6 +18,13 @@ const JoinRoom = () => {
     const firstUser = query.get("username");
     const history = useHistory();
     const [rooms, setRooms] = useState([]);
+
+    useEffect(() => {
+        const pathName = window.location.pathname
+        const parts = pathName.split('/')
+        const roomName = parts[parts.length - 2];
+        setRooms(roomName)
+    }, [])
  
 
     const handleInputChange = (event) => {
@@ -47,35 +54,51 @@ const JoinRoom = () => {
         if (currentUser) { 
             setUserName(currentUser);
             try {
-                const response = await fetch(`${profileURL}voice_chat/token/${currentUser}`)
-                const data = await response.json()
-                const twilioToken = JSON.parse(data).token
-                await joinRoom()
-                const device = new Device(twilioToken)
-                device.updateOptions(twilioToken, {
-                    codecPreferences: ['opus', 'pcmu'],
-                    fakeLocalDTMF: true,
-                    maxAverageBitrate: 16000,
-                    maxCallSignalingTimeoutMs: 30000
-                });
-                device.connect({ roomName: rooms })
-                device.on('connect', (connection) => {
-                    console.log('Successfully connected', connection)
-                })
-                device.on('error', (device) => {
-                    console.log('error', device)
-                    console.error('Error message:', device.message);
-                    console.error('Error code:', device.code);
+                // Fetch existing rooms using Twilio API
+                const response = await fetch(`${profileURL}voice_chat/rooms`);
+                const roomsData = await response.json();
+                console.log('roomsData', roomsData)
+                console.log('cuurRoom',rooms.room_name)
                 
-                })
-                setRoomState({ ...roomState, device, twilioToken, username})
-                history.push(`/rooms/${roomName}`)
-            }
-            catch (error) {
-                console.log(error)
+                // Identify the target room using the room name from the URL
+                const targetRoom = roomsData.rooms.find(room => room.room_name === rooms);
+                
+                if (targetRoom) {
+                    const twilioTokenResponse = await fetch(`${profileURL}voice_chat/token/${currentUser}`);
+                    const tokenData = await twilioTokenResponse.json();
+                    const twilioToken = JSON.parse(tokenData).token;
+    
+                    // Connect to the identified room
+                    const device = new Device(twilioToken);
+                    device.updateOptions(twilioToken, {
+                        codecPreferences: ['opus', 'pcmu'],
+                        fakeLocalDTMF: true,
+                        maxAverageBitrate: 16000,
+                        maxCallSignalingTimeoutMs: 30000
+                    });
+                    device.connect({ roomName: targetRoom.room_name });
+    
+                    device.on('connect', (connection) => {
+                        console.log('Successfully connected', connection);
+                    });
+    
+                    device.on('error', (device) => {
+                        console.log('error', device);
+                        console.error('Error message:', device.message);
+                        console.error('Error code:', device.code);
+                    });
+    
+                    setRoomState({ ...roomState, device, twilioToken, username });
+                    history.push(`/rooms/${targetRoom.room_name}`);
+                } else {
+                    console.log('No matching room found');
+                }
+            } catch (error) {
+                console.log(error);
             }
         }
     };
+    
 
     return (
         <div style={{

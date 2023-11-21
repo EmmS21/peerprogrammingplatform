@@ -10,7 +10,7 @@ import Spinner from './Spinner';
 import 'brace/theme/monokai';
 //import tabs components
 import "antd/dist/antd.css";
-import { Button, Spin, Tabs  } from 'antd'
+import { Button, Spin, Tabs, Radio  } from 'antd'
 import { CloseOutlined } from '@ant-design/icons';
 import ProgrammingChallenge from './ProgrammingChallenges';
 import SelectDifficulty from './SelectDifficulty';
@@ -21,10 +21,7 @@ import { useHistory } from 'react-router-dom';
 import "../../assets/other_css/sidebar.css";
 import TestCases from './TestCases';
 import TimerComponent from './TimerComponent';
-import * as esprima from 'esprima';
-import estraverse from 'estraverse';
-import escodegen from 'escodegen';
-
+import axios from 'axios';
 
 
 //change language based on map
@@ -33,12 +30,13 @@ const CodeEditor = () => {
     const [isRightSidebarVisible, setRightSidebarVisible] = useState(false);
     const [isSidebarVisible, setSidebarVisible] = useState(true);
     let {  
-          getSolution, isLoadingSolution, 
+          getSolution, isLoadingSolution, setLoadingCode,
           sendCodeJudge0, spinnerOn, submitJudge0,
           setSpinnerOn, resp,setCodeResp,
           setResp, codeResp, setOpenModal,  
           contextHolder, challengeInState, codeHelpState,
-          showNextChallengeButton, setShowNextChallengeButton,
+          setShowNextChallengeButton, profileURL,
+          setQuestion
          } = useContext(AuthContext)
     // let photoURL = user.photo.split('"').join('');
     const [query, setQuery] = useState('');
@@ -48,7 +46,10 @@ const CodeEditor = () => {
     const [isCodeHelpModalVisible, setIsCodeHelpModalVisible] = useState(false);
     const [typedText, setTypedText] = useState('');
     const [charIndex, setCharIndex] = useState(0); 
-    const [localChallengeInState, setLocalChallengeInState] = useState([]);
+    const [localChallengeInState, setLocalChallengeInState] = useState(() => {
+        const storedChallenge = localStorage.getItem('challenge');
+        return storedChallenge ? JSON.parse(storedChallenge) : challengeInState;
+      });
     const [pseudoCode, setPseudoCode] = useState('');
     const [editorVal, setEditorVal] = useState(() => {
         const savedEditorVal = localStorage.getItem('editorVal');
@@ -66,11 +67,12 @@ const CodeEditor = () => {
     );
     const [waitingForChallenge, setWaitingForChallenge] = useState(false);
     const [waitingForAnswer, setWaitingForAnswer] = useState(false);
-    const [challengeInStateToUse, setChallengeInStateToUse] = useState(challengeInState)
     const [elapsedTime, setElapsedTime] = useState(0);
     const [showTimer, setShowTimer] = useState(false);
     const [intervalId, setIntervalId] = useState(null); 
     const [getHelp, setGetHelp] = useState(false)
+    const [difficulty, setDifficulty] = useState(null); 
+    const [showRadio, setShowRadio] = useState(false);
 
 
 
@@ -97,14 +99,10 @@ const CodeEditor = () => {
 
       useEffect(() => {
         const savedChallenge = localStorage.getItem('challenge');
-        // console.log('savedChallenge*', savedChallenge, '***')
         const savedCodeResp = localStorage.getItem('codeResp');
-        console.log('saved in local', savedCodeResp)
-        // console.log('Saved Challenge from localStorage:', savedChallenge);
         if (savedChallenge) {
             const parsedChallenge = JSON.parse(savedChallenge);
-            // console.log('parsedChallenge', parsedChallenge, '***')
-            if (parsedChallenge.length > 0) {
+            if (Object.keys(parsedChallenge).length > 0) {
                 setLocalChallengeInState(parsedChallenge);
                 // console.log('Setting localChallengeInState from localStorage:', parsedChallenge);
                 setShowSelect(false);
@@ -112,49 +110,30 @@ const CodeEditor = () => {
             }
         // Check if the current challenge title is different from the one in localStorage
         if (challengeInState.length > 0 && savedChallenge) {
-            // console.log('if', challengeInState, '*****')
             const currentChallengeTitle = challengeInState[0].title;
             const parsedSavedChallenge = JSON.parse(savedChallenge);
             const savedChallengeTitle = parsedSavedChallenge[0].title;
-            // console.log('Current Challenge Title:', currentChallengeTitle);
-            // console.log('curr', currentChallengeTitle, 'saved', savedChallengeTitle)
             if (currentChallengeTitle !== savedChallengeTitle) {
-                // console.log('****', challengeInState, '****')
-                // Update localStorage with the new challenge
                 localStorage.setItem('challenge', JSON.stringify(challengeInState));
-                // console.log('Updating localStorage with new challenge:', challengeInState);
-
                 setLocalChallengeInState(challengeInState);
-                console.log('Setting localChallengeInState with the new challenge:', challengeInState);
-
             } else {
                 setLocalChallengeInState(challengeInState);
-                // console.log('Setting localChallengeInState from challengeInState:', challengeInState);
-
             }
         }}
         if (savedCodeResp) {
-            // codeResp.current = savedCodeResp; // Assuming setCodeResp is available in context
             setCodeResp(savedCodeResp)
-            // console.log('Setting codeResp from localStorage:', savedCodeResp);
         }
     }, []);
     
     useEffect(() => {
-        setChallengeInStateToUse(localChallengeInState.length > 0 ? localChallengeInState : challengeInState);
-    }, [localChallengeInState, challengeInState]);
-    
-    // let challengeInStateToUse = localChallengeInState.length > 0 ? localChallengeInState : challengeInState;
-
-    useEffect(() => {
         // Save challengeInState to local storage when it changes
-        if (localChallengeInState.length > 0) {
+        if (localChallengeInState) {
             localStorage.setItem('challenge', JSON.stringify(localChallengeInState));
         }
     }, [localChallengeInState]);
 
+
     const toggleTestCases = async () => {
-        // console.log("function");
         setRightSidebarVisible(false)
         requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
         requestBody.language_id = "63"
@@ -180,12 +159,10 @@ const CodeEditor = () => {
       
           // Save the extracted text in the variable savedStr
           const savedStr = textAfterTestCases;
-          const res = await getSolution(challengeInStateToUse[0], savedStr, 'four')
+          const res = await getSolution(localChallengeInState, savedStr, 'four')
           const resObj = JSON.parse(res)
           const dataType = resObj.dataType
           const testCases = resObj.output;
-        //   console.log('res', testCases)
-        //   console.log('type', dataType)
           const valuesArray = testCases.map((testCase) => {
             if (dataType === 'string') {
               return String(testCase);
@@ -240,7 +217,7 @@ const CodeEditor = () => {
         requestBody.source_code = code
         requestBody.language_id = "63"
         requestBody.base64_encoded = true
-        console.log('body', requestBody.source_code)
+        // console.log('body', requestBody.source_code)
         setSpinnerOn(true)
         setResp('')
         toggleRightSidebar()
@@ -305,7 +282,6 @@ const CodeEditor = () => {
     }, [pseudoCode]);
     
     useEffect(() => {
-        // console.log('code', codeResp)
         setPseudoCode(codeResp);
     }, [codeResp]);
 
@@ -318,30 +294,7 @@ const CodeEditor = () => {
         console.log('streaming', challenge)
         // console.log('challengeInState', challenge)
         const code = document.getElementsByClassName('ace_content')[0].innerText;
-        // console.log('code', code)
         getSolution(challenge, code, null)
-        // let codeSnapShot = ''
-        // let debounceTimer;
-        // const captureSnapshot = () => {
-        //     const code = document.getElementsByClassName('ace_content')[0].innerText;
-        //     console.log('Code Snapshot:', code)
-        //     console.log('challengeSending', challenge)
-        //     console.log('calling get solution')
-        //     getSolution(challenge, code, null)
-        // };
-        // const editor = document.getElementsByClassName('ace_editor')[0];
-        // editor.addEventListener('input', () => {
-        //     codeSnapShot = document.getElementsByClassName('ace_content')[0].innerText;
-
-        //     //Debouncing the captureSnapshot function
-        //     clearTimeout(debounceTimer);
-        //     debounceTimer = setTimeout(() => {
-        //         captureSnapshot()
-        //     }, 2000)
-        // });
-        // if(challengeInStateToUse && challengeInStateToUse.length > 0){
-        //     captureSnapshot()
-        // }
     }
     
 
@@ -370,12 +323,77 @@ const CodeEditor = () => {
         setEditorVal(pseudoCode)
     }
 
+    const handleRadioChange = (e) => {
+        setLoadingCode(true)
+        let level = ''
+        if (e.target.value === 'easy'){
+            level = 'get_easy'
+        }
+        else if (e.target.value === 'medium') {
+            level = 'get_medium'
+        }
+        else {
+            level = 'get_hard'
+        }
+        console.log('level', level)
+        const baseUrl = `${profileURL}programming_challenge/${level}`
+        axios.get(baseUrl)
+            .then((res) => {
+                const response = setQuestion(res.data)
+                setLocalChallengeInState(response.newChallengeData)
+                setEditorVal(response.answer)
+                setPseudoCode(response.answer)
+            })
+        setLoadingCode(false)
+        setShowRadio(false)
+    };
+
+    function changeChallenge () {
+        setShowRadio(true)
+        // setLoadingCode(true) 
+        // const base_url = `${profileURL}programming_challenge/get_easy`
+        // axios.get(base_url)
+        //     .then((res) => {
+        //         localStorage.removeItem('challenge')
+        //         localStorage.setItem('challenge', JSON.stringify(challengeInState));
+
+        //     })
+        // setLoadingCode(false) 
+    }
+
+
+
+    //     axios.get(base_url)
+    //     .then( async (res)=>{
+    //         console.log('res', res.data)
+    //         if (onNewChallengeFetched){
+    //             console.log('resData SelectDiff', res.data)
+    //             const challenge = { 'title': res.data[0].title,
+    //                                 'place': res.data[0].place
+    //                             }
+    //             let explanationRes = await getSolution(challenge, null, "three")
+    //             explanationRes = explanationRes.replace(/\n/g, ' ');
+    //             explanationRes = JSON.stringify(explanationRes)
+    //             console.log('explanationRes***', explanationRes)
+    //             res.data[0].extra_explain = JSON.parse(explanationRes);
+    //             let answerRes = await getSolution(res.data[0], null, "one")   
+    //             console.log('resData', res.data)
+    //             console.log('answerRes', answerRes)    
+    //             onNewChallengeFetched(res.data)
+    //             newAnswerFetched(answerRes)
+    //         }
+
+
+    // }
+
+
     function resetTimer () {
         setElapsedTime(0)
         setShowTimer(0)
         setShowTimer(false)
         localStorage.removeItem('elapsedTime')
     }
+
 
         return (
         <>
@@ -398,8 +416,19 @@ const CodeEditor = () => {
                     Refresh
                 </Button>
             </Menu.Item>
-            <Menu.Item>
-                {
+            <Menu.Item className="single-menu-item-container">
+                {showRadio ? (
+                    <Radio.Group onChange={handleRadioChange} value={difficulty}>
+                    <Radio.Button value="easy">Easy</Radio.Button>
+                    <Radio.Button value="medium">Medium</Radio.Button>
+                    <Radio.Button value="hard">Hard</Radio.Button>
+                    </Radio.Group>
+                ) : (
+                    <Button className="btn btn-primary single-full-height-button" onClick={changeChallenge}>
+                        Next Challenge
+                    </Button>
+                )}
+                {/* {
                     showNextChallengeButton ? (
                         <SelectDifficulty 
                             showSelect={showSelect} 
@@ -421,7 +450,7 @@ const CodeEditor = () => {
                             }}
                         />
                     ): null
-                }
+                } */}
             </Menu.Item>
             <Menu.Item className="single-menu-item-container">
                 {
@@ -492,11 +521,8 @@ const CodeEditor = () => {
         <div className={`col-2 whiteCol my-0 ${!isSidebarVisible ? 'hidden' : ''}`}>
             <Tabs type="card">
                     <TabPane tab="Coding Challenge" key="1">
-                        { challengeInStateToUse.length > 0 && <ProgrammingChallenge query={query} challengeInState={challengeInStateToUse}/> }
+                        { <ProgrammingChallenge query={query} challengeInState={localChallengeInState}/> }
                     </TabPane> 
-                    {/* <TabPane tab="Your Clue" key="2">
-                        {challengeInStateToUse.length > 0 && <Solutions challengeInState={challengeInStateToUse} query={editorVal}/>}
-                    </TabPane> */}
             </Tabs>
         </div>
            <div className="col-4 ace-editor-container" style={{ marginTop: -20, marginLeft: 10 }}>

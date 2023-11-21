@@ -7,10 +7,7 @@ import Spinner from './Spinner';
 
 export default function ProgrammingChallenge({ query, challengeInState }) {
   const {
-    getSolution, isLoadingSolution,
-    currentLanguage,openNotification,setSpinnerOn,
-    setOpenModal,spinnerOn,formattedChallengeName,
-    setFormattedChallengeName,setInputArr,setOutputArr
+    getSolution, isLoadingSolution,setInputArr,setOutputArr
   } = useContext(AuthContext);
   const [challengeData, setChallengeData] = useState({
     name: '',
@@ -18,7 +15,6 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
     description: '',
     examples: [],
   });
-  // console.log('challege', challengeData, '########')
 
   const headers = ["Input","Output","Explanation"]
 
@@ -40,10 +36,8 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
 
 
   useEffect(() => {
-    console.log('programmingchallenge')
-    if (challengeInState && challengeInState.length > 0) {
-      // console.log('challenge', challengeInState)
-      const challenge = challengeInState[0];
+    if (challengeInState && Object.keys(challengeInState).length > 0) {
+      const challenge = challengeInState;
       const { explanation, exampleData } = parseExplanationAndExamples(challenge.extra_explain);
       setChallengeData({
         name: challenge.title,
@@ -83,7 +77,7 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
   }, [challengeData, setInputArr, setOutputArr]);
 
   useEffect(() => {
-    if(challengeInState[0].length > 0){
+    if(challengeInState){
       console.log('hit', challengeInState[0])
       // getSolutionHandler(challengeInState[0].title)
     }
@@ -124,13 +118,11 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
             }
         }
     }
-    // console.log("Header start, rows start, table end:", headersStart, rowsStart, tableEnd);  // Log the start/end indices
     if (headersStart === -1 || rowsStart === -1 || tableEnd === -1) return null;
     // Extract headers
     const headers = lines[headersStart].trim().split('|').map(header => header.trim());
     const textDataAfterTablePosition = lines.slice(0, tableEnd + 1).join('\n').length;
     const textDataAfterTable = data.slice(textDataAfterTablePosition).trim();
-    // console.log('textData***', textDataAfterTable, '***')
     
     // Extract rows data
     const rows = [];
@@ -143,13 +135,11 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
     const tableLabels = lines.slice(0, headersStart - 1);
 
     const result = {headers, rows, tableLabels, textDataAfterTable}
-    // console.log("Parsed data:", result);  // Log the parsed data
     return result;
   }
 
   function RenderTableOrText({ data }) {
     const tableData = useMemo(() => parseTableData(data), [data]);
-    // console.log('**', tableData?.textDataAfterTable, '!!!')
     
     if (tableData) {
         return (
@@ -201,18 +191,28 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
   }
 
   function parseExplanationAndExamples(data) {
-    // console.log('dataParseExplanation', data)
     const explanationStart = data.indexOf("Simplified Explanation:");
-    const exampleStart = data.indexOf("An Example:");
+    const exampleStart = data.indexOf("Some Simple Examples:");
 
     const explanation = data.substring(explanationStart, exampleStart).replace("Simplified Explanation:", "").trim();
-    const exampleData = data.substring(exampleStart + "An Example:".length).trim();
-  
+    const exampleData = parseExampleData(data.substring(exampleStart + "Some Simple Examples:".length).trim());
     return { explanation, exampleData };
     }
 
-  const tableData = useMemo(() => parseTableData(challengeData.description), [challengeData.description]);
+  function parseExampleData(exampleSection) {
+      const examples = exampleSection.split("Example");
+      const exampleData = [];
+    
+      for (let i = 1; i < examples.length; i++) {
+        const exampleHeader = `Example${i}`;
+        const exampleText = examples[i].trim();
+        exampleData.push({ header: exampleHeader, text: exampleText });
+      }
+    
+      return exampleData;
+    }  
 
+  const tableData = useMemo(() => parseTableData(challengeData.description), [challengeData.description]);
 
   return (
     <div className='challenge' style={{ color: 'white' }}>
@@ -255,7 +255,15 @@ export default function ProgrammingChallenge({ query, challengeInState }) {
               <h5>Simplified Explanation</h5>
               <div>{challengeData.explanation}</div>
               <h6>Additional Examples</h6>
-              <div>{challengeData.exampleData}</div>
+              <div>
+                { challengeData.exampleData && 
+                  challengeData.exampleData.map((example, index) => (
+                  <div key={index}>
+                    <strong>{example.header}</strong>:<br />
+                    {example.text.replace(/\n/g, " ")}
+                  </div>  
+                ))}
+              </div>
               <div><strong>Constraints:</strong>
                 {getConstraints(challengeData.examples.join(''))}
               </div>

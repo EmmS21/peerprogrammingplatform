@@ -42,7 +42,9 @@ const Hero = ({
   const [clockSpin, setClockSpin] = useState(false);
   const [stage, setStage] = useState(0);
   let { profileURL, setChallengeInState, setShowNextChallengeButton, 
-        getSolution, setRoomName, username, setUserName, roomName } = useContext(AuthContext);
+        getSolution, setRoomName, username, 
+        setUserName, roomName, getResp,
+        setQuestion } = useContext(AuthContext);
   const [roomState, setRoomState] = useGlobalState();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [shareableLink, setShareableLink] = useState("")
@@ -72,34 +74,9 @@ const Hero = ({
     const base_url = `${profileURL}programming_challenge/${selection}` 
     axios.get(base_url)
     .then(async (res)=>{
-      let opt = "three"
-      const challengeName = res.data[0].title
-      const challengeDescription = res.data[0].place
-      // console.log('name', challengeName, 'desc', challengeDescription)
-      let challenge = { 'title': challengeName, 
-                        'place': challengeDescription
-                      }
-      let result = await getSolutionHandler(challenge, null, opt)
-      result = result.replace(/\n/g, ' ');
-      result = JSON.stringify(result)
-      res.data[0].extra_explain = JSON.parse(result);
-      // console.log('res', res.data)
-      setChallengeInState(res.data)
-      //   // console.log('res.data', res.data)
-      setShowNextChallengeButton(true)
-      if(res.data[0] && res.data.length > 0){
-        let opt = "one"
-        // console.log('challenge one', challenge)
-        // console.log('res', res.data)
-        // console.log('challenge', res.data)
-        // console.log('before setting to local', JSON.stringify(res.data))
-        localStorage.setItem('challenge', JSON.stringify(res.data));
-        let result = await getSolutionHandler(challenge, null, opt)
-        console.log('result******', result)
-        // console.log('Hero **** result', result)
-        setClockSpin(false);
-        history.push(`/rooms/${generateRandomString(5)}`)
-      }
+      setQuestion(res.data)
+      setClockSpin(false)
+      history.push(`/rooms/${generateRandomString(5)}`)
     })
     .catch(err=> {
         console.log(err)
