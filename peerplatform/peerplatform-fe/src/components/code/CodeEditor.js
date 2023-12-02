@@ -90,7 +90,7 @@ const CodeEditor = () => {
       }, []);
 
     useEffect(() => {
-        let query = codeResp.replace(/\/\/ Test Cases[\s\S]*/, '')
+        let query = codeResp?.replace(/\/\/ Test Cases[\s\S]*/, '')
         getAnswer(localChallengeInState, query)
     }, [localChallengeInState])
 
@@ -103,6 +103,28 @@ const CodeEditor = () => {
           setIsCodeHelpModalVisible(true);
         }
       }, [codeHelpState]);
+
+      useEffect(() => {
+        const storedTime = localStorage.getItem('elapsedTime');
+        const initialTime = Number.isNaN(parseInt(storedTime, 10)) ? 0 : parseInt(storedTime, 10);
+        setElapsedTime(initialTime);
+
+        const interval = setInterval(() => {
+            setElapsedTime(prevTime => {
+                const newTime = prevTime + 1;
+                localStorage.setItem('elapsedTime', newTime.toString());
+
+                if( newTime % (4 * 60) === 0) {
+                    streamHelp(localChallengeInState)
+                }
+
+                return newTime;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
 
 
       useEffect(() => {
@@ -162,7 +184,7 @@ const CodeEditor = () => {
 
         // Extract the matched text
         if (matches && matches.length > 0) {
-          const textAfterTestCases = matches[0].replace("// Test cases", "").trim();
+          const textAfterTestCases = matches[0]?.replace("// Test cases", "").trim();
         //   console.log("Text after // Test cases:", textAfterTestCases);
       
           // Save the extracted text in the variable savedStr
@@ -385,7 +407,7 @@ const CodeEditor = () => {
 
         return (
         <>
-        <Menu class="w-full" pointing widths={ 6 } size={"small"} style={{ marginTop:0 }}>
+        <Menu class="w-full" pointing widths={ 5 } size={"small"} style={{ marginTop:0 }}>
             <Menu.Item className="single-menu-item-container">
                 <Button className="btn btn-primary single-full-height-button" 
                         onClick={() => {
@@ -421,34 +443,6 @@ const CodeEditor = () => {
                 {
                     <Button className="btn btn-primary single-full-height-button" onClick={()=> setSidebarVisible(!isSidebarVisible)}>{ isSidebarVisible ? "Hide Sidebar" : "Show Sidebar" }</Button>
                 }
-            </Menu.Item>
-            <Menu.Item className="single-menu-item-container">
-                {isLoading ? (
-                    <span>
-                    Please Wait
-                    <span className="bouncing-dots">
-                        {Array.from({ length: 4 }, (_, index) => (
-                        <span
-                            key={index}
-                            className={`dot ${colors[(currentColorIndex + index) % colors.length]}`}
-                            style={{ animationDelay: `${0.5 * index}s` }}
-                        >
-                            .
-                        </span>
-                        ))}
-                    </span>
-                    </span>
-                    ) : (
-                        <TimerComponent 
-                        elapsedTime={elapsedTime} 
-                        setElapsedTime={setElapsedTime}
-                        showTimer={showTimer}
-                        setShowTimer={setShowTimer}
-                        intervalId={intervalId}
-                        setIntervalId={setIntervalId}
-                        streamHelp={streamHelp}
-                        />
-                )}
             </Menu.Item>
             <Menu.Item className="menu-item-container">
                 <Button className="btn btn-primary full-height-button" onClick={makeSubmission} disabled={isRightSidebarVisible}>
@@ -488,7 +482,7 @@ const CodeEditor = () => {
                     )
                 }
                 <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '10px', textAlign: 'center' }}>
-                    AI Mentor Clue at {Math.floor(elapsedTime/60)} minute mark
+                    AI Mentor Clue
                 </div>
             </div>
             <pre style={{ color: 'white' }}>{codeHelpState}</pre>
@@ -544,6 +538,16 @@ const CodeEditor = () => {
                     <p key={index} className="line1"> { line } </p>
                 ))}
            </div>
+           <TimerComponent 
+                        elapsedTime={elapsedTime} 
+                        setElapsedTime={setElapsedTime}
+                        showTimer={showTimer}
+                        setShowTimer={setShowTimer}
+                        intervalId={intervalId}
+                        setIntervalId={setIntervalId}
+                        streamHelp={streamHelp}
+                        />
+
         </div>
         </>
         )

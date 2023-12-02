@@ -263,21 +263,26 @@ export const AuthProvider = ({children}) => {
             headers
         })
         .then((res) => {
-            threeSecondWait().then(() => {
-                axios.get(`${baseURL}/${res.data.token}`, {
-                    headers
-                })
-                .then((res) => {
-                    console.log('res', res)
-                    setSpinnerOn(false)
-                    !res.data.stdout ? setResp(res.data.stderr)
-                        : setResp(res.data.stdout)
-                })
-                .catch((err) => {
-                    setSpinnerOn(false)
-                    console.error('Error fetching result:', err);
-                    setResp('An error occurred while fetching the result. Please try again.');
-                })
+            axios.get(`${baseURL}/${res.data.token}`, {
+                headers
+            })
+            .then((res) => {
+                console.log('res', res)
+                setSpinnerOn(false)
+                const { status, stdout, stderr } = res.data;
+    
+                if (status && status.description === "Processing") {
+                    setResp("Your code is taking too long to execute. It might contain an infinite loop or a very intensive computation.")
+                } else if (!stdout) {
+                    setResp(stderr || "An unknown error occurred.");
+                } else {
+                    setResp(stdout);
+                }
+            })
+            .catch((err) => {
+                setSpinnerOn(false)
+                console.error('Error fetching result:', err);
+                setResp('An error occurred while fetching the result. Please try again.');
             })
         })
         .catch((err) => {
