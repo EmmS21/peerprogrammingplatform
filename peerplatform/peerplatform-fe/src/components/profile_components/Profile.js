@@ -240,12 +240,12 @@ import WebSocketInstance from '../../websocket/Connect';
                         <hr />
                         <div className="button-container">
                           <Row>
-                            <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
+                            <Col className="ml-auto mr-auto" lg="6">
                               <small>
-                                 User score
+                                 User Score
                               </small>
                             </Col>
-                            <Col className="mr-auto" lg="3">
+                            <Col className="mr-auto" lg="6">
                               <small>
                                 Monthly Score
                               </small>
