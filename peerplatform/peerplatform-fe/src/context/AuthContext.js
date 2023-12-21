@@ -1,15 +1,9 @@
 import React, { createContext,useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-//decoding token with this function
 import jwt_decode from 'jwt-decode';
-//we are importing history to have the ability to redirect user to home page
 import { useHistory } from 'react-router-dom';
-import axiosWithAuth from "../axios"
-import { Device } from '@twilio/voice-sdk';
-import { useGlobalState } from '../context/RoomContextProvider';
 import WebSocketInstance from '../websocket/Connect';
 import { notification as notify } from 'antd';
-import { result } from 'lodash';
 
 
 const AuthContext = createContext()
@@ -21,7 +15,6 @@ export const AuthProvider = ({children}) => {
     let [user,setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
     let [loading, setLoading] = useState(true)
     //creating new drop in audio chat
-    const [state, setState] = useState(useGlobalState());
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [availableUsers, setAvailableUsers] = useState([]);
     const [spinnerOn, setSpinnerOn] = useState(false)
@@ -47,8 +40,8 @@ export const AuthProvider = ({children}) => {
     const driverInState = useRef([])
     const room_name = useRef([])
     const participants = useRef([])
-    // const profileURL = 'http://127.0.0.1:8000/'
-    const profileURL = 'https://aicoder.onrender.com/'
+    const profileURL = 'http://127.0.0.1:8000/'
+    // const profileURL = 'https://aicoder.onrender.com/'
     const difficultySelected = useRef([])
     const [openModal, setOpenModal] = useState(true);
     const [gptresp, setGptResp] = useState({})
@@ -67,7 +60,7 @@ export const AuthProvider = ({children}) => {
     const [isLoadingSolution, setIsLoadingSolution] = useState(false);
     const [optimalAnswer, setOptimalAnswer] = useState()
     const history = useHistory();
-    
+    const [checkAnswers, setCheckAnswers] = useState([])
 
     //we are going to pass this information down to login page
     //async function because we must wait for something to happen first
@@ -256,33 +249,76 @@ export const AuthProvider = ({children}) => {
     });
     };
 
-
-    //send code and required data to Judge0API
-    const sendCodeJudge0 = (requestBody) => {
+    const submitCodeJudge0 = (requestBody, answers) => {
+        let result = new Array(answers.length).fill(0)
+        // Step 1: Format the Expected Output
         axios.post(`${baseURL}`, requestBody, {
             headers
         })
+        .then((postRes) => {
+            axios.get(`${baseURL}/${postRes.data.token}`, {
+                headers
+            })
+            .then((getRes) => {
+                const { status, stdout, stderr } = getRes.data;
+                const splitResults = stdout.split("\n").filter(line => line !== '');
+                for(let i = 0; i < splitResults.length; i++){
+                    result[i] = splitResults[i] == answers[i]
+                }
+                setCheckAnswers(result)
+            })
+            .catch((err) => {
+                console.error('Error fetching result:', err);
+            });
+        })
+        .catch((err) => {
+            console.error('Error submitting code:', err);
+        });
+    };
+
+    //send code and required data to Judge0API
+    const sendCodeJudge0 = (requestBody) => {
+        const reqUrl = `${baseURL}?wait=true`
+        axios.post(reqUrl, requestBody, {
+            headers
+        })
         .then((res) => {
-            axios.get(`${baseURL}/${res.data.token}`, {
+            const token = res.data.token
+            if(!token){
+                console.error('Invalid token received', res.data)
+                setSpinnerOn(false);
+                setResp('Oops, this is on us, it seems we are having an issue running your code, please screenshot this and send an email to emmanuelsibandaus@gmail.com')
+                return;
+            }
+            const resultUrl = `${baseURL}/${token}`;
+            axios.get(resultUrl, {
                 headers
             })
             .then((res) => {
                 console.log('res', res)
                 setSpinnerOn(false)
                 const { status, stdout, stderr } = res.data;
-    
+                if(stdout && stdout.length > 1){
+                    let resp = decodeURIComponent(stdout)
+                    setResp(resp)
+                }    
                 if (status && status.description === "Processing") {
                     setResp("Your code is taking too long to execute. It might contain an infinite loop or a very intensive computation.")
-                } else if (!stdout) {
+                } 
+                if (!stdout) {
+                    console.log('err', stderr)
                     setResp(stderr || "An unknown error occurred.");
-                } else {
-                    setResp(stdout);
                 }
             })
             .catch((err) => {
                 setSpinnerOn(false)
-                console.error('Error fetching result:', err);
-                setResp('An error occurred while fetching the result. Please try again.');
+                if(err.response){
+                    console.error('Error Response:', err.response);
+                    setResp(`Error: ${err.response.status} - ${err.response.statusText}`)
+                } else {
+                    console.error('An error occurred while fetching the result:', err)
+                    setResp('An unknown error occurred. Please try again.')
+                }
             })
         })
         .catch((err) => {
@@ -555,7 +591,10 @@ export const AuthProvider = ({children}) => {
         getResp: getResp,
         setQuestion: setQuestion,
         getAnswer: getAnswer,
-        optimalAnswer: optimalAnswer
+        optimalAnswer: optimalAnswer,
+        submitCodeJudge0: submitCodeJudge0,
+        checkAnswers: checkAnswers,
+        setCheckAnswers: setCheckAnswers
     }
 
     //so we refresh our refresh token and update state every 4 minutes

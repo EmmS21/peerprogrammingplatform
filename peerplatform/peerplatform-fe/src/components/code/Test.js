@@ -21,7 +21,7 @@ const TestComponent = () => {
     const [charIndex, setCharIndex] = useState(0); // Index for the current character to type
     const editorRef = useRef(null);
     let isUndoOperation = false; // Flag to prevent event loop
-    let { codeResp } = useContext(AuthContext)
+    let { codeResp, checkAnswers, setCheckAnswers } = useContext(AuthContext)
     const history = useHistory();
     const [query, setQuery] = useState('');
 

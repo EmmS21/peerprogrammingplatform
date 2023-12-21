@@ -4,16 +4,12 @@ import AceEditor from 'react-ace';
 import 'brace/mode/python';
 import 'brace/mode/javascript';
 import 'brace/mode/sql';
-//import spinner
 import Spinner from './Spinner';
-//import themes
 import 'brace/theme/monokai';
-//import tabs components
 import "antd/dist/antd.css";
 import { Button, Spin, Tabs, Radio  } from 'antd'
 import { CloseOutlined, PlusCircleOutlined, MinusCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import ProgrammingChallenge from './ProgrammingChallenges';
-import SelectDifficulty from './SelectDifficulty';
 import AuthContext from '../../context/AuthContext';
 import 'semantic-ui-css/semantic.min.css'
 import { Menu } from 'semantic-ui-react';
@@ -24,22 +20,22 @@ import TimerComponent from './TimerComponent';
 import OptimalSolution from './OptimalSolution';
 import axios from 'axios';
 
-//change language based on map
 const CodeEditor = () => {
     const { TabPane } = Tabs;
     const [isRightSidebarVisible, setRightSidebarVisible] = useState(false);
     const [isSidebarVisible, setSidebarVisible] = useState(true);
     let {  
           getSolution, isLoadingSolution, setLoadingCode,
-          sendCodeJudge0, spinnerOn, submitJudge0,
-          setSpinnerOn, resp,setCodeResp,
-          setResp, codeResp, setOpenModal,  
-          contextHolder, challengeInState, codeHelpState,
+          sendCodeJudge0, spinnerOn, setSpinnerOn, 
+          resp, setCodeResp, setResp, 
+          codeResp, setOpenModal, challengeInState, 
           setShowNextChallengeButton, profileURL,
-          setQuestion, getAnswer, optimalAnswer
+          setQuestion, getAnswer, optimalAnswer,
+          submitCodeJudge0, codeHelpState,
          } = useContext(AuthContext)
     // let photoURL = user.photo.split('"').join('');
     const [query, setQuery] = useState('');
+    const [testCases, setTestCases] = useState([])
 
     // checks to see if select or programming challenge should be shown;
     const [showSelect, setShowSelect] = useState(true)
@@ -65,8 +61,6 @@ const CodeEditor = () => {
     const [submitButtonText, setSubmitButtonText] = useState(
         showTestCases ? 'Close Tests' : 'Submit Code'
     );
-    const [waitingForChallenge, setWaitingForChallenge] = useState(false);
-    const [waitingForAnswer, setWaitingForAnswer] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [showTimer, setShowTimer] = useState(false);
     const [intervalId, setIntervalId] = useState(null); 
@@ -89,15 +83,12 @@ const CodeEditor = () => {
         return () => clearInterval(interval);
       }, []);
 
+
     useEffect(() => {
         let query = codeResp?.replace(/\/\/ Test Cases[\s\S]*/, '')
         getAnswer(localChallengeInState, query)
     }, [localChallengeInState])
-
-    // optimalAnswer(res.data)
-    // localStorage.setItem('answer', res.data)
-
-
+    
     useEffect(() => {
         if (codeHelpState) {
           setIsCodeHelpModalVisible(true);
@@ -134,7 +125,6 @@ const CodeEditor = () => {
             const parsedChallenge = JSON.parse(savedChallenge);
             if (Object.keys(parsedChallenge).length > 0) {
                 setLocalChallengeInState(parsedChallenge);
-                // console.log('Setting localChallengeInState from localStorage:', parsedChallenge);
                 setShowSelect(false);
                 setShowNextChallengeButton(true);
             }
@@ -156,7 +146,6 @@ const CodeEditor = () => {
     }, []);
     
     useEffect(() => {
-        // Save challengeInState to local storage when it changes
         if (localChallengeInState) {
             localStorage.setItem('challenge', JSON.stringify(localChallengeInState));
         }
@@ -167,6 +156,7 @@ const CodeEditor = () => {
         setRightSidebarVisible(false)
         requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
         requestBody.language_id = "63"
+        requestBody.base64_encoded = true
 
         setShowTestCases((prevShow) => {
           const newShow = !prevShow;
@@ -177,42 +167,39 @@ const CodeEditor = () => {
         setSubmitButtonText((prevText) =>
         showTestCases ? 'Submit Code' : 'Close Tests'
         );  
-  
         // Match and store the comments in an array
-        const regex = /\/\/ Test cases([\s\S]*)/g;
-        const matches = editorVal.match(regex);
+        const parts = editorVal.split("// Test Cases");
+        if(parts.length < 2) {
+            return "No test cases found."
+        }
 
-        // Extract the matched text
-        if (matches && matches.length > 0) {
-          const textAfterTestCases = matches[0]?.replace("// Test cases", "").trim();
-        //   console.log("Text after // Test cases:", textAfterTestCases);
-      
-          // Save the extracted text in the variable savedStr
-          const savedStr = textAfterTestCases;
-          const res = await getSolution(localChallengeInState, savedStr, 'four')
-          const resObj = JSON.parse(res)
-          const dataType = resObj.dataType
-          const testCases = resObj.output;
-          const valuesArray = testCases.map((testCase) => {
-            if (dataType === 'string') {
-              return String(testCase);
-            } else if (dataType === 'number') {
-              return Number(testCase);
-            } else if (dataType === 'boolean') {
-              return Boolean(testCase);
-            } else {
-              // Handle other data types as needed
-              return testCase; // By default, return the value as is
-            }
-          });
-          requestBody.expected_output = valuesArray
+        const consoleLogLines = parts[1].split("\n");
+        const cleanedLines = consoleLogLines.map(line => line.replace(/console\.log\(/, '').replace(/\);/, ''));
+        cleanedLines.shift()
 
-          submitJudge0(requestBody).then((response) => {
-            setTestResults(response)
-          })
-        } else {
-        //   console.log("No text found after // Test cases.");
-        }              
+        const funcCallRegex = /\w+\([^)]*\)/;
+
+        // Extracting function calls from cleanedLines
+        const functionCalls = cleanedLines.map(line => {
+            const match = line.match(funcCallRegex);
+            return match ? match[0] : null;
+        }).filter(Boolean); 
+
+        setTestCases(functionCalls)
+
+        const regex = /console\.log\(([\s\S]*?)\);(\s*\/\/.*)?/g;
+        const testCases = parts[1].match(regex);
+        const answers = [];
+
+        if (testCases) {
+            testCases.forEach(tc => {
+                const match = /\/\/\s*(\d+)/.exec(tc);
+                if (match) {
+                    answers.push(parseInt(match[1], 10));
+                }
+            });
+        }
+        submitCodeJudge0(requestBody, answers)
     };
       
     
@@ -231,23 +218,20 @@ const CodeEditor = () => {
         "enable_per_process_and_thread_time_limit": null,
         "enable_per_process_and_thread_memory_limit": null,
         "max_file_size": null,
-        "enable_network": null
+        "enable_network": null,
+        "base64_encoded": true,
     }
     
-    // const changeLanguageHandler = (e) => {
-    //     selectLang.current = e.target.value
-    //     setCurrentLanguage(languageMap[selectLang.current])
-    // }
     //handle submission
     const makeSubmission = (e) => {
         e.preventDefault();
         setShowTestCases(false)
-        const code = requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
-        // const encodedSourceCode = btoa(encodeURIComponent(code))
+        let code = encodeURIComponent(requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText)
+        console.log('code', code)
+        // let undecode = atob(code)
+        // console.log('after decode', undecode)
         requestBody.source_code = code
         requestBody.language_id = "63"
-        requestBody.base64_encoded = true
-        // console.log('body', requestBody.source_code)
         setSpinnerOn(true)
         setResp('')
         toggleRightSidebar()
@@ -255,7 +239,6 @@ const CodeEditor = () => {
     }
 
     const toggleRightSidebar = () => {
-        // console.log('triggered')
         setRightSidebarVisible(!isRightSidebarVisible);
         if (!isRightSidebarVisible) {
             setTypedText('');
@@ -265,12 +248,10 @@ const CodeEditor = () => {
 
     useEffect(() => {
         let timeoutId;
-        // console.log('resp', resp)
         if (isRightSidebarVisible && charIndex < resp.length) {
           timeoutId = setTimeout(() => {
             setTypedText((prevTypedText) => prevTypedText + resp[charIndex]);
             setCharIndex((prevCharIndex) => prevCharIndex + 1);
-            // console.log("TypedText value: ", typedText);  // Debugging line
           }, 5);
         }
         return () => {
@@ -289,10 +270,6 @@ const CodeEditor = () => {
     };
 
     //handles changing clock timer
-    const array = [10,11,12,13];
-    const [key, setKey] = useState(1);
-    const [index, setIndex] = useState(1);
-    const [timer, setTimer] = useState(array[0]);
     const [codeHelpBtn, setCodeHelpBtn] = useState("Code Help")
     
 
@@ -448,9 +425,9 @@ const CodeEditor = () => {
                 <Button className="btn btn-primary full-height-button" onClick={makeSubmission} disabled={isRightSidebarVisible}>
                     Run Code
                 </Button>
-                {/* <Button className="btn btn-primary full-height-button" onClick={showTestCases ? handleCloseTests : toggleTestCases}>
+                <Button className="btn btn-primary full-height-button" onClick={showTestCases ? handleCloseTests : toggleTestCases}>
                     {submitButtonText}
-                </Button> */}
+                </Button>
             </Menu.Item>
         </Menu>
         <div className="row">
@@ -530,7 +507,7 @@ const CodeEditor = () => {
                 />
             </div>
            </div>
-           {showTestCases && <TestCases testResults={testResults}/>}
+           {showTestCases && <TestCases testResults={testResults} testCases={testCases}/>}
            <div className={`col-2 rightCol ${!isRightSidebarVisible ? 'hidden' : ''}`}>
                 <CloseOutlined onClick={()=> setRightSidebarVisible(false)}/>
                 <Spinner on={spinnerOn} Spin={Spin}/>

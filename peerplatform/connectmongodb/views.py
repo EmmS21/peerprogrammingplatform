@@ -10,8 +10,9 @@ from django.views.decorators.cache import never_cache
 # Create your views here.
 api_key = "5opRhTzTbi2N2A71LeLZBAhrZEDxjUakTc1UOncQ2qGjg5CE1IvGTfLBMFFpVyL2"
 get_easy = "https://data.mongodb-api.com/app/data-pkrpq/endpoint/getEasyChallenge"
-get_medium = "https://data.mongodb-api.com/app/data-pkrpq/endpoint/getMediumChallenge" 
+get_medium = "https://data.mongodb-api.com/app/data-pkrpq/endpoint/getMediumChallenge"
 get_hard = "https://data.mongodb-api.com/app/data-pkrpq/endpoint/getHardChallenge"
+
 
 @api_view(('GET',))
 @renderer_classes((JSONRenderer,))
@@ -25,6 +26,7 @@ def retrieveEasy(request):
     result = urllib2.urlopen(request).read()
     return Response(json.loads(result))
 
+
 @api_view(('GET',))
 @renderer_classes((JSONRenderer,))
 @never_cache
@@ -37,6 +39,7 @@ def retrieveMedium(request):
     result = urllib2.urlopen(request).read()
     return Response(json.loads(result))
 
+
 @api_view(('GET',))
 @renderer_classes((JSONRenderer,))
 @never_cache
@@ -48,6 +51,3 @@ def retrieveHard(request):
     request.add_header('api-key', api_key)
     result = urllib2.urlopen(request).read()
     return Response(json.loads(result))
-
-    
-

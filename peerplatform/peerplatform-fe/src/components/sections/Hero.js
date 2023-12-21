@@ -1,11 +1,9 @@
 import React, { useState,useContext } from 'react';
 import classNames from 'classnames';
 import { SectionProps } from '../../utils/SectionProps';
-import ButtonGroup from '../elements/ButtonGroup';
 import Button from '../elements/Button';
 import Image from '../elements/Image';
 import { Modal, Input, Form } from 'antd';
-import {Alert} from 'antd';
 import { useHistory } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import "../../assets/demo/buttonsflash.css";
@@ -35,21 +33,17 @@ const Hero = ({
 }) => {
 
   const [videoModalActive, setVideomodalactive] = useState(false);
-  const [visible, setVisible] = useState(false);
   const history = useHistory();
   const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [clockSpin, setClockSpin] = useState(false);
   const [stage, setStage] = useState(0);
-  let { profileURL, setChallengeInState, setShowNextChallengeButton, 
-        getSolution, setRoomName, roomName, getResp,
-        setQuestion } = useContext(AuthContext);
+  let { profileURL, setRoomName, setQuestion } = useContext(AuthContext);
   const [roomState, setRoomState] = useGlobalState();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [shareableLink, setShareableLink] = useState("")
   const [username, setUsername] = useState("")
   const [showMessage, setShowMessage] = useState("")
-  const { device } = roomState
 
 
 
@@ -71,7 +65,6 @@ const Hero = ({
     else {
         selection = 'get_hard'
     }
-    // console.log('selection', selection)
     const base_url = `${profileURL}programming_challenge/${selection}` 
     axios.get(base_url)
     .then(async (res)=>{
@@ -96,15 +89,6 @@ const Hero = ({
     }
     
     return result;
-  }
-
-  async function getSolutionHandler(challenge, query=null, opt){
-    try {
-      console.log('challenge inside func', challenge)
-        return await getSolution(challenge, query, opt)
-    } catch(error){
-        return console.error('Error fetching the solution:', error)
-    } 
   }
 
   async function handleStageSet(bttn, nickname) {
@@ -241,21 +225,7 @@ const Hero = ({
                     className="my-custom-modal"
                     title={
                       <div style={{ textAlign: 'center' }}>
-                        {clockSpin ? (
-                          <>
-                            Please Wait
-                            <span className="bouncing-dot"></span>
-                            <span className="bouncing-dot"></span>
-                            <span className="bouncing-dot"></span>
-                          </>
-                        ) : stage === 0 ? (
-                          "Enter your email to join the waiting list. If you have already been approved as a beta user, you will be allowed to proceed, otherwise expect an email confirming your approval"
-                        ): stage === 1 ? (
-                          "Pick a nickname"
-                        ):
-                        (
-                          "Select Challenge Difficulty"
-                        )}
+                          Select Challenge Difficulty
                       </div>
                     }                    
                     visible={isEmailModalVisible}
@@ -265,85 +235,6 @@ const Hero = ({
                     }}
                     footer={null}
                   >
-                    {clockSpin ? (
-                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                        <ClockLoader color="#36d7b7" />
-                      </div>
-                    ): stage === 0 ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
-                        <Form
-                          name="wrapper"
-                        >
-                          <Form.Item
-                            label="Email"
-                            name="email"
-                            rules={[
-                              {
-                                type: 'email',
-                                message: 'Please enter a valid email address!',
-                              },
-                              {
-                                required: true,
-                                message: 'Email is required!',
-                              },
-                            ]}
-                          >
-                            <Input
-                                type="email"
-                                placeholder="Enter Email"
-                                onChange={(e) => setEmail(e.target.value)}
-                                style={{ marginBottom: '10px' }}
-                            />
-                          </Form.Item>
-                          <Form.Item
-                              label="Name"
-                              name="username"
-                              rules={[
-                                {
-                                  min: 3,
-                                  message: 'Username must be atleast 3 characters',
-                                }
-                              ]}
-                            >
-                              <Input
-                                  type="email"
-                                  placeholder="Enter Email"
-                                  onChange={(e) => setUsername(e.target.value)}
-                                  style={{ marginBottom: '10px' }}
-                              />
-                            </Form.Item>
-                            {showMessage}
-                        </Form>
-                      <Button 
-                        type="primary" 
-                        onClick={handleEmailSubmit} 
-                        style={{ marginBottom: '10px' }}
-                        disabled={ !email }
-                      >
-                        Next
-                      </Button>
-                    </div>            
-                    ): stage === 1 ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
-                          <Input
-                            placeholder="Enter your username"
-                            value={username}
-                            onChange={e => setUsername(e.target.value)}
-                            style={{ marginBottom: '10px' }}
-                          />
-                          <Button 
-                            type="primary"
-                            disabled={!username} 
-                            onClick={() => {
-                            if (username) {
-                              handleStageSet('pair', username.toLowerCase());  
-                            }
-                          }}>
-                            Submit
-                          </Button>
-                      </div>          
-                    ):
-                    (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
                       <Button className="flash-on-hover" type="primary" onClick={(e) => handleSelect(e, e.currentTarget.innerText)} style={{ marginBottom: '10px' }}>
                         Easy
@@ -355,7 +246,6 @@ const Hero = ({
                         Hard
                       </Button> */}
                     </div>
-                    )}
                   </Modal>
               </div>
             </div>
