@@ -67,23 +67,29 @@ export const AuthProvider = ({children}) => {
     //we are going to pass this information down to login page
     //async function because we must wait for something to happen first
     const loginUser = async (tokens) => {
-        let response = await axios.post(`${profileURL}api/token/`,tokens)
         try {
-            setAuthTokens(authTokens => ({
-                ...response.data
-            }))
-            const decoded = jwt_decode(response.data.access)
-            setUser(user => ({
-                ...decoded
-            }))
+            const response = await axios.post(`${profileURL}api/token/`,tokens)
+            console.log('resp', response)
+            const { access, refresh } = response.data
+            setAuthTokens({
+                access,
+                refresh
+            })
+            const decoded = jwt_decode(access)
+            if (!decoded || !decoded.username) {
+                throw new Error("Invalid token structure or missing information");
+            }    
+            setUser(decoded)
             localStorage.setItem('authTokens',JSON.stringify(response.data))
             history.push('/')
+        } catch (error) {
+            setLoginError(error.response?.data?.detail || "An error occurred during login", error);
+            console.log('login error', error)
+            alert(error.response?.data?.detail || "An error occurred during login");
         }
-        catch(err) {
-            setLoginError(response.data.user)
-            alert(response.data.user);
-        }
-    }
+    };
+
+
     const onShowNotificationClicked = () => {
         setNotification({ title: "Notification",
                           body: "This is a test notification" })

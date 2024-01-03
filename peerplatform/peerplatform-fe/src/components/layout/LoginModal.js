@@ -2,12 +2,17 @@ import React, { useState,  useContext } from "react";
 import AuthContext from '../../context/AuthContext';
 import loginSchema from "../login_components/validation/loginSchema";
 import "../../assets/dashboard_scss/login-modal.scss"
+import { withRouter } from "react-router-dom"
+import PropTypes from "prop-types"
+
+
 
 const LoginModal = ({ closeModal }) => {
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  let { loginUser, loginError, 
+  const { loginUser, loginError, 
         setLoginModalVisible, successSignup } = useContext(AuthContext);
+
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -28,9 +33,9 @@ const LoginModal = ({ closeModal }) => {
         <button className="close-button" onClick={() => setLoginModalVisible(false)}>X</button>
         <div>Login</div>
         <div className="content">
-          <p id="loginError" data-testid="loginError">{loginError}</p>
+          <div id="loginError" data-testid="loginError">{loginError}</div>
           {successSignup && (
-            <div>User created successfully. Please login.</div>
+            <p>User created successfully. Please login.</p>
           )}
           <form className="form">
             <div className="form-group">
@@ -65,4 +70,10 @@ const LoginModal = ({ closeModal }) => {
   );
 };
 
-export default LoginModal;
+LoginModal.propTypes = {
+    login: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired
+};
+
+
+export default withRouter(LoginModal);

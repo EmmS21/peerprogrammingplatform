@@ -6,6 +6,8 @@ from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 
 # extending user model to include
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     city = models.CharField(max_length=50, blank=True)
@@ -21,9 +23,11 @@ class Profile(models.Model):
 
     @receiver(user_logged_in)
     def got_online(sender, user, request, **kwargs):
-        user.profile.is_online = True
-        user.profile.save()
-    #not using this
+        if hasattr(user, 'profile'):
+            user.profile.is_online = True
+            user.profile.save()
+    # not using this
+
     @receiver(user_logged_out)
     def got_offline(sender, user, request, **kwargs):
         user.profile.is_online = False

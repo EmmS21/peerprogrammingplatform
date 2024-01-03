@@ -37,7 +37,7 @@ const Hero = ({
   const [clockSpin, setClockSpin] = useState(false);
   const [stage, setStage] = useState(0);
   let { profileURL, setRoomName, setQuestion,
-        isLoginModalVisible, setIsLoginModalVisible,
+        isLoginModalVisible, setLoginModalVisible,
         isSignupModalVisible, setIsSignupModalVisible } = useContext(AuthContext);
 
         // isSignupModalVisible: isSignupModalVisible,
@@ -204,9 +204,8 @@ const Hero = ({
                     </h2>
                     <div>Practice programming challenges guided by advice and tips from AI to help you learn more effectively and ace your interviews.</div>
                   </div>
-                  { isLoginModalVisible && <LoginModal closeModal={() => setIsLoginModalVisible(false)} />}
-                  { isSignupModalVisible && <SignupModal/> }
-                  {/* { isSignupModalVisible && <SignupModal closeModal={() => setIsSignupModalVisible(false)} />}  */}
+                  { isLoginModalVisible && <LoginModal closeModal={() => setLoginModalVisible(false)} />}
+                  { isSignupModalVisible && <SignupModal closeModal={() => setIsSignupModalVisible(false)} />} 
               </div>
             </div>
           </div>

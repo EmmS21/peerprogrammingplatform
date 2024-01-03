@@ -3,6 +3,7 @@ import { push } from "connected-react-router";
 import { toast } from "react-toastify";
 import { SET_TOKEN, SET_CURRENT_USER, UNSET_CURRENT_USER } from "./LoginTypes";
 import { setAxiosAuthToken, toastOnError } from "../../utils/Utils";
+import AuthContext from '../../context/AuthContext'
 
 //update profile information
 //export const updateProfile = (userData) => dispatch => {
@@ -13,9 +14,11 @@ import { setAxiosAuthToken, toastOnError } from "../../utils/Utils";
 //        })
 //}
 
+
+
 export const login = (userData, redirectTo) => dispatch => {
   axios
-    .post("https://codesquad.onrender.com/api/token/", userData)
+    .post("http://127.0.0.1:8000/api/token/", userData)
     .then(response => {
       const { auth_token } = response.data;
       setAxiosAuthToken(auth_token);
@@ -30,7 +33,7 @@ export const login = (userData, redirectTo) => dispatch => {
 
 export const getCurrentUser = redirectTo => dispatch => {
   axios
-    .get("https://codesquad.onrender.com/users/")
+    .get("http://127.0.0.1:8000/users/")
     .then(response => {
       const user = {
         username: response.data.username,

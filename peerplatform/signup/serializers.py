@@ -176,19 +176,19 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         except KeyError:
             pass
         user = authenticate(**authenticate_kwargs)
+        print('user', user)
+        print('authenticate_kwargs:', authenticate_kwargs)
         if not user:
             return {
                 'user': 'Username or password is incorrect',
             }
         token = RefreshToken.for_user(user)
         logger.debug(f"User Pair: {user}")
-        token['username'] = user.username
-        token['first_name'] = user.first_name
-        token['last_name'] = user.last_name
-        token['country'] = user.profile.country
-        token['city'] = user.profile.city
-        token['bio'] = user.profile.bio
-        token['photo'] = json.dumps(str(user.profile.profile_pic))
+        token_data = {
+            'refresh': str(token),
+            'access': str(token.access_token),
+        }
+        print('tokendata', token_data)
 
         user_logged_in.send(sender=user.__class__,
                             request=self.context['request'], user=user)
@@ -200,8 +200,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             )
 
         return {
-            'refresh': str(token),
-            'access': str(token.access_token),
+            'refresh': token_data.refresh,
+            'access': token_data.access,
         }
 
 
