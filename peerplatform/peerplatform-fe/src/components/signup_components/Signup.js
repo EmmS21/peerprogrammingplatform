@@ -62,12 +62,7 @@ const Signup = () => {
             <div className="base-container">
                 <div className="content">
                     <div className="image">
-                        <ProcessImage
-                            image={secure_signup}
-                            resize={{ width:400, height: 400 }}
-                            processedImage={(src,err) => this.setState({ src,err})}
-                            />
-                        {loading === false && <h1>Signup</h1>}
+                        <h1>Signup</h1>
                     </div>
                     { visible ? (
                         <Alert

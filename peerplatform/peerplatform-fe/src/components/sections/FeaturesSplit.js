@@ -62,7 +62,7 @@ const FeaturesSplit = ({
         <div className={innerClasses}>
           <SectionHeader data={sectionHeader} className="center-content" />
           <div className={splitClasses}>
-            Practice Leetcode guided by advice and tips from AI to help you learn more effectively and ace your interviews.
+            Practice programming challenges guided by advice and tips from AI to help you learn more effectively and ace your interviews.
           </div>
         </div>
       </div>

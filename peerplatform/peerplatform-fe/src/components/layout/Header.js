@@ -34,9 +34,9 @@ const Header = ({
 }) => {
 
   const [isActive, setIsactive] = useState(false);
-  let { user,logOutUser } = useContext(AuthContext)
-
-
+  let { user, logOutUser,
+        setLoginModalVisible, setIsSignupModalVisible,
+        successSignup } = useContext(AuthContext)  
   const nav = useRef(null);
   const hamburger = useRef(null);
 
@@ -50,6 +50,13 @@ const Header = ({
       closeMenu();
     };
   });  
+
+  useEffect (() => {
+    if(successSignup === true){
+      setIsSignupModalVisible(false)
+      setLoginModalVisible(true)
+    }
+  },[successSignup])
 
   const openMenu = () => {
     document.body.classList.add('off-nav-is-active');
@@ -122,7 +129,7 @@ const Header = ({
                       className="list-reset header-nav-right"
                     >
                       <li>
-                        {/* { user ? (
+                        { user ? (
                                     <div className="parentButtons">
                                         {user && <p>Welcome back {user.username}</p>}
                                         <Link id="dashboard-button" to={"/profile"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Dashboard</Link>
@@ -130,10 +137,28 @@ const Header = ({
                                     </div>
                         ): (
                             <div className="parentButtons">
-                                <Link id="login" to={"/login"} className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Login</Link>
+                                <Link 
+                                  id="login" 
+                                  className="button button-primary button-wide-mobile button-sm" 
+                                  onClick={() => {
+                                    setLoginModalVisible(prevState => !prevState)
+                                    setIsSignupModalVisible(false)
+                                  }}>
+                                    Login
+                                  </Link>
+                                <Link 
+                                  id="signup" 
+                                  className="button button-primary button-wide-mobile button-sm" 
+                                  onClick={() => {
+                                    setIsSignupModalVisible(prevState => !prevState)
+                                    setLoginModalVisible(false)
+                                  }}>
+                                    Sign Up
+                                </Link>
+
                             </div>
                             )
-                        } */}
+                        }
                       </li>
                     </ul>}
                 </div>

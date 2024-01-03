@@ -61,6 +61,8 @@ export const AuthProvider = ({children}) => {
     const [optimalAnswer, setOptimalAnswer] = useState()
     const history = useHistory();
     const [checkAnswers, setCheckAnswers] = useState([])
+    const [isLoginModalVisible, setLoginModalVisible] = useState(false);
+    const [isSignupModalVisible, setIsSignupModalVisible] = useState(false)
 
     //we are going to pass this information down to login page
     //async function because we must wait for something to happen first
@@ -352,13 +354,9 @@ export const AuthProvider = ({children}) => {
 
     const onSubmit = (data) => {
         const user = {
-            username: data.username,
+            username: data.email,
             email: data.email,
             password: data.password,
-            profile: {
-                        city: data.city,
-                        country: data.country,
-            }
         };
         fetch(`${profileURL}api/register`, {
             method: 'POST',
@@ -367,21 +365,24 @@ export const AuthProvider = ({children}) => {
             },
             body: JSON.stringify(user)
             })
-            .then(res => {
+            .then(async (res) => {
                 if(!res.ok){
-                   return res.text().then(text=> {
-                    const cleanText = text.split(':')[1].replace('[', '').replace(']','').replace('}','')
+                    const errorText = await res.text()
+                    const cleanText = errorText
+                        .split(":"[1])
+                        .replace("[", "")
+                        .replace("]", "")
+                        .replace("}", "")
                     setErrorText(cleanText)
                     setVisible(true)
-                   })
-                }
-                else {
-                    return res.json()
-                            .then(data=> {
-                                    setSuccessSignup(true)
-                            });
-                    }
-            })
+                   } else {
+                    const userData = await res.json()
+                    setSuccessSignup(true)
+                   }
+                })
+                .catch((error) => {
+                    console.error("Unexpected error:", error)
+                })
         };
     
     async function sendWebSocketData(data){
@@ -594,7 +595,11 @@ export const AuthProvider = ({children}) => {
         optimalAnswer: optimalAnswer,
         submitCodeJudge0: submitCodeJudge0,
         checkAnswers: checkAnswers,
-        setCheckAnswers: setCheckAnswers
+        setCheckAnswers: setCheckAnswers,
+        isLoginModalVisible: isLoginModalVisible, 
+        setLoginModalVisible: setLoginModalVisible,
+        isSignupModalVisible: isSignupModalVisible,
+        setIsSignupModalVisible: setIsSignupModalVisible,
     }
 
     //so we refresh our refresh token and update state every 4 minutes

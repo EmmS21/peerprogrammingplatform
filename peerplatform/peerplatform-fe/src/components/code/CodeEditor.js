@@ -226,11 +226,12 @@ const CodeEditor = () => {
     const makeSubmission = (e) => {
         e.preventDefault();
         setShowTestCases(false)
-        let code = encodeURIComponent(requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText)
+        let code = requestBody.source_code = document.getElementsByClassName('ace_content')[0].innerText
         console.log('code', code)
         // let undecode = atob(code)
         // console.log('after decode', undecode)
         requestBody.source_code = code
+        console.log('**', requestBody.source_code)
         requestBody.language_id = "63"
         setSpinnerOn(true)
         setResp('')

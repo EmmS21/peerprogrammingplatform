@@ -2,16 +2,16 @@ import React, { useState,useContext } from 'react';
 import classNames from 'classnames';
 import { SectionProps } from '../../utils/SectionProps';
 import Button from '../elements/Button';
-import Image from '../elements/Image';
-import { Modal, Input, Form } from 'antd';
+import { Modal } from 'antd';
 import { useHistory } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import "../../assets/demo/buttonsflash.css";
 import axios from 'axios';
-import ClockLoader from "react-spinners/ClockLoader";
 import { useGlobalState } from '../../context/RoomContextProvider';
 import { Device } from '@twilio/voice-sdk';
 import ShareLink from './ShareLink';
+import SignupModal from '../layout/SignupModal';
+import LoginModal from '../layout/LoginModal';
 
 const propTypes = {
   ...SectionProps.types
@@ -32,19 +32,20 @@ const Hero = ({
   ...props
 }) => {
 
-  const [videoModalActive, setVideomodalactive] = useState(false);
   const history = useHistory();
   const [isEmailModalVisible, setIsEmailModalVisible] = useState(false);
-  const [email, setEmail] = useState('');
   const [clockSpin, setClockSpin] = useState(false);
   const [stage, setStage] = useState(0);
-  let { profileURL, setRoomName, setQuestion } = useContext(AuthContext);
+  let { profileURL, setRoomName, setQuestion,
+        isLoginModalVisible, setIsLoginModalVisible,
+        isSignupModalVisible, setIsSignupModalVisible } = useContext(AuthContext);
+
+        // isSignupModalVisible: isSignupModalVisible,
+        // setIsSignupModalVisible: setIsSignupModalVisible
+
   const [roomState, setRoomState] = useGlobalState();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [shareableLink, setShareableLink] = useState("")
-  const [username, setUsername] = useState("")
-  const [showMessage, setShowMessage] = useState("")
-
 
 
   const handleGetStarted = () => {
@@ -132,57 +133,6 @@ const Hero = ({
     }
   }  
 
-  const handleEmailSubmit = async () => {
-    try {
-      // Make API call to store email in the backend
-      let sendObj = {  email, username };
-      const response = await fetch(`${profileURL}api/addEmail`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(sendObj),
-      });
-  
-      if (response.status === 201) {
-        // Show success message and delay closing the modal
-        setShowMessage('Your email has not been approved, please wait for the email giving your access.');
-        setTimeout(() => {
-          setIsEmailModalVisible(false) 
-        }, 5000); 
-      } else if (response.status === 202) {
-        setShowMessage('Email has been added to the waiting list. You will receive confirmation once it has been approved.');
-        setTimeout(() => {
-          setIsEmailModalVisible(false) 
-        }, 5000); 
-
-      }
-      
-      else if (response.status === 200) {
-        // Continue to setStage(2)
-        setStage(2);
-      } else {
-        // Handle other statuses if needed
-        console.error('Unexpected response status:', response.status);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      // Handle errors if needed
-    }
-  };
-  
-
-
-  function openModal (e) {
-    e.preventDefault();
-    setVideomodalactive(true);
-  }
-
-  function closeModal (e) {
-    e.preventDefault();
-    setVideomodalactive(false);
-  }   
-
   const outerClasses = classNames(
     'hero section center-content',
     topOuterDivider && 'has-top-divider',
@@ -207,7 +157,7 @@ const Hero = ({
         <div className={innerClasses}>
           <div className="hero-content">
             <h1 id="header" className="mt-0 mb-16 reveal-from-bottom" data-reveal-delay="200">
-              Learn Leetcode <span className="text-color-primary">using AI</span>
+              Practice programming challenges for interviews <span className="text-color-primary">guided by AI</span>
             </h1>
             <div className="container-xs">
               <p className="m-0 mb-32 reveal-from-bottom" data-reveal-delay="400">
@@ -221,6 +171,7 @@ const Hero = ({
                   <Button tag="a" color="primary" wideMobile onClick={handleGetStarted} id="get-started">
                     Get started
                   </Button>
+                  <div style={{ marginBottom: '80px' }}></div>
                   <Modal
                     className="my-custom-modal"
                     title={
@@ -247,31 +198,18 @@ const Hero = ({
                       </Button> */}
                     </div>
                   </Modal>
+                  <div>
+                    <h2>
+                      How it works
+                    </h2>
+                    <div>Practice programming challenges guided by advice and tips from AI to help you learn more effectively and ace your interviews.</div>
+                  </div>
+                  { isLoginModalVisible && <LoginModal closeModal={() => setIsLoginModalVisible(false)} />}
+                  { isSignupModalVisible && <SignupModal/> }
+                  {/* { isSignupModalVisible && <SignupModal closeModal={() => setIsSignupModalVisible(false)} />}  */}
               </div>
             </div>
           </div>
-          <div className="hero-figure reveal-from-bottom illustration-element-01" data-reveal-value="20px" data-reveal-delay="800">
-            <a
-              id="video-icon"
-              data-video="https://youtu.be/n_OT7bHZ-ls"
-              href="#0"
-              aria-controls="video-modal"
-              onClick={openModal}
-            >
-              <Image
-                className="has-shadow"
-                src={require('./../../assets/images/peerprogramming.png')}
-                alt="Hero"
-                width={896}
-                height={504} />
-            </a>
-          </div>
-          <Modal
-            id="video-modal"
-            show={videoModalActive}
-            handleClose={closeModal}
-            video= "https://www.youtube.com/embed/n_OT7bHZ-ls"
-            videoTag="iframe" />
         </div>
       </div>
     </section>
@@ -282,3 +220,5 @@ Hero.propTypes = propTypes;
 Hero.defaultProps = defaultProps;
 
 export default Hero;
+
+// isSignupModalVisible, setIsSignupModalVisible
