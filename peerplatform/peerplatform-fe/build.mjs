@@ -13,6 +13,8 @@ if (!process.env["DOCKER_USERNAME"] || !process.env["DOCKER_PASSWORD"]) {
 async function loginToDockerHub(contextDir, client, dockerRepo) {
 //    const dockerUsernameSecret = await client.setSecret("DOCKER_USERNAME", process.env.DOCKER_USERNAME);
 //    const dockerPasswordSecret = await client.setSecret("DOCKER_PASSWORD", process.env.DOCKER_PASSWORD);
+    const dockerUserName = process.env.DOCKER_USERNAME
+    const dockerPassword = process.env.DOCKER_PASSWORD
    try {
        const imageRef = await contextDir
            .dockerBuild()
@@ -20,12 +22,12 @@ async function loginToDockerHub(contextDir, client, dockerRepo) {
            .withExec(["sh", "-c", "apt-get update && apt-get install -y docker.io"])
         //    .withSecretVariable("DOCKER_USERNAME", dockerUsernameSecret)
         //    .withSecretVariable("DOCKER_PASSWORD", dockerPasswordSecret)
-           .withRegistryAuth("docker.io",process.env.DOCKER_USERNAME, process.env.DOCKER_PASSWORD)
-           .publish(dockerRepo)
-        //    .withExec([
-        //        "sh", "-c",
-        //        `echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin`
-        //    ])
+        //    .withRegistryAuth("docker.io",process.env.DOCKER_USERNAME, process.env.DOCKER_PASSWORD)
+        .withExec([
+            "sh", "-c",
+            `echo "${dockerPassword}" | docker login -u "${dockerUserName}" --password-stdin`
+        ])
+        .publish(dockerRepo)
            return imageRef
    } catch (error) {
        console.error("Error during Docker login:", error);
