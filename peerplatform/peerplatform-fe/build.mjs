@@ -15,7 +15,7 @@ async function loginToDockerHub(contextDir, client, dockerRepo) {
 //    const dockerPasswordSecret = await client.setSecret("DOCKER_PASSWORD", process.env.DOCKER_PASSWORD);
     const dockerUserName = process.env.DOCKER_USERNAME
     const dockerPassword = process.env.DOCKER_PASSWORD
-    const dockerImage = "emms21/interviewsageai:test"; 
+    const dockerImage = "emms21/interviewsageai:test";
    try {
        const imageRef = await contextDir
            .dockerBuild()
@@ -28,14 +28,12 @@ async function loginToDockerHub(contextDir, client, dockerRepo) {
                 "sh", "-c",
                 `echo "${dockerPassword}" | docker login -u "${dockerUserName}" --password-stdin`
             ])
-            console.log(`Attempting to pull the Docker image: "testing"...`);
-            await imageRef.withExec(["sh", "-c", `docker pull ${dockerImage}`]);
-            console.log(`Successfully pulled image: ${dockerImage}`);
-    
-            console.log(`Listing contents of the image: ${dockerImage}...`);
-            const contents = await imageRef.withExec(["sh", "-c", `docker run --rm ${dockerImage} ls -l /`]);
-            console.log(`Contents of the image:\n${contents}`);
-    
+        console.log(`Attempting to pull and run the Docker image: ${dockerImage}...`);
+        await imageRef.withExec(["sh", "-c", `docker pull ${dockerImage}`]);
+        console.log(`Running the container from image: ${dockerImage}...`);
+        const output = await imageRef.withExec(["sh", "-c", `docker run --rm ${dockerImage}`]);
+        console.log(`Output from the container:\n${output}`);
+        return imageRef;
     } catch (error) {
         console.error("Error during Docker operation:", error);
 
