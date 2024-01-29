@@ -18,8 +18,8 @@ async function loginToDockerHub(contextDir, client, dockerRepo) {
            .dockerBuild()
            .from("debian:buster")
            .withExec(["sh", "-c", "apt-get update && apt-get install -y docker.io"])
-           .withSecretVariable("DOCKER_USERNAME", dockerUsernameSecret)
-           .withSecretVariable("DOCKER_PASSWORD", dockerPasswordSecret)
+        //    .withSecretVariable("DOCKER_USERNAME", dockerUsernameSecret)
+        //    .withSecretVariable("DOCKER_PASSWORD", dockerPasswordSecret)
            .withRegistryAuth("docker.io",dockerUsernameSecret, dockerPasswordSecret)
            .publish(dockerRepo)
         //    .withExec([
