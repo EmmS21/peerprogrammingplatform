@@ -56,15 +56,8 @@ async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
        } catch (publishErr) {
             console.error("Error during the Docker publish:", publishErr);
             if (publishErr instanceof GraphQLRequestError) {
-                console.error("GraphQL Request Error Details:", publishErr.details);
+                console.error("GraphQL Request Error Details:", publishErr);
             } 
-        if (publishErr.response) {
-            console.error("HTTP Status Code:", publishErr.response.status);
-            console.error("HTTP Headers:", publishErr.response.headers);
-            console.error("HTTP Response Body:", publishErr.response.data);
-        } else {
-                console.error("Publish Error Details:", publishErr);
-            }
         }
     } catch (loginErr) {
         console.error("Error during the Docker login:", loginErr);
