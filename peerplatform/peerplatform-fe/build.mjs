@@ -47,12 +47,15 @@ async function dockerizeApp (contextDir, client, repo, environment) {
 
 async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
     const dockerRepo = `${repo}:${tag}`;
+    const secret = client.setSecret("secret", "TOKEN")
+    
     try {
         await contextDir
             .dockerBuild()
             .from("debian:buster")
             .withExec(["sh", "-c", "apt-get update && apt-get install -y docker.io"])
-            .withRegistryAuth(process.env.DOCKER_USERNAME, process.env.DOCKER_PASSWORD, "test") 
+            .withSecretVariable("secret", secret)
+            .withRegistryAuth(process.env.DOCKER_USERNAME, process.env.DOCKER_PASSWORD) 
             .publish(dockerRepo);
             // .withExec([
             //     "sh", "-c",
