@@ -9,6 +9,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: CI/CD
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -27,6 +28,8 @@ jobs:
         run: node ./peerplatform/peerplatform-fe/build.mjs
         env:
           ENVIRONMENT: "dev"
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Manual Approval for Staging
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging'
@@ -47,9 +50,13 @@ jobs:
         run: node ./peerplatform/peerplatform-fe/build.mjs
         env:
           ENVIRONMENT: "staging"
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Deploy to Production
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
         run: node ./peerplatform/peerplatform-fe/build.mjs
         env:
           ENVIRONMENT: "production"
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
