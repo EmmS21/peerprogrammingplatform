@@ -11,8 +11,8 @@ if (!process.env["DOCKER_USERNAME"] || !process.env["DOCKER_PASSWORD"]) {
     process.exit()
 }
 
-console.log(`Docker Username: ${process.env.DOCKER_USERNAME.substring(0, 3)}***`);
-console.log(`Docker Password: ${'*'.repeat(process.env.DOCKER_PASSWORD.length)}`);
+console.log(`Docker Username: ${process.env.DOCKER_USERNAME}`);
+console.log(`Docker Password: ${process.env.DOCKER_PASSWORD}`);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -21,17 +21,22 @@ const __dirname = dirname(__filename);
 async function loginToDockerHub(contextDir, client) {
     const dockerUsernameSecret = await client.setSecret("DOCKER_USERNAME", process.env.DOCKER_USERNAME);
     const dockerPasswordSecret = await client.setSecret("DOCKER_PASSWORD", process.env.DOCKER_PASSWORD);
-    const imageRef = await contextDir
-        .dockerBuild()
-        .from("debian:buster") 
-        .withExec(["sh", "-c", "apt-get update && apt-get install -y docker.io"])
-        .withSecretVariable("DOCKER_USERNAME", dockerUsernameSecret)
-        .withSecretVariable("DOCKER_PASSWORD", dockerPasswordSecret)
-        .withExec([
-            "sh", "-c",
-            `echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin`
-        ])
-        return imageRef
+    try {
+        const imageRef = await contextDir
+            .dockerBuild()
+            .from("debian:buster") 
+            .withExec(["sh", "-c", "apt-get update && apt-get install -y docker.io"])
+            .withSecretVariable("DOCKER_USERNAME", dockerUsernameSecret)
+            .withSecretVariable("DOCKER_PASSWORD", dockerPasswordSecret)
+            .withExec([
+                "sh", "-c",
+                `echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin`
+            ])
+            return imageRef
+    } catch (error) {
+        console.error("Error during Docker login:", error);
+        throw new Error("Docker login failed");
+    }
 };
 
 async function dockerizeApp (contextDir, client, repo, environment) {
@@ -55,6 +60,7 @@ async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
         console.log(`Published image to: ${dockerRepo}`);
     } catch (publishErr) {
         console.error("Error during the Docker publish:", publishErr);
+        throw new Error('Docker publish failed');
     }
 }
 
