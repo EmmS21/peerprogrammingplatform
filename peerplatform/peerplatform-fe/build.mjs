@@ -52,11 +52,12 @@ async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
             .dockerBuild()
             .from("debian:buster")
             .withExec(["sh", "-c", "apt-get update && apt-get install -y docker.io"])
-            .withRegistryAuth(process.env.DOCKER_USERNAME, process.env.DOCKER_PASSWORD) // Use withRegistryAuth
-            .withExec([
-                "sh", "-c",
-                `docker push ${dockerRepo}`
-            ]);
+            .withRegistryAuth(process.env.DOCKER_USERNAME, process.env.DOCKER_PASSWORD) 
+            .publish(dockerRepo);
+            // .withExec([
+            //     "sh", "-c",
+            //     `docker push ${dockerRepo}`
+            // ]);
         console.log(`Published image to: ${dockerRepo}`);
     } catch (error) {
         console.error("Error during Docker build and publish:", error);
