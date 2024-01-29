@@ -16,6 +16,8 @@ console.log(`Docker Password: ${process.env.DOCKER_PASSWORD}`);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+console.log('Listing directory contents:');
+execSync('ls -la', { stdio: 'inherit' }); 
 
 
 async function loginToDockerHub(contextDir, client) {
@@ -111,8 +113,8 @@ async function repullRetagRepublishImage(repo, oldTag, newTag) {
 
 connect(
     async (client) => {
-        const contextDir = client.host().directory(".", { exclude: ["node_modules/"] });  
-        const backendContextDir = client.host().directory(join(__dirname, '../'));
+        const contextDir = client.host().directory('./peerprogrammingplatform/peerprogramming/peerprogramming-fe', { exclude: ["node_modules/"] });
+        const backendContextDir = client.host().directory('./peerprogrammingplatform/peerprogramming/');
         // const node = client.container().from("node:16");
         // const runner = node
         //   .withDirectory("/src", contextDir)
