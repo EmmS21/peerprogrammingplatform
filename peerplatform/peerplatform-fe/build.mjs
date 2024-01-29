@@ -45,31 +45,49 @@ async function dockerizeApp (contextDir, client, repo, environment) {
    }
 }
 
-
 async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
-   const dockerRepo = `${repo}:${tag}`;
-   try {
-       const imageRef = await loginToDockerHub(contextDir, client);
-       try {
-           await imageRef.publish(dockerRepo);
-           console.log(`Published image to: ${dockerRepo}`);
-       } catch (publishErr) {
-            console.error("Error during the Docker publish:", publishErr);
-            if (publishErr instanceof GraphQLRequestError) {
-                console.error("GraphQL Request Error Details:", publishErr);
-            } 
-        }
-    } catch (loginErr) {
-        console.error("Error during the Docker login:", loginErr);
-        if (loginErr.response) {
-            console.error("HTTP Status Code:", loginErr.response.status);
-            console.error("HTTP Headers:", loginErr.response.headers);
-            console.error("HTTP Response Body:", loginErr.response.data);
-        } else {
-            console.error("Login Error Details:", loginErr);
-        }
+    const dockerRepo = `${repo}:${tag}`;
+    try {
+        await contextDir
+            .dockerBuild()
+            .from("debian:buster")
+            .withExec(["sh", "-c", "apt-get update && apt-get install -y docker.io"])
+            .withRegistryAuth(process.env.DOCKER_USERNAME, process.env.DOCKER_PASSWORD) // Use withRegistryAuth
+            .withExec([
+                "sh", "-c",
+                `docker push ${dockerRepo}`
+            ]);
+        console.log(`Published image to: ${dockerRepo}`);
+    } catch (error) {
+        console.error("Error during Docker build and publish:", error);
     }
-}
+ }
+ 
+
+// async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
+//    const dockerRepo = `${repo}:${tag}`;
+//    try {
+//        const imageRef = await loginToDockerHub(contextDir, client);
+//        try {
+//            await imageRef.publish(dockerRepo);
+//            console.log(`Published image to: ${dockerRepo}`);
+//        } catch (publishErr) {
+//             console.error("Error during the Docker publish:", publishErr);
+//             if (publishErr instanceof GraphQLRequestError) {
+//                 console.error("GraphQL Request Error Details:", publishErr);
+//             } 
+//         }
+//     } catch (loginErr) {
+//         console.error("Error during the Docker login:", loginErr);
+//         if (loginErr.response) {
+//             console.error("HTTP Status Code:", loginErr.response.status);
+//             console.error("HTTP Headers:", loginErr.response.headers);
+//             console.error("HTTP Response Body:", loginErr.response.data);
+//         } else {
+//             console.error("Login Error Details:", loginErr);
+//         }
+//     }
+// }
 
 
 async function repullRetagRepublishImage(repo, oldTag, newTag) {
