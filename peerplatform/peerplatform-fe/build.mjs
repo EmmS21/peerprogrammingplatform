@@ -1,4 +1,4 @@
-import { connect } from "@dagger.io/dagger"
+import { connect, GraphQLRequestError } from "@dagger.io/dagger"
 // import { loginToDockerHub } from "/loginToDockerHub"
 import { execSync } from "child_process";
 import dotenv from 'dotenv';
@@ -54,7 +54,10 @@ async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
            await imageRef.publish(dockerRepo);
            console.log(`Published image to: ${dockerRepo}`);
        } catch (publishErr) {
-        console.error("Error during the Docker publish:", publishErr);
+            console.error("Error during the Docker publish:", publishErr);
+            if (publishErr instanceof GraphQLRequestError) {
+                console.error("GraphQL Request Error Details:", publishErr.details);
+            } 
         if (publishErr.response) {
             console.error("HTTP Status Code:", publishErr.response.status);
             console.error("HTTP Headers:", publishErr.response.headers);
@@ -90,9 +93,9 @@ async function repullRetagRepublishImage(repo, oldTag, newTag) {
 connect(
    async (client) => {
        const contextDir = client.host().directory('peerplatform/peerplatform-fe', { exclude: ["node_modules/"] });
-       const backendContextDir = client.host().directory(' peerplatform');
+       const backendContextDir = client.host().directory('peerplatform');
        // const node = client.container().from("node:16");
-       // const runner = node
+       // const runner = noderr
        //   .withDirectory("/src", contextDir)
        //   .withWorkdir("/src")
        //   .withExec(["npm", "install", "--legacy-peer-deps"]);
