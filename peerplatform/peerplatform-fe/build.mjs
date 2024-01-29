@@ -52,7 +52,7 @@ async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
             .dockerBuild()
             .from("debian:buster")
             .withExec(["sh", "-c", "apt-get update && apt-get install -y docker.io"])
-            .withRegistryAuth(process.env.DOCKER_USERNAME, process.env.DOCKER_PASSWORD) 
+            .withRegistryAuth(process.env.DOCKER_USERNAME, process.env.DOCKER_PASSWORD, "") 
             .publish(dockerRepo);
             // .withExec([
             //     "sh", "-c",
