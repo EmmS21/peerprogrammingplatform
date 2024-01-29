@@ -23,6 +23,9 @@ jobs:
         run: npm install --legacy-peer-deps
         working-directory: ./peerplatform/peerplatform-fe
 
+      - name: Print Current Directory
+        run: pwd
+
       - name: Test Docker Build and Push
         if: github.ref == 'refs/heads/main'
         run: |
