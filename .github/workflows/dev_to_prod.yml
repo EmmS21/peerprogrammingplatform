@@ -24,7 +24,7 @@ jobs:
 
       - name: Build and Deploy to Development
         if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
-        run: node ../../peerplatform/peerplatform-fe/build.mjs
+        run: node ./peerplatform/peerplatform-fe/build.mjs
         env:
           ENVIRONMENT: "dev"
 
@@ -44,12 +44,12 @@ jobs:
 
       - name: Build and Deploy to Staging
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging'
-        run: node ../../peerplatform/peerplatform-fe/build.mjs
+        run: node ./peerplatform/peerplatform-fe/build.mjs
         env:
           ENVIRONMENT: "staging"
 
       - name: Build and Deploy to Production
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
-        run: node ../../peerplatform/peerplatform-fe/build.mjs
+        run: node ./peerplatform/peerplatform-fe/build.mjs
         env:
           ENVIRONMENT: "production"
