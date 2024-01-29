@@ -2,6 +2,12 @@ import { connect, GraphQLRequestError } from "@dagger.io/dagger"
 // import { loginToDockerHub } from "/loginToDockerHub"
 import { execSync } from "child_process";
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const scriptUrl = import.meta.url;
+const scriptDir = path.dirname(fileURLToPath(scriptUrl));
+
 
 dotenv.config();
 if (!process.env["DOCKER_USERNAME"] || !process.env["DOCKER_PASSWORD"]) {
@@ -15,7 +21,6 @@ async function loginToDockerHub(contextDir, client, dockerRepo) {
 //    const dockerPasswordSecret = await client.setSecret("DOCKER_PASSWORD", process.env.DOCKER_PASSWORD);
     const dockerUserName = process.env.DOCKER_USERNAME
     const dockerPassword = process.env.DOCKER_PASSWORD
-    const dockerImage = "emms21/interviewsageai:test";
    try {
        const imageRef = await contextDir
            .dockerBuild()
@@ -28,11 +33,9 @@ async function loginToDockerHub(contextDir, client, dockerRepo) {
                 "sh", "-c",
                 `echo "${dockerPassword}" | docker login -u "${dockerUserName}" --password-stdin`
             ])
-        console.log(`Attempting to pull and run the Docker image: ${dockerImage}...`);
-        await imageRef.withExec(["sh", "-c", `docker pull ${dockerImage}`]);
-        console.log(`Running the container from image: ${dockerImage}...`);
-        const output = await imageRef.withExec(["sh", "-c", `docker run --rm ${dockerImage}`]);
-        console.log(`Output from the container:\n${JSON.stringify(output)}`);
+        console.log("Attempting to publish the Docker image...");
+        await imageRef.publish(dockerRepo);
+        console.log(`Successfully published image to: ${dockerRepo}`);
         return imageRef;
     } catch (error) {
         console.error("Error during Docker operation:", error);
@@ -105,9 +108,17 @@ async function repullRetagRepublishImage(repo, oldTag, newTag) {
 
 connect(
    async (client) => {
-       const contextDir = client.host().directory('peerplatform/peerplatform-fe', { exclude: ["node_modules/"] });
-       const backendContextDir = client.host().directory('peerplatform');
-       // const node = client.container().from("node:16");
+    const frontendContextDir = path.join(scriptDir, '../peerplatform-fe');
+    const backendContext = path.join(scriptDir, '../');
+
+// Use the absolute paths in your code
+    const contextDir = client.host().directory(frontendContextDir, { exclude: ["node_modules/"] });
+    const backendContextDir = client.host().directory(backendContext);
+
+    //    const contextDir = client.host().directory('peerplatform/peerplatform-fe', { exclude: ["node_modules/"] });
+    //    const backendContextDir = client.host().directory('peerplatform');
+
+    // const node = client.container().from("node:16");
        // const runner = noderr
        //   .withDirectory("/src", contextDir)
        //   .withWorkdir("/src")
