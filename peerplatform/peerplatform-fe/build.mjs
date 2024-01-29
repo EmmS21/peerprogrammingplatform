@@ -11,8 +11,8 @@ if (!process.env["DOCKER_USERNAME"] || !process.env["DOCKER_PASSWORD"]) {
 
 
 async function loginToDockerHub(contextDir, client, dockerRepo) {
-   const dockerUsernameSecret = await client.setSecret("DOCKER_USERNAME", process.env.DOCKER_USERNAME);
-   const dockerPasswordSecret = await client.setSecret("DOCKER_PASSWORD", process.env.DOCKER_PASSWORD);
+//    const dockerUsernameSecret = await client.setSecret("DOCKER_USERNAME", process.env.DOCKER_USERNAME);
+//    const dockerPasswordSecret = await client.setSecret("DOCKER_PASSWORD", process.env.DOCKER_PASSWORD);
    try {
        const imageRef = await contextDir
            .dockerBuild()
@@ -20,7 +20,7 @@ async function loginToDockerHub(contextDir, client, dockerRepo) {
            .withExec(["sh", "-c", "apt-get update && apt-get install -y docker.io"])
         //    .withSecretVariable("DOCKER_USERNAME", dockerUsernameSecret)
         //    .withSecretVariable("DOCKER_PASSWORD", dockerPasswordSecret)
-           .withRegistryAuth("docker.io",dockerUsernameSecret, dockerPasswordSecret)
+           .withRegistryAuth("docker.io",process.env.DOCKER_USERNAME, process.env.DOCKER_PASSWORD)
            .publish(dockerRepo)
         //    .withExec([
         //        "sh", "-c",
