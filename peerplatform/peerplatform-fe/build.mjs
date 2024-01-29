@@ -131,7 +131,7 @@ listDirectoryContents();
 
 connect(
     async (client) => {
-        const contextDir = client.host().directory('/peerplatform/peerprogramming-fe', { exclude: ["node_modules/"] });
+        const contextDir = client.host().directory('/peerplatform/peerplatform-fe', { exclude: ["node_modules/"] });
         const backendContextDir = client.host().directory('/peerplatform');
         // const node = client.container().from("node:16");
         // const runner = node
