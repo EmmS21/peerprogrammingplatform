@@ -23,18 +23,27 @@ async function loginToDockerHub(contextDir, client, dockerRepo) {
         //    .withSecretVariable("DOCKER_USERNAME", dockerUsernameSecret)
         //    .withSecretVariable("DOCKER_PASSWORD", dockerPasswordSecret)
         //    .withRegistryAuth("docker.io",process.env.DOCKER_USERNAME, process.env.DOCKER_PASSWORD)
-        .withExec([
-            "sh", "-c",
-            `echo "${dockerPassword}" | docker login -u "${dockerUserName}" --password-stdin`
-        ])
-        .publish(dockerRepo)
-           return imageRef
-   } catch (error) {
-       console.error("Error during Docker login:", error);
-       throw new Error("Docker login failed");
-   }
-};
+            .withExec([
+                "sh", "-c",
+                `echo "${dockerPassword}" | docker login -u "${dockerUserName}" --password-stdin`
+            ])
+        console.log("Attempting to publish the Docker image...");
+        console.log("Attempting to push the Docker image...");
+        await imageRef.withExec(["sh", "-c", `docker push ${dockerRepo}`]);
+        // await imageRef.publish(dockerRepo);
+        console.log(`Successfully published image to: ${dockerRepo}`);
+        return imageRef;
+    } catch (error) {
+        console.error("Error during Docker operation:", error);
 
+        // Log the error details if it's related to the OAuth token fetching
+        if (error.message.includes('failed to fetch oauth token')) {
+            console.error("OAuth token fetching failed. Detailed error: ", error);
+        }
+
+        throw new Error("Docker operation failed");
+    }
+};
 
 async function dockerizeApp (contextDir, client, repo, environment) {
    const gitCommitHash = execSync("git rev-parse HEAD").toString().trim();
