@@ -65,17 +65,16 @@ async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
             console.log(`Published image to: ${dockerRepo}`);
         } catch (publishErr) {
             console.error("Error during Docker image publishing:", publishErr.message);
-            if (publishErr.response) {
-                console.error("Response status:", publishErr.response.status);
-                console.error("Response details:", publishErr.response.data);
-            }
+            console.error("Detailed error:", publishErr);
             throw new Error('Docker image publishing failed');
         }
     } catch (loginErr) {
         console.error("Error during Docker login:", loginErr.message);
+        console.error("Detailed error:", loginErr);
         throw new Error('Docker login failed');
     }
 }
+
 
 
 async function repullRetagRepublishImage(repo, oldTag, newTag) {
