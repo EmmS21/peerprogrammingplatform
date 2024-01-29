@@ -32,7 +32,7 @@ async function loginToDockerHub(contextDir, client, dockerRepo) {
         await imageRef.withExec(["sh", "-c", `docker pull ${dockerImage}`]);
         console.log(`Running the container from image: ${dockerImage}...`);
         const output = await imageRef.withExec(["sh", "-c", `docker run --rm ${dockerImage}`]);
-        console.log(`Output from the container:\n${output}`);
+        console.log(`Output from the container:\n${JSON.stringify(output)}`);
         return imageRef;
     } catch (error) {
         console.error("Error during Docker operation:", error);
