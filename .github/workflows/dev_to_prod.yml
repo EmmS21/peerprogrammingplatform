@@ -26,15 +26,15 @@ jobs:
       - name: Print Current Directory
         run: pwd
 
-      - name: Test Docker Build and Push
-        if: github.ref == 'refs/heads/main'
-        run: |
-          docker build -t emms21/interviewsageai:test .
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker push emms21/interviewsageai:test
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      #   - name: Test Docker Build and Push
+      #     if: github.ref == 'refs/heads/main'
+      #     run: |
+      #       docker build -t emms21/interviewsageai:test .
+      #       echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      #       docker push emms21/interviewsageai:test
+      #     env:
+      #       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Deploy to Development
         if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
