@@ -1,4 +1,4 @@
-FROM node:13.12.0-alpine
+FROM node:13.12.0
 WORKDIR django-project/peerplatform/peerplatform-fe
 #use node image
 COPY package.json package-lock.json ./

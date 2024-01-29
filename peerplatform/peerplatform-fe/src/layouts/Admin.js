@@ -4,7 +4,7 @@ import { Route, Switch, useLocation } from "react-router-dom";
 
 import DemoNavbar from "../components/navbars/DemoNavBar.js";
 //import Footer from "components/Footer/Footer.js";
-import Footer from '../components/layout/Footer';
+import Footer from "../components/layout/Footer";
 import Sidebar from "../components/sidebar/Sidebar.js";
 
 import routes from "../routes.js";

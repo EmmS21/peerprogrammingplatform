@@ -77,7 +77,7 @@ function Tables() {
               </CardBody>
             </Card>
           </Col>
-          </Row>
+        </Row>
       </div>
     </>
   );

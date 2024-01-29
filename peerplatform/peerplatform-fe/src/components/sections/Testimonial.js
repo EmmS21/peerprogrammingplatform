@@ -1,15 +1,15 @@
-import React from 'react';
-import classNames from 'classnames';
-import { SectionTilesProps } from '../../utils/SectionProps';
-import SectionHeader from './partials/SectionHeader';
+import React from "react";
+import classNames from "classnames";
+import { SectionTilesProps } from "../../utils/SectionProps";
+import SectionHeader from "./partials/SectionHeader";
 
 const propTypes = {
-  ...SectionTilesProps.types
-}
+  ...SectionTilesProps.types,
+};
 
 const defaultProps = {
-  ...SectionTilesProps.defaults
-}
+  ...SectionTilesProps.defaults,
+};
 
 const Testimonial = ({
   className,
@@ -22,41 +22,33 @@ const Testimonial = ({
   pushLeft,
   ...props
 }) => {
-
   const outerClasses = classNames(
-    'testimonial section',
-    topOuterDivider && 'has-top-divider',
-    bottomOuterDivider && 'has-bottom-divider',
-    hasBgColor && 'has-bg-color',
-    invertColor && 'invert-color',
-    className
+    "testimonial section",
+    topOuterDivider && "has-top-divider",
+    bottomOuterDivider && "has-bottom-divider",
+    hasBgColor && "has-bg-color",
+    invertColor && "invert-color",
+    className,
   );
 
   const innerClasses = classNames(
-    'testimonial-inner section-inner',
-    topDivider && 'has-top-divider',
-    bottomDivider && 'has-bottom-divider'
+    "testimonial-inner section-inner",
+    topDivider && "has-top-divider",
+    bottomDivider && "has-bottom-divider",
   );
 
-  const tilesClasses = classNames(
-    'tiles-wrap',
-    pushLeft && 'push-left'
-  );
+  const tilesClasses = classNames("tiles-wrap", pushLeft && "push-left");
 
   const sectionHeader = {
-    title: 'Customer testimonials',
+    title: "Customer testimonials",
   };
 
   return (
-    <section
-      {...props}
-      className={outerClasses}
-    >
-      <div className="container">
-      </div>
+    <section {...props} className={outerClasses}>
+      <div className="container"></div>
     </section>
   );
-}
+};
 
 Testimonial.propTypes = propTypes;
 Testimonial.defaultProps = defaultProps;

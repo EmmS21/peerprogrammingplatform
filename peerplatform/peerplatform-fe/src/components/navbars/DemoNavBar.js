@@ -81,11 +81,10 @@ function DemoNavBar(props) {
     >
       <Container fluid>
         <div className="navbar-wrapper">
-          <div className="navbar-toggle">
-          </div>
+          <div className="navbar-toggle"></div>
         </div>
         <Collapse isOpen={isOpen} navbar className="justify-content-end">
-           <Nav navbar>
+          <Nav navbar>
             <UncontrolledDropdown>
               <DropdownToggle caret>
                 <i className="nc-icon nc-settings-gear-65" />

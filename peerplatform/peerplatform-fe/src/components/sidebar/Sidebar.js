@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
 import PerfectScrollbar from "perfect-scrollbar";
-import Logo from '../../components/layout/partials/Logo';
+import Logo from "../../components/layout/partials/Logo";
 
 //import logo from "logo.svg";
 
@@ -46,9 +46,7 @@ function Sidebar(props) {
           href="https://www.creative-tim.com"
           className="simple-text logo-normal"
         >
-          <p>
-            TGB
-          </p>
+          <p>TGB</p>
         </div>
       </div>
       <div className="sidebar-wrapper" ref={sidebar}>

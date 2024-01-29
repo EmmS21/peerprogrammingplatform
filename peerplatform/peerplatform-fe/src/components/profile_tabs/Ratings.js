@@ -1,11 +1,11 @@
-import React, { useState,useContext } from 'react';
-import { Modal, Button, Slider } from 'antd';
-import { FrownOutlined, SmileOutlined } from '@ant-design/icons';
-import IconSlider from './IconSlider.js'
-import IconSliderTwo from './IconSliderQuestionTwo.js'
-import IconSliderThree from './IconSliderQuestionThree.js'
-import IconSliderFour from './IconSliderQuestionFour.js';
-import AuthContext from '../../context/AuthContext';
+import React, { useState, useContext } from "react";
+import { Modal, Button, Slider } from "antd";
+import { FrownOutlined, SmileOutlined } from "@ant-design/icons";
+import IconSlider from "./IconSlider.js";
+import IconSliderTwo from "./IconSliderQuestionTwo.js";
+import IconSliderThree from "./IconSliderQuestionThree.js";
+import IconSliderFour from "./IconSliderQuestionFour.js";
+import AuthContext from "../../context/AuthContext";
 
 const Ratings = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -43,4 +43,3 @@ const Ratings = () => {
   );
 };
 export default Ratings;
-

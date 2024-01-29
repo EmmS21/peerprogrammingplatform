@@ -6,7 +6,10 @@ import { applyMiddleware, createStore } from "redux";
 import { routerMiddleware, ConnectedRouter } from "connected-react-router";
 
 import rootReducer from "./Reducer";
-import { setCurrentUser, setToken } from "./components/login_components/LoginActions"; // new imports
+import {
+  setCurrentUser,
+  setToken,
+} from "./components/login_components/LoginActions"; // new imports
 import { isEmpty } from "./utils/Utils"; // new imports
 
 export default ({ children, initialState = {} }) => {
@@ -16,7 +19,7 @@ export default ({ children, initialState = {} }) => {
   const store = createStore(
     rootReducer(history),
     initialState,
-    applyMiddleware(...middleware)
+    applyMiddleware(...middleware),
   );
 
   // check localStorage

@@ -1,21 +1,39 @@
 import React, { useState } from "react";
-import '../../assets/other_css/tabs.css';
+import "../../assets/other_css/tabs.css";
 import "antd/dist/antd.css";
-import { Steps } from 'antd'
-import { AudioOutlined, MessageOutlined, CodeOutlined, BuildOutlined, SolutionOutlined } from '@ant-design/icons';
+import { Steps } from "antd";
+import {
+  AudioOutlined,
+  MessageOutlined,
+  CodeOutlined,
+  BuildOutlined,
+  SolutionOutlined,
+} from "@ant-design/icons";
 
 const Tabs = ({ index }) => {
   const { Step } = Steps;
-//  const { index } = props
+  //  const { index } = props
 
   return (
     <div>
-        <Steps direction="vertical" current={index-1} >
-            <Step title='Introduction' description="Time to introduce yourself to your peer." icon={<AudioOutlined/>} />
-            <Step title="Pseudo Code" description="Time to pseudoCode potential solutions" icon={<MessageOutlined/>} />
-            <Step title="Code" description="Time to Code" icon={<CodeOutlined />} />
-            <Step title="Review and Rebuild" description="If you don't already have a working answer, time to find one and rebuild it" icon={<SolutionOutlined />} />
-         </Steps>
+      <Steps direction="vertical" current={index - 1}>
+        <Step
+          title="Introduction"
+          description="Time to introduce yourself to your peer."
+          icon={<AudioOutlined />}
+        />
+        <Step
+          title="Pseudo Code"
+          description="Time to pseudoCode potential solutions"
+          icon={<MessageOutlined />}
+        />
+        <Step title="Code" description="Time to Code" icon={<CodeOutlined />} />
+        <Step
+          title="Review and Rebuild"
+          description="If you don't already have a working answer, time to find one and rebuild it"
+          icon={<SolutionOutlined />}
+        />
+      </Steps>
     </div>
   );
 };

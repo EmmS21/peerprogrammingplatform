@@ -1,0 +1,54 @@
+name: Development to Staging to Production Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build and Deploy to Development
+        if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
+        run: node ../../peerplatform/peerplatform-fe/build.mjs
+        env:
+          ENVIRONMENT: "dev"
+
+      - name: Manual Approval for Staging
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging'
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const issue = await github.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Deployment Approval Required',
+              body: 'Please review the staging deployment and approve to push to production.',
+              labels: ['deployment-approval']
+            });
+            console.log(`Created issue: ${issue.data.html_url}`);
+
+      - name: Build and Deploy to Staging
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging'
+        run: node ../../peerplatform/peerplatform-fe/build.mjs
+        env:
+          ENVIRONMENT: "staging"
+
+      - name: Build and Deploy to Production
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
+        run: node ../../peerplatform/peerplatform-fe/build.mjs
+        env:
+          ENVIRONMENT: "production"

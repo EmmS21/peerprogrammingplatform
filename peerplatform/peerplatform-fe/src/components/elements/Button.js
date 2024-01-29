@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import React from "react";
+import PropTypes from "prop-types";
+import classNames from "classnames";
 
 const propTypes = {
   tag: PropTypes.elementType,
@@ -9,18 +9,18 @@ const propTypes = {
   loading: PropTypes.bool,
   wide: PropTypes.bool,
   wideMobile: PropTypes.bool,
-  disabled: PropTypes.bool
-}
+  disabled: PropTypes.bool,
+};
 
 const defaultProps = {
-  tag: 'button',
-  color: '',
-  size: '',
+  tag: "button",
+  color: "",
+  size: "",
   loading: false,
   wide: false,
   wideMobile: false,
-  disabled: false
-}
+  disabled: false,
+};
 
 const Button = ({
   className,
@@ -33,26 +33,19 @@ const Button = ({
   disabled,
   ...props
 }) => {
-
   const classes = classNames(
-    'button',
+    "button",
     color && `button-${color}`,
     size && `button-${size}`,
-    loading && 'is-loading',
-    wide && 'button-block',
-    wideMobile && 'button-wide-mobile',
-    className
+    loading && "is-loading",
+    wide && "button-block",
+    wideMobile && "button-wide-mobile",
+    className,
   );
 
   const Component = tag;
-  return (
-    <Component
-      {...props}
-      className={classes}
-      disabled={disabled}
-    />
-  );
-}
+  return <Component {...props} className={classes} disabled={disabled} />;
+};
 
 Button.propTypes = propTypes;
 Button.defaultProps = defaultProps;

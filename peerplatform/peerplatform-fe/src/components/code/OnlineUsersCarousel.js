@@ -1,61 +1,69 @@
-import React, { useEffect, useContext, useState, Component } from 'react';
-import AuthContext from '../../context/AuthContext';
-import { Carousel } from 'antd';
-import axios from 'axios';
+import React, { useEffect, useContext, useState, Component } from "react";
+import AuthContext from "../../context/AuthContext";
+import { Carousel } from "antd";
+import axios from "axios";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import { Rings } from 'react-loader-spinner';
+import { Rings } from "react-loader-spinner";
 
-const OnlineUsersCarousel = () =>  {
-        const { user, onlineUsers, getAllUsers } = useContext(AuthContext);
-//        const [onlineUsers, setOnlineUsers] = useState([]);
+const OnlineUsersCarousel = () => {
+  const { user, onlineUsers, getAllUsers } = useContext(AuthContext);
+  //        const [onlineUsers, setOnlineUsers] = useState([]);
 
-        const contentStyle = {
-              height: '160px',
-              width: '20%',
-              color: '#fff',
-              lineHeight: '50%',
-              textAlign: 'center',
-              background: '#364d79',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-        };
+  const contentStyle = {
+    height: "160px",
+    width: "20%",
+    color: "#fff",
+    lineHeight: "50%",
+    textAlign: "center",
+    background: "#364d79",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  };
 
-        const imageStyle = {
-            flex: 1,
-            width: '100%',
-            height: '100%',
-            resizeMode: 'center',
-        }
+  const imageStyle = {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    resizeMode: "center",
+  };
 
-        const containerStyle = {
-            transform: 'translate(39%, 0%)',
-        }
+  const containerStyle = {
+    transform: "translate(39%, 0%)",
+  };
 
-        useEffect((() => {
-            getAllUsers()
-        }),[])
+  useEffect(() => {
+    getAllUsers();
+  }, []);
 
-        return(
-        <>
-            <center><h6>Who's Online</h6></center>
-            <Carousel autoplay style={containerStyle} dots={false} effect={'fade'} autoplaySpeed={10}>
-                    {
-                        [onlineUsers].length === 0 ?
-                            <Rings color="#00BFFF" height={80} width={80} />
-                            : onlineUsers.map(user => {
-                                return (
-                                <div className="img-container">
-                                    <h3 style={contentStyle}>
-                                        <img style={imageStyle} src={user.profile_pic} />
-                                    </h3>
-                                </div>
-                                )
-                            })
-                    }
-            </Carousel>
-        </>
-        )
+  return (
+    <>
+      <center>
+        <h6>Who's Online</h6>
+      </center>
+      <Carousel
+        autoplay
+        style={containerStyle}
+        dots={false}
+        effect={"fade"}
+        autoplaySpeed={10}
+      >
+        {[onlineUsers].length === 0 ? (
+          <Rings color="#00BFFF" height={80} width={80} />
+        ) : (
+          onlineUsers.map((user) => {
+            return (
+              <div className="img-container">
+                <h3 style={contentStyle}>
+                  <img style={imageStyle} src={user.profile_pic} />
+                </h3>
+              </div>
+            );
+          })
+        )}
+      </Carousel>
+    </>
+  );
 };
 
 export default OnlineUsersCarousel;
