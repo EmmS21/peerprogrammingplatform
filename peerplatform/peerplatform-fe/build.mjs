@@ -10,6 +10,10 @@ if (!process.env["DOCKER_USERNAME"] || !process.env["DOCKER_PASSWORD"]) {
     console.log('Docker username or password has not been set')
     process.exit()
 }
+
+console.log(`Docker Username: ${process.env.DOCKER_USERNAME.substring(0, 3)}***`);
+console.log(`Docker Password: ${'*'.repeat(process.env.DOCKER_PASSWORD.length)}`);
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
