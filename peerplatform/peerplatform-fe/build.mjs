@@ -3,7 +3,9 @@ import { connect } from "@dagger.io/dagger"
 import { execSync } from "child_process";
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url'; 
-import { dirname, join } from 'path';
+import { dirname } from 'path';
+import { readdirSync } from 'fs'; 
+
 
 dotenv.config();
 if (!process.env["DOCKER_USERNAME"] || !process.env["DOCKER_PASSWORD"]) {
@@ -109,6 +111,22 @@ async function repullRetagRepublishImage(repo, oldTag, newTag) {
 //         }
 //     }
 // }
+
+function listDirectoryContents() {
+    console.log('Listing directory contents:');
+    try {
+        const files = readdirSync('.'); // Read contents of current directory
+        files.forEach(file => {
+            console.log(file);
+        });
+    } catch (err) {
+        console.error('Error reading directory:', err);
+    }
+}
+
+// Add a call to listDirectoryContents at the start of your script
+listDirectoryContents();
+
 
 
 connect(
