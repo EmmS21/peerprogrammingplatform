@@ -113,8 +113,8 @@ async function repullRetagRepublishImage(repo, oldTag, newTag) {
 
 connect(
     async (client) => {
-        const contextDir = client.host().directory('./peerprogrammingplatform/peerprogramming/peerprogramming-fe', { exclude: ["node_modules/"] });
-        const backendContextDir = client.host().directory('./peerprogrammingplatform/peerprogramming/');
+        const contextDir = client.host().directory('peerplatform/peerprogramming-fe', { exclude: ["node_modules/"] });
+        const backendContextDir = client.host().directory('/peerplatform');
         // const node = client.container().from("node:16");
         // const runner = node
         //   .withDirectory("/src", contextDir)
