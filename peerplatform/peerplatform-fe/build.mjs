@@ -58,15 +58,25 @@ async function dockerizeApp (contextDir, client, repo, environment) {
 
 async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
     const dockerRepo = `${repo}:${tag}`;
-    const imageRef = await loginToDockerHub(contextDir, client);
     try {
-        await imageRef.publish(dockerRepo);
-        console.log(`Published image to: ${dockerRepo}`);
-    } catch (publishErr) {
-        console.error("Error during the Docker publish:", publishErr);
-        throw new Error('Docker publish failed');
+        const imageRef = await loginToDockerHub(contextDir, client);
+        try {
+            await imageRef.publish(dockerRepo);
+            console.log(`Published image to: ${dockerRepo}`);
+        } catch (publishErr) {
+            console.error("Error during Docker image publishing:", publishErr.message);
+            if (publishErr.response) {
+                console.error("Response status:", publishErr.response.status);
+                console.error("Response details:", publishErr.response.data);
+            }
+            throw new Error('Docker image publishing failed');
+        }
+    } catch (loginErr) {
+        console.error("Error during Docker login:", loginErr.message);
+        throw new Error('Docker login failed');
     }
 }
+
 
 async function repullRetagRepublishImage(repo, oldTag, newTag) {
     try {
@@ -81,58 +91,10 @@ async function repullRetagRepublishImage(repo, oldTag, newTag) {
 
 
 
-// async function dockerizeApp (contextDir, environment, client, repo) {
-//     const gitCommitHash = execSync("git rev-parse HEAD").toString().trim();
-//     let tag = `${gitCommitHash}-${environment}`;
-//     const dockerRepo = `${repo}:${tag}`;
-//     try {
-//         const imageRef = await loginToDockerHub(contextDir, client);
-//         try {
-//             await imageRef.publish(dockerRepo);
-//             console.log(`Published image to: ${dockerRepo}`);
-//         } catch (publishErr) {
-//             console.error("Error during the Docker publish:", publishErr);
-//             if (publishErr.response) {
-//                 console.error("HTTP Status Code:", publishErr.response.status);
-//                 console.error("HTTP Headers:", publishErr.response.headers);
-//                 console.error("HTTP Response Body:", publishErr.response.data);
-//             } else {
-//                 console.error("Publish Error Details:", publishErr);
-//             }
-//         }
-//     } catch (loginErr) {
-//         console.error("Error during the Docker login:", loginErr);
-//         if (loginErr.response) {
-//             console.error("HTTP Status Code:", loginErr.response.status);
-//             console.error("HTTP Headers:", loginErr.response.headers);
-//             console.error("HTTP Response Body:", loginErr.response.data);
-//         } else {
-//             console.error("Login Error Details:", loginErr);
-//         }
-//     }
-// }
-
-function listDirectoryContents() {
-    console.log('Listing directory contents:');
-    try {
-        const files = readdirSync('.'); // Read contents of current directory
-        files.forEach(file => {
-            console.log(file);
-        });
-    } catch (err) {
-        console.error('Error reading directory:', err);
-    }
-}
-
-// Add a call to listDirectoryContents at the start of your script
-listDirectoryContents();
-
-
-
 connect(
     async (client) => {
         const contextDir = client.host().directory('peerplatform/peerplatform-fe', { exclude: ["node_modules/"] });
-        const backendContextDir = client.host().directory('peerplatform');
+        const backendContextDir = client.host().directory(' peerplatform');
         // const node = client.container().from("node:16");
         // const runner = node
         //   .withDirectory("/src", contextDir)
