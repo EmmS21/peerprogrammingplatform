@@ -20,6 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: ../../peerplatform/peerplatform-fe
 
       - name: Build and Deploy to Development
         if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
