@@ -26,7 +26,7 @@ jobs:
       - name: List directory contents
         run: |
           ls -l
-          ls -l ./peerprogrammingplatform/peerprogramming/peerprogramming-fe
+          ls -l ./peerprogramming/peerprogramming-fe
 
       - name: Build and Deploy to Development
         if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
