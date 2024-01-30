@@ -126,7 +126,7 @@ const Header = ({
                       navPosition && `header-nav-${navPosition}`,
                     )}
                   ></ul>
-                  {!hideSignin && (
+                  {/* {!hideSignin && (
                     <ul className="list-reset header-nav-right">
                       <li>
                         {user ? (
@@ -175,7 +175,7 @@ const Header = ({
                         )}
                       </li>
                     </ul>
-                  )}
+                  )} */}
                 </div>
               </nav>
             </>

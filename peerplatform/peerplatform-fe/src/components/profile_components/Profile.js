@@ -53,7 +53,7 @@ const Profile = () => {
   const [fileDataURL, setFileDataURL] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
   const baseURL = `${profileURL}media/`;
-  const photoURL = user.photo.split('"').join("");
+  // const photoURL = user.photo.split('"').join("");
 
   //on idle update Profile model activity field
   const handleOnIdle = () => {
@@ -174,41 +174,8 @@ const Profile = () => {
         <Row>
           <Col md="4">
             <Card className="card-user">
-              <div className="image">
-                <img
-                  alt="..."
-                  src={fileDataURL ? fileDataURL : `${baseURL}${photoURL}`}
-                />
-              </div>
               <CardBody>
                 <div className="author">
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                    <label
-                      htmlFor="photo-upload"
-                      className="custom-file-upload fas"
-                    >
-                      <div className="img-wrap img-upload">
-                        <img
-                          alt="..."
-                          className="avatar border-gray"
-                          src={
-                            fileDataURL ? fileDataURL : `${baseURL}${photoURL}`
-                          }
-                        />
-                      </div>
-                    </label>
-                  </a>
-                  <div>
-                    <form class="file-uploader">
-                      <label for="file-input">Select Profile Picture</label>
-                      <input
-                        type="file"
-                        id="file-input"
-                        onChange={(e) => onImageChange(e)}
-                        accept="image/*"
-                      />
-                    </form>
-                  </div>
                   <h5 id="username-returned" className="title">
                     Hi, {user.username}
                   </h5>

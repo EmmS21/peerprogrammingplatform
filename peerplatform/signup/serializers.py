@@ -183,13 +183,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 'user': 'Username or password is incorrect',
             }
         token = RefreshToken.for_user(user)
+        token['username'] = user.get_username()
         logger.debug(f"User Pair: {user}")
         token_data = {
             'refresh': str(token),
             'access': str(token.access_token),
         }
-        print('tokendata', token_data)
-
         user_logged_in.send(sender=user.__class__,
                             request=self.context['request'], user=user)
 
@@ -198,10 +197,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 self.error_messages["no_active_account"],
                 "no_active_account",
             )
-
         return {
-            'refresh': token_data.refresh,
-            'access': token_data.access,
+            'refresh': token_data['refresh'],
+            'access': token_data['access'],
         }
 
 
