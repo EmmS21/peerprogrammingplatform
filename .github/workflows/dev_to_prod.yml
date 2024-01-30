@@ -41,20 +41,6 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Manual Approval for Staging
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging'
-        uses: actions/github-script@v4
-        with:
-          script: |
-            const issue = await github.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Deployment Approval Required',
-              body: 'Please review the staging deployment and approve to push to production.',
-              labels: ['deployment-approval']
-            });
-            console.log(`Created issue: ${issue.data.html_url}`);
-
       - name: Build and Deploy to Staging
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging'
         run: node ./peerplatform/peerplatform-fe/build.mjs
