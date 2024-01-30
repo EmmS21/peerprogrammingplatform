@@ -22,3 +22,4 @@ djangorestframework-api-key==2.2.0
 pyairtable==2.1.0.post1
 django-allauth==0.57.0
 markdown==3.3.6
+highlight_io
