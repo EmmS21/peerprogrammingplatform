@@ -25,10 +25,10 @@ async function loginToDockerHub(contextDir, client) {
            .withExec(["sh", "-c", "apt-get update && apt-get install -y docker.io"])
            .withSecretVariable("DOCKER_USERNAME", dockerUsernameSecret)
            .withSecretVariable("DOCKER_PASSWORD", dockerPasswordSecret)
-            .withExec([
-                "sh", "-c",
-                `echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin`
-            ])
+            // .withExec([
+            //     "sh", "-c",
+            //     `echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin`
+            // ])
         return imageRef;
     } catch (error) {
         console.error("Error during Docker operation:", error);
