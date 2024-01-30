@@ -1,5 +1,4 @@
 import React, {
-  Component,
   useState,
   useEffect,
   useContext,
@@ -7,20 +6,14 @@ import React, {
 } from "react";
 import secure_login from "../../assets/images/secure_login.svg";
 import "../../assets/scss/core/signup_components/_signup.scss";
-import AxiosInstance from "../../AxiosApi.js";
-
-import { connect } from "react-redux";
-import { login } from "./LoginActions.js";
 import { withRouter } from "react-router-dom"; // new import
 import PropTypes from "prop-types"; // new import
-import axios from "axios";
 import AuthContext from "../../context/AuthContext";
 import loginSchema from "./validation/loginSchema";
 
 const Login = () => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   //if user login details are incorrect
   let { loginUser, loginError } = useContext(AuthContext);
 
