@@ -25,17 +25,12 @@ async function loginToDockerHub(contextDir, client) {
            .withExec(["sh", "-c", "apt-get update && apt-get install -y docker.io"])
            .withSecretVariable("DOCKER_USERNAME", dockerUsernameSecret)
            .withSecretVariable("DOCKER_PASSWORD", dockerPasswordSecret)
-            // .withExec([
-            //     "sh", "-c",
-            //     `echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin`
-            // ])
         return imageRef;
     } catch (error) {
         console.error("Error during Docker operation:", error);
         if (error.message.includes('failed to fetch oauth token')) {
             console.error("OAuth token fetching failed. Detailed error: ", error);
         }
-
         throw new Error("Docker operation failed");
     }
 };
@@ -59,7 +54,6 @@ async function dockerizeApp (contextDir, client, repo, environment) {
        await repullRetagRepublishImage(repo, oldTag, tag);
    }
 }
-
 
 async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
     const dockerRepo = `${repo}:${tag}`;
@@ -99,16 +93,16 @@ async function repullRetagRepublishImage(repo, oldTag, newTag) {
 connect(
    async (client) => {
     const frontendContextDir = path.join(scriptDir, '../peerplatform-fe');
-    // const backendContext = path.join(scriptDir, '../');
+    const backendContext = path.join(scriptDir, '../');
 
     const contextDir = client.host().directory(frontendContextDir, { exclude: ["node_modules/"] });
-    // const backendContextDir = client.host().directory(backendContext);
+    const backendContextDir = client.host().directory(backendContext);
        const environment = process.env.ENVIRONMENT || "dev"; 
        let feRepo = "emms21/interviewsageai"
-    //    let beRepo = "emms21/interviewsageaibe"
+       let beRepo = "emms21/interviewsageaibe"
        try {
            await dockerizeApp(contextDir, client, feRepo, environment)
-        //    await dockerizeApp(backendContextDir, client, beRepo, environment)
+           await dockerizeApp(backendContextDir, client, beRepo, environment)
        } catch (err) {
            console.error("Error during the Docker build and publish:", err);
        }
