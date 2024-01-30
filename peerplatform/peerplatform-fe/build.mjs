@@ -81,8 +81,9 @@ async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
 
 async function repullRetagRepublishImage(repo, oldTag, newTag) {
    try {
-       execSync(`docker pull ${repo}:${oldTag}`);
-       execSync(`docker tag ${repo}:${oldTag} ${repo}:${newTag}`);
+        const pullResult = execSync(`docker pull ${repo}:${oldTag}`, { stdio: 'pipe' }).toString();
+        console.log(`Pull result for ${repo}:${oldTag}:`, pullResult);
+        execSync(`docker tag ${repo}:${oldTag} ${repo}:${newTag}`);
        execSync(`docker push ${repo}:${newTag}`);
        console.log(`Re-tagged and pushed image from ${repo}:${oldTag} to ${repo}:${newTag}`);
    } catch (err) {
