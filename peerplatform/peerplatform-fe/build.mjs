@@ -1,5 +1,4 @@
 import { connect, GraphQLRequestError } from "@dagger.io/dagger"
-// import { loginToDockerHub } from "/loginToDockerHub"
 import { execSync } from "child_process";
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
@@ -44,15 +43,23 @@ async function loginToDockerHub(contextDir, client) {
 async function dockerizeApp (contextDir, client, repo, environment) {
    const gitCommitHash = execSync("git rev-parse HEAD").toString().trim();
    let tag;
+   let oldTag;
    if (environment === "dev") {
        tag = `${gitCommitHash}-dev`;
        await buildAndPublishDockerImage(contextDir, client, repo, tag);
-   } else {
-       const oldTag = `${gitCommitHash}-dev`;
+   } 
+   if (environment === "staging") {
+        oldTag = `${gitCommitHash}-dev`
+        tag = `${gitCommitHash}-staging`;
+        await repullRetagRepublishImage(repo, oldTag, tag);
+   }
+    else {
+       const oldTag = `${gitCommitHash}-staging`;
        tag = `${gitCommitHash}-${environment}`;
        await repullRetagRepublishImage(repo, oldTag, tag);
    }
 }
+
 
 async function buildAndPublishDockerImage(contextDir, client, repo, tag) {
     const dockerRepo = `${repo}:${tag}`;
@@ -92,30 +99,16 @@ async function repullRetagRepublishImage(repo, oldTag, newTag) {
 connect(
    async (client) => {
     const frontendContextDir = path.join(scriptDir, '../peerplatform-fe');
-    const backendContext = path.join(scriptDir, '../');
+    // const backendContext = path.join(scriptDir, '../');
 
-// Use the absolute paths in your code
     const contextDir = client.host().directory(frontendContextDir, { exclude: ["node_modules/"] });
-    const backendContextDir = client.host().directory(backendContext);
-
-    //    const contextDir = client.host().directory('peerplatform/peerplatform-fe', { exclude: ["node_modules/"] });
-    //    const backendContextDir = client.host().directory('peerplatform');
-
-    // const node = client.container().from("node:16");
-       // const runner = noderr
-       //   .withDirectory("/src", contextDir)
-       //   .withWorkdir("/src")
-       //   .withExec(["npm", "install", "--legacy-peer-deps"]);
-        
-       // await runner.withExec(["npm", "run", "format"]).sync();
-       // await runner.withExec(["npm", "test", "--", "--watchAll=false"]).sync();
-       const environment = process.env.ENVIRONMENT || "dev"; // Determine the stage
-       //build frontend image
+    // const backendContextDir = client.host().directory(backendContext);
+       const environment = process.env.ENVIRONMENT || "dev"; 
        let feRepo = "emms21/interviewsageai"
-       let beRepo = "emms21/interviewsageaibe"
+    //    let beRepo = "emms21/interviewsageaibe"
        try {
            await dockerizeApp(contextDir, client, feRepo, environment)
-           await dockerizeApp(backendContextDir, client, beRepo, environment)
+        //    await dockerizeApp(backendContextDir, client, beRepo, environment)
        } catch (err) {
            console.error("Error during the Docker build and publish:", err);
        }
