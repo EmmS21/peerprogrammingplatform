@@ -42,8 +42,7 @@ async function dockerizeApp (contextDir, client, repo, environment) {
    if (environment === "dev") {
        tag = `${gitCommitHash}-dev`;
        await buildAndPublishDockerImage(contextDir, client, repo, tag);
-   } 
-   if (environment === "staging") {
+   } else if (environment === "staging") {
         oldTag = `${gitCommitHash}-dev`
         tag = `${gitCommitHash}-staging`;
         await repullRetagRepublishImage(repo, oldTag, tag);
