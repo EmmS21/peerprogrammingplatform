@@ -9,7 +9,7 @@ export async function loginToDockerHub(username, password) {
             } else {
                 resolve();
             }
-        });
+        });a
         child.stdin.write(password);
         child.stdin.end();
     });

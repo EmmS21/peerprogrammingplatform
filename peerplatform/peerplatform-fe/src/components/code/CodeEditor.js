@@ -401,6 +401,7 @@ const CodeEditor = () => {
         widths={5}
         size={"small"}
         style={{ marginTop: 0 }}
+        data-testid="top-menu"
       >
         <Menu.Item className="single-menu-item-container">
           <Button
@@ -421,6 +422,7 @@ const CodeEditor = () => {
           <Button
             className="btn btn-primary single-full-height-button"
             onClick={resetHandler}
+            data-testid="reset-button"
           >
             Refresh
           </Button>
@@ -446,6 +448,7 @@ const CodeEditor = () => {
             <Button
               className="btn btn-primary single-full-height-button"
               onClick={() => setSidebarVisible(!isSidebarVisible)}
+              data-testid="toggle-sidebar-btn"
             >
               {isSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
             </Button>
@@ -518,6 +521,7 @@ const CodeEditor = () => {
         </div>
         <div
           className={`col-2 whiteCol my-0 ${!isSidebarVisible ? "hidden" : ""}`}
+          data-testid="sidebar"
         >
           <Tabs type="card">
             <TabPane tab="Coding Challenge" key="1">
@@ -545,9 +549,11 @@ const CodeEditor = () => {
             height: "100%",
             overflow: "hidden",
           }}
+          data-testid="editor-container"
         >
           <div className="my-0" style={{ width: editorWidth() }}>
             <AceEditor
+              data-testid="ace-editor"
               ref={editorRef}
               style={{
                 position: "fixed",

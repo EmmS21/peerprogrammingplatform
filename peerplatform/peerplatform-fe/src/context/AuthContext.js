@@ -82,9 +82,9 @@ export const AuthProvider = ({ children }) => {
         access,
         refresh,
       });
-      console.log('access***', access)
+      console.log("access***", access);
       const decoded = jwt_decode(access);
-      console.log('!!!! decoded !!!', decoded)
+      console.log("!!!! decoded !!!", decoded);
       if (!decoded || !decoded.username) {
         throw new Error("Invalid token structure or missing information");
       }

@@ -80,7 +80,7 @@ const Room = () => {
             }
           }
         }
-        checkCall = true; // Note: This line will not persist the change outside this useEffect, consider using useState or useRef.
+        checkCall = true;
       }
     };
 

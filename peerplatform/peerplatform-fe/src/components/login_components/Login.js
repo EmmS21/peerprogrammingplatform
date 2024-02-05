@@ -1,9 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  useRef,
-} from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import secure_login from "../../assets/images/secure_login.svg";
 import "../../assets/scss/core/signup_components/_signup.scss";
 import { withRouter } from "react-router-dom"; // new import

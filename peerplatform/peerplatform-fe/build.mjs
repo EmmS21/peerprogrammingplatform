@@ -1,4 +1,4 @@
-import { connect, GraphQLRequestError } from "@dagger.io/dagger"
+import { connect, GraphQLRequestError, ExecError } from "@dagger.io/dagger"
 import { execSync } from "child_process";
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
@@ -94,18 +94,41 @@ connect(
    async (client) => {
     const frontendContextDir = path.join(scriptDir, '../peerplatform-fe');
     const backendContext = path.join(scriptDir, '../');
-
     const contextDir = client.host().directory(frontendContextDir, { exclude: ["node_modules/"] });
     const backendContextDir = client.host().directory(backendContext);
-       const environment = process.env.ENVIRONMENT || "dev"; 
-       let feRepo = "emms21/interviewsageai"
-       let beRepo = "emms21/interviewsageaibe"
-       try {
-           await dockerizeApp(contextDir, client, feRepo, environment)
-           await dockerizeApp(backendContextDir, client, beRepo, environment)
-       } catch (err) {
-           console.error("Error during the Docker build and publish:", err);
-       }
+    const environment = process.env.ENVIRONMENT || "dev"; 
+    const node = client.container().from("node:16");
+    const runner =  node
+        .withDirectory("/app", contextDir)
+        .withWorkdir("/app")
+        .withExec(["npm", "install", "--legacy-peer-deps"])
+
+    if(environment === "dev") {
+        let lintErrors = null;
+        try {
+                await runner.withExec(["npm", "run", "lint"]).sync();
+        } catch (error) {
+            if(error instanceof ExecError) {
+                console.log("Linting errors found");
+                lintErrors = error.stdout;
+            }
+        }
+        if (lintErrors) {
+            console.log("Proceeding with the build despite lint errors.");
+        }  
+        await runner.withExec(["npm", "run", "format"]).sync();
+    }
+
+    await runner.withExec(["npm", "test", "--", "--watchAll=false"]).sync();
+
+    let feRepo = "emms21/interviewsageai"
+    let beRepo = "emms21/interviewsageaibe"
+    try {
+        await dockerizeApp(contextDir, client, feRepo, environment)
+        await dockerizeApp(backendContextDir, client, beRepo, environment)
+    } catch (err) {
+        console.error("Error during the Docker build and publish:", err);
+    }
    },
    { LogOutput: process.stderr }
 );

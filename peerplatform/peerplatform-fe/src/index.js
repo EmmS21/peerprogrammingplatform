@@ -7,10 +7,10 @@ import * as serviceWorker from "./serviceWorker";
 
 import "./assets/scss/style.scss";
 import { CookiesProvider } from "react-cookie";
-import { H } from 'highlight.run';
-import { ErrorBoundary } from '@highlight-run/react';
+import { H } from "highlight.run";
+import { ErrorBoundary } from "@highlight-run/react";
 
-H.init('4d7kom6e', {
+H.init("4d7kom6e", {
   serviceName: "frontend-app",
   tracingOrigins: true,
   networkRecording: {
@@ -24,8 +24,6 @@ H.init('4d7kom6e', {
 });
 
 const history = createBrowserHistory();
-
-
 
 ReactDOM.render(
   <ErrorBoundary>
