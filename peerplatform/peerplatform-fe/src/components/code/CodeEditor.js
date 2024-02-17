@@ -161,7 +161,7 @@ const CodeEditor = () => {
         const newTime = prevTime + 1;
         localStorage.setItem("elapsedTime", newTime.toString());
 
-        if (newTime === 30 && !showCollectData){
+        if (newTime === 1800 && !showCollectData){
           setShowCollectData(true);
         }
 
