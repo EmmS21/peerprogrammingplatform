@@ -1,12 +1,10 @@
 import os
 from pathlib import Path
 from decouple import config
-import highlight_io
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-H = highlight_io.H("4d7kom6e", instrument_logging=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/

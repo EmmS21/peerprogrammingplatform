@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import AceEditor from "react-ace";
-
 import "brace/mode/python";
 import "brace/mode/javascript";
 import "brace/mode/sql";
@@ -24,6 +23,9 @@ import TestCases from "./TestCases";
 import TimerComponent from "./TimerComponent";
 import OptimalSolution from "./OptimalSolution";
 import axios from "axios";
+import StartDisplay from "../display/Start";
+import CollectData from "../display/CollectData";
+
 
 const CodeEditor = () => {
   const { TabPane } = Tabs;
@@ -85,16 +87,53 @@ const CodeEditor = () => {
   const [difficulty, setDifficulty] = useState(null);
   const [showRadio, setShowRadio] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
+  const [showStartDisplay, setShowStartDisplay] = useState(() => {
+    const hasVisited = localStorage.getItem("hasVisitedCodeEditor");
+    return !hasVisited;
+  });
+  const [showCollectData, setShowCollectData] = useState(false);
 
   useEffect(() => {
-    // Function to change the current color index randomly
+    if (showStartDisplay) {
+      setTimeout(() => localStorage.setItem("hasVisitedCodeEditor", "true"), 0);
+    }
+  }, [showStartDisplay]);
+  
+
+  useEffect(() => {
+      const setChallenge = () => {
+        const savedChallenge = localStorage.getItem("challenge");
+        const savedCodeResp = localStorage.getItem("codeResp");
+        if (savedChallenge) {
+          const parsedChallenge = JSON.parse(savedChallenge);
+          if (Object.keys(parsedChallenge).length > 0) {
+            setLocalChallengeInState(parsedChallenge);
+            setShowSelect(false);
+            setShowNextChallengeButton(true);
+          }
+        // Check if the current challenge title is different from the one in localStorage
+        if (challengeInState.length > 0 && savedChallenge) {
+          const currentChallengeTitle = challengeInState[0].title;
+          const parsedSavedChallenge = JSON.parse(savedChallenge);
+          const savedChallengeTitle = parsedSavedChallenge[0].title;
+          if (currentChallengeTitle !== savedChallengeTitle) {
+            localStorage.setItem("challenge", JSON.stringify(challengeInState));
+            setLocalChallengeInState(challengeInState);
+          } else {
+            setLocalChallengeInState(challengeInState);
+          }
+        }
+      }
+      if (savedCodeResp) {
+        setCodeResp(savedCodeResp);
+      }
+    }
+    setChallenge()
     const changeColor = () => {
       setCurrentColorIndex(Math.floor(Math.random() * colors.length));
     };
-
     // Set an interval to change the color every 2 seconds
     const interval = setInterval(changeColor, 2000);
-
     // Clean up the interval when the component unmounts
     return () => clearInterval(interval);
   }, []);
@@ -122,6 +161,10 @@ const CodeEditor = () => {
         const newTime = prevTime + 1;
         localStorage.setItem("elapsedTime", newTime.toString());
 
+        if (newTime === 30 && !showCollectData){
+          setShowCollectData(true);
+        }
+
         if (newTime % (4 * 60) === 0) {
           streamHelp(localChallengeInState);
         }
@@ -129,37 +172,9 @@ const CodeEditor = () => {
         return newTime;
       });
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const savedChallenge = localStorage.getItem("challenge");
-    const savedCodeResp = localStorage.getItem("codeResp");
-    if (savedChallenge) {
-      const parsedChallenge = JSON.parse(savedChallenge);
-      if (Object.keys(parsedChallenge).length > 0) {
-        setLocalChallengeInState(parsedChallenge);
-        setShowSelect(false);
-        setShowNextChallengeButton(true);
-      }
-      // Check if the current challenge title is different from the one in localStorage
-      if (challengeInState.length > 0 && savedChallenge) {
-        const currentChallengeTitle = challengeInState[0].title;
-        const parsedSavedChallenge = JSON.parse(savedChallenge);
-        const savedChallengeTitle = parsedSavedChallenge[0].title;
-        if (currentChallengeTitle !== savedChallengeTitle) {
-          localStorage.setItem("challenge", JSON.stringify(challengeInState));
-          setLocalChallengeInState(challengeInState);
-        } else {
-          setLocalChallengeInState(challengeInState);
-        }
-      }
-    }
-    if (savedCodeResp) {
-      setCodeResp(savedCodeResp);
-    }
-  }, []);
 
   useEffect(() => {
     if (localChallengeInState) {
@@ -371,15 +386,6 @@ const CodeEditor = () => {
 
   function changeChallenge() {
     setShowRadio(true);
-    // setLoadingCode(true)
-    // const base_url = `${profileURL}programming_challenge/get_easy`
-    // axios.get(base_url)
-    //     .then((res) => {
-    //         localStorage.removeItem('challenge')
-    //         localStorage.setItem('challenge', JSON.stringify(challengeInState));
-
-    //     })
-    // setLoadingCode(false)
   }
 
   function resetTimer() {
@@ -393,231 +399,227 @@ const CodeEditor = () => {
     setIsMaximized(!isMaximized);
   }
 
+  function exitSession () {
+    localStorage.removeItem("challenge");
+    localStorage.removeItem("showTestCases");
+    localStorage.removeItem("editorVal");
+    localStorage.removeItem("codeResp");
+    localStorage.removeItem("hasVisitedCodeEditor");
+    resetTimer();
+    history.push("/");
+  }
+
   return (
     <>
-      <Menu
-        class="w-full"
-        pointing
-        widths={5}
-        size={"small"}
-        style={{ marginTop: 0 }}
-        data-testid="top-menu"
-      >
-        <Menu.Item className="single-menu-item-container">
-          <Button
-            className="btn btn-primary single-full-height-button"
-            onClick={() => {
-              localStorage.removeItem("challenge");
-              localStorage.removeItem("showTestCases");
-              localStorage.removeItem("editorVal");
-              localStorage.removeItem("codeResp");
-              resetTimer();
-              history.push("/");
-            }}
+      {showCollectData && <CollectData exitSession={exitSession} />}
+      { showStartDisplay ? (
+        <StartDisplay setShowStartDisplay={setShowStartDisplay} />
+      ): (
+        <><Menu
+            class="w-full"
+            pointing
+            widths={5}
+            size={"small"}
+            style={{ marginTop: 0 }}
+            data-testid="top-menu"
           >
-            Exit Session
-          </Button>
-        </Menu.Item>
-        <Menu.Item className="single-menu-item-container">
-          <Button
-            className="btn btn-primary single-full-height-button"
-            onClick={resetHandler}
-            data-testid="reset-button"
-          >
-            Refresh
-          </Button>
-        </Menu.Item>
-        <Menu.Item className="single-menu-item-container">
-          {showRadio ? (
-            <Radio.Group onChange={handleRadioChange} value={difficulty}>
-              <Radio.Button value="easy">Easy</Radio.Button>
-              {/* <Radio.Button value="medium">Medium</Radio.Button>
-                    <Radio.Button value="hard">Hard</Radio.Button> */}
-            </Radio.Group>
-          ) : (
-            <Button
-              className="btn btn-primary single-full-height-button"
-              onClick={changeChallenge}
-            >
-              Next Challenge
-            </Button>
-          )}
-        </Menu.Item>
-        <Menu.Item className="single-menu-item-container">
-          {
-            <Button
-              className="btn btn-primary single-full-height-button"
-              onClick={() => setSidebarVisible(!isSidebarVisible)}
-              data-testid="toggle-sidebar-btn"
-            >
-              {isSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
-            </Button>
-          }
-        </Menu.Item>
-        <Menu.Item className="menu-item-container">
-          <Button
-            className="btn btn-primary full-height-button"
-            onClick={makeSubmission}
-            disabled={isRightSidebarVisible}
-          >
-            Run Code
-          </Button>
-          <Button
-            className="btn btn-primary full-height-button"
-            onClick={showTestCases ? handleCloseTests : toggleTestCases}
-          >
-            {submitButtonText}
-          </Button>
-        </Menu.Item>
-      </Menu>
-      <div className="row">
-        <div
-          className={`col-4 code-editor-col ${isCodeHelpModalVisible ? "code-help-visible" : ""}`}
-          style={{
-            marginTop: isMaximized ? "-0px" : "-20px",
-            marginLeft: 10,
-            height: "100%",
-          }}
-        >
-          <div
-            className={`my-0 code-help-div ${isMaximized ? "maximized" : ""}`}
-          >
-            <div className="code-help-header">
-              <CloseCircleOutlined
-                onClick={() => {
-                  setIsCodeHelpModalVisible(false);
-                  setOpenModal(false);
-                  setGetHelp(false);
-                  setCodeHelpBtn("Code Help");
-                }}
-                className="close-icon"
-              />
-              {isMaximized ? (
-                <MinusCircleOutlined
-                  onClick={toggleMaximize}
-                  className="minimize-maximize-icon"
-                  style={{ fontSize: "150%" }}
-                />
+            <Menu.Item className="single-menu-item-container">
+              <Button
+                className="btn btn-primary single-full-height-button"
+                onClick={() => exitSession() }
+              >
+                Exit Session
+              </Button>
+            </Menu.Item>
+            <Menu.Item className="single-menu-item-container">
+              <Button
+                className="btn btn-primary single-full-height-button"
+                onClick={resetHandler}
+                data-testid="reset-button"
+              >
+                Refresh
+              </Button>
+            </Menu.Item>
+            <Menu.Item className="single-menu-item-container">
+              {showRadio ? (
+                <Radio.Group onChange={handleRadioChange} value={difficulty}>
+                  <Radio.Button value="easy">Easy</Radio.Button>
+                  {/* <Radio.Button value="medium">Medium</Radio.Button>
+                  <Radio.Button value="hard">Hard</Radio.Button> */}
+                </Radio.Group>
               ) : (
-                <PlusCircleOutlined
-                  onClick={toggleMaximize}
-                  className="minimize-maximize-icon"
-                  style={{ fontSize: "150%" }}
-                />
+                <Button
+                  className="btn btn-primary single-full-height-button"
+                  onClick={changeChallenge}
+                >
+                  Next Challenge
+                </Button>
               )}
+            </Menu.Item>
+            <Menu.Item className="single-menu-item-container">
+              {<Button
+                className="btn btn-primary single-full-height-button"
+                onClick={() => setSidebarVisible(!isSidebarVisible)}
+                data-testid="toggle-sidebar-btn"
+              >
+                {isSidebarVisible ? "Hide Sidebar" : "Show Sidebar"}
+              </Button>}
+            </Menu.Item>
+            <Menu.Item className="menu-item-container">
+              <Button
+                className="btn btn-primary full-height-button"
+                onClick={makeSubmission}
+                disabled={isRightSidebarVisible}
+              >
+                Run Code
+              </Button>
+              <Button
+                className="btn btn-primary full-height-button"
+                onClick={showTestCases ? handleCloseTests : toggleTestCases}
+              >
+                {submitButtonText}
+              </Button>
+            </Menu.Item>
+          </Menu><div className="row">
               <div
+                className={`col-4 code-editor-col ${isCodeHelpModalVisible ? "code-help-visible" : ""}`}
                 style={{
-                  fontSize: "18px",
-                  fontWeight: "bold",
-                  marginBottom: "10px",
-                  textAlign: "center",
+                  marginTop: isMaximized ? "-0px" : "-20px",
+                  marginLeft: 10,
+                  height: "100%",
                 }}
               >
-                AI Mentor Clue
+                <div
+                  className={`my-0 code-help-div ${isMaximized ? "maximized" : ""}`}
+                >
+                  <div className="code-help-header">
+                    <CloseCircleOutlined
+                      onClick={() => {
+                        setIsCodeHelpModalVisible(false);
+                        setOpenModal(false);
+                        setGetHelp(false);
+                        setCodeHelpBtn("Code Help");
+                      } }
+                      className="close-icon" />
+                    {isMaximized ? (
+                      <MinusCircleOutlined
+                        onClick={toggleMaximize}
+                        className="minimize-maximize-icon"
+                        style={{ fontSize: "150%" }} />
+                    ) : (
+                      <PlusCircleOutlined
+                        onClick={toggleMaximize}
+                        className="minimize-maximize-icon"
+                        style={{ fontSize: "150%" }} />
+                    )}
+                    <div
+                      style={{
+                        fontSize: "18px",
+                        fontWeight: "bold",
+                        marginBottom: "10px",
+                        textAlign: "center",
+                      }}
+                    >
+                      AI Mentor Clue
+                    </div>
+                  </div>
+                  <pre style={{ color: "white" }}>{codeHelpState}</pre>
+                </div>
               </div>
-            </div>
-            <pre style={{ color: "white" }}>{codeHelpState}</pre>
-          </div>
-        </div>
-        <div
-          className={`col-2 whiteCol my-0 ${!isSidebarVisible ? "hidden" : ""}`}
-          data-testid="sidebar"
-        >
-          <Tabs type="card">
-            <TabPane tab="Coding Challenge" key="1">
-              {
-                <ProgrammingChallenge
-                  query={query}
-                  challengeInState={localChallengeInState}
-                />
-              }
-            </TabPane>
-            <TabPane tab="Optimal Solution" key="2">
-              {optimalAnswer ? (
-                <OptimalSolution challenge={localStorage.getItem("answer")} />
-              ) : (
-                "Please wait for the optimal answer to be generated..."
+              <div
+                className={`col-2 whiteCol my-0 ${!isSidebarVisible ? "hidden" : ""}`}
+                data-testid="sidebar"
+              >
+                <Tabs type="card">
+                  <TabPane tab="Coding Challenge" key="1">
+                    {<ProgrammingChallenge
+                      query={query}
+                      challengeInState={localChallengeInState} />}
+                  </TabPane>
+                  <TabPane tab="Optimal Solution" key="2">
+                    {optimalAnswer ? (
+                      <OptimalSolution challenge={localStorage.getItem("answer")} />
+                    ) : (
+                      "Please wait for the optimal answer to be generated..."
+                    )}
+                  </TabPane>
+                </Tabs>
+              </div>
+              <div
+                className="col-4 ace-editor-container"
+                style={{
+                  marginTop: -20,
+                  marginLeft: 10,
+                  height: "100%",
+                  overflow: "hidden",
+                }}
+                data-testid="editor-container"
+              >
+                <div className="my-0" style={{ width: editorWidth() }}>
+                  <AceEditor
+                    data-testid="ace-editor"
+                    ref={editorRef}
+                    style={{
+                      position: "fixed",
+                      top: "3.5rem",
+                      left: isSidebarVisible ? "30%" : "0",
+                      width: editorWidth(),
+                      height: "90%",
+                    }}
+                    mode={"javascript"}
+                    onChange={handleOnChange}
+                    theme="monokai"
+                    name="code_editor"
+                    showPrintMargin={false}
+                    highlightActiveLine={true}
+                    editorProps={{ $blockScrolling: Infinity }}
+                    setOptions={{
+                      enableBasicAutocompletion: true,
+                      enableLiveAutocompletion: false,
+                      enableSnippets: true,
+                      animatedScroll: false,
+                      useWorker: true,
+                      vScrollBarAlwaysVisible: true,
+                      hScrollBarAlwaysVisible: true,
+                      autoScrollEditorIntoView: true,
+                      highlightActiveLine: true,
+                      wrapBehavioursEnabled: true,
+                      overflow: true,
+                      wrap: true,
+                    }}
+                    tabSize={3}
+                    wrapEnabled={true}
+                    value={isLoadingSolution
+                      ? "Fetching new answer, please wait...."
+                      : editorVal} />
+                </div>
+              </div>
+              {showTestCases && (
+                <TestCases testResults={testResults} testCases={testCases} />
               )}
-            </TabPane>
-          </Tabs>
-        </div>
-        <div
-          className="col-4 ace-editor-container"
-          style={{
-            marginTop: -20,
-            marginLeft: 10,
-            height: "100%",
-            overflow: "hidden",
-          }}
-          data-testid="editor-container"
-        >
-          <div className="my-0" style={{ width: editorWidth() }}>
-            <AceEditor
-              data-testid="ace-editor"
-              ref={editorRef}
-              style={{
-                position: "fixed",
-                top: "3.5rem",
-                left: isSidebarVisible ? "30%" : "0",
-                width: editorWidth(),
-                height: "90%",
-              }}
-              mode={"javascript"}
-              onChange={handleOnChange}
-              theme="monokai"
-              name="code_editor"
-              showPrintMargin={false}
-              highlightActiveLine={true}
-              editorProps={{ $blockScrolling: Infinity }}
-              setOptions={{
-                enableBasicAutocompletion: true,
-                enableLiveAutocompletion: false,
-                enableSnippets: true,
-                animatedScroll: false,
-                useWorker: true,
-                vScrollBarAlwaysVisible: true,
-                hScrollBarAlwaysVisible: true,
-                autoScrollEditorIntoView: true,
-                highlightActiveLine: true,
-                wrapBehavioursEnabled: true,
-                overflow: true,
-                wrap: true,
-              }}
-              tabSize={3}
-              wrapEnabled={true}
-              value={
-                isLoadingSolution
-                  ? "Fetching new answer, please wait...."
-                  : editorVal
-              }
-            />
-          </div>
-        </div>
-        {showTestCases && (
-          <TestCases testResults={testResults} testCases={testCases} />
-        )}
-        <div
-          className={`col-2 rightCol ${!isRightSidebarVisible ? "hidden" : ""}`}
-        >
-          <CloseOutlined onClick={() => setRightSidebarVisible(false)} />
-          <Spinner on={spinnerOn} Spin={Spin} />
-          {resp.split("\n").map((line, index) => (
-            <p key={index} className="line1">
-              {" "}
-              {line}{" "}
-            </p>
-          ))}
-        </div>
-        <TimerComponent
-          elapsedTime={elapsedTime}
-          setElapsedTime={setElapsedTime}
-          showTimer={showTimer}
-          setShowTimer={setShowTimer}
-          intervalId={intervalId}
-          setIntervalId={setIntervalId}
-          streamHelp={streamHelp}
-        />
-      </div>
+              <div
+                className={`col-2 rightCol ${!isRightSidebarVisible ? "hidden" : ""}`}
+              >
+                <CloseOutlined onClick={() => setRightSidebarVisible(false)} />
+                <Spinner on={spinnerOn} Spin={Spin} />
+                {resp.split("\n").map((line, index) => (
+                  <p key={index} className="line1">
+                    {" "}
+                    {line}{" "}
+                  </p>
+                ))}
+              </div>
+              <TimerComponent
+                elapsedTime={elapsedTime}
+                setElapsedTime={setElapsedTime}
+                showTimer={showTimer}
+                setShowTimer={setShowTimer}
+                intervalId={intervalId}
+                setIntervalId={setIntervalId}
+                streamHelp={streamHelp} />
+            </div></>        
+      )
+     }
     </>
   );
 };
