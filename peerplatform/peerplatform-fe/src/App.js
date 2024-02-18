@@ -1,9 +1,8 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import {
   useLocation,
   Switch,
   BrowserRouter as Router,
-  Route,
 } from "react-router-dom";
 import AppRoute from "./utils/AppRoute";
 import ScrollReveal from "./utils/ScrollReveal";
@@ -19,7 +18,6 @@ import LayoutDefault from "./layouts/LayoutDefault";
 import Home from "./views/Home";
 import PrivateRoute from "./utils/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
-//we can probably deconstruct these to a one-liner
 import {
   RoomContextProvider,
   useGlobalState,
@@ -31,7 +29,6 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js/pure";
 import TestComponent from "./components/code/Test";
 
-// Initialize Google Analytics
 ReactGA.initialize(process.env.REACT_APP_GA_CODE);
 
 const trackPage = (page) => {

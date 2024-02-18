@@ -174,3 +174,7 @@ def get_user_id(username):
         return User.objects.get(username=username).pk
     except User.DoesNotExist:
         return 'User does not exist'
+
+@api_view(['GET'])
+def Ping(request):
+    return JsonResponse({'status': 'ok'})

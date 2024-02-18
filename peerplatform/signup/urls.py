@@ -4,7 +4,7 @@ from rest_framework import routers
 from . import views
 from rest_framework_simplejwt.views import (TokenRefreshView, TokenVerifyView)
 from .serializers import CustomTokenObtainPairView
-from .views import ProgrammingChallengeView, CacheView, usernames_to_room_id, addEmail
+from .views import ProgrammingChallengeView, CacheView, usernames_to_room_id, addEmail, Ping
 from django.conf import settings
 from django.conf.urls.static import static
 from .api import RegisterApi
@@ -42,6 +42,7 @@ urlpatterns = [
     path('cache/', include('redisCache.urls')),
     path('programming_challenge/', include('connectmongodb.urls')),
     path('cacheUsers/', CacheView, name='cacheUsers'),
+    path('ping/', Ping, name='ping'),
     path('api/programming_challenges/',
          ProgrammingChallengeView.as_view({'get': 'list'}), name='programming_challenges'),
     path('code_help/', include('codehelp.urls')),
