@@ -59,6 +59,8 @@ const Hero = ({
   function handleSelect(e, data) {
     e.preventDefault();
     setClockSpin(true);
+    localStorage.removeItem("codeResp")
+    localStorage.removeItem("editorVal")
     let selection;
     // console.log('data', data)
     if (data === "Easy") {
