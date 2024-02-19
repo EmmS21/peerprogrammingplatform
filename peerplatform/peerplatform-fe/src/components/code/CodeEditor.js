@@ -25,6 +25,8 @@ import OptimalSolution from "./OptimalSolution";
 import axios from "axios";
 import StartDisplay from "../display/Start";
 import CollectData from "../display/CollectData";
+import { parseScript } from 'esprima';
+import escodegen from 'escodegen';
 
 
 const CodeEditor = () => {
@@ -77,9 +79,9 @@ const CodeEditor = () => {
   const history = useHistory();
   const editorRef = useRef(null);
   const [showTestCases, setShowTestCases] = useState(false);
-  const [submitButtonText, setSubmitButtonText] = useState(
-    showTestCases ? "Close Tests" : "Submit Code",
-  );
+  // const [submitButtonText, setSubmitButtonText] = useState(
+  //   showTestCases ? "Close Tests" : "Submit Code",
+  // );
   const [elapsedTime, setElapsedTime] = useState(0);
   const [showTimer, setShowTimer] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
@@ -195,9 +197,9 @@ const CodeEditor = () => {
       return newShow;
     });
 
-    setSubmitButtonText((prevText) =>
-      showTestCases ? "Submit Code" : "Close Tests",
-    );
+    // setSubmitButtonText((prevText) =>
+    //   showTestCases ? "Submit Code" : "Close Tests",
+    // );
     // Match and store the comments in an array
     const parts = editorVal.split("// Test Cases");
     if (parts.length < 2) {
@@ -256,23 +258,39 @@ const CodeEditor = () => {
     base64_encoded: true,
   };
 
-  //handle submission
-  const makeSubmission = (e) => {
-    e.preventDefault();
-    setShowTestCases(false);
-    let code = (requestBody.source_code =
-      document.getElementsByClassName("ace_content")[0].innerText);
-    console.log("code", code);
-    // let undecode = atob(code)
-    // console.log('after decode', undecode)
-    requestBody.source_code = code;
-    console.log("**", requestBody.source_code);
+  function containsComments(code) {
+    const singleLineCommentRegex = /\/\/.*/;
+    const multiLineCommentRegex = /\/\*[\s\S]*?\*\//;
+    return singleLineCommentRegex.test(code) || multiLineCommentRegex.test(code);
+  }
+  
+    
+//handle submission
+const makeSubmission = async (e) => {
+  e.preventDefault();
+  setShowTestCases(false);
+  let code = document.getElementsByClassName("ace_content")[0].innerText;
+  if (containsComments(code)) {
+    alert("Please delete all comments before running the code.");
+    return; 
+  }
+  
+  try {
+    // Encode the code to base64 asynchronously
+    requestBody.source_code = btoa(code);
+    requestBody.stdin = btoa
+    requestBody.base64_encoded = true;
+    console.log("*****", requestBody.source_code);
+
     requestBody.language_id = "63";
     setSpinnerOn(true);
     setResp("");
     toggleRightSidebar();
     sendCodeJudge0(requestBody);
-  };
+  } catch (error) {
+    console.error("Error encoding or sending code:", error);
+  }
+};
 
   const toggleRightSidebar = () => {
     setRightSidebarVisible(!isRightSidebarVisible);
@@ -352,7 +370,7 @@ const CodeEditor = () => {
 
   const handleCloseTests = () => {
     setShowTestCases(false);
-    setSubmitButtonText("Submit Code");
+    // setSubmitButtonText("Submit Code");
   };
 
   function resetHandler() {
@@ -419,7 +437,7 @@ const CodeEditor = () => {
             class="w-full"
             pointing
             widths={5}
-            size={"small"}
+            size={"large"}
             style={{ marginTop: 0 }}
             data-testid="top-menu"
           >
@@ -473,12 +491,12 @@ const CodeEditor = () => {
               >
                 Run Code
               </Button>
-              <Button
+              {/* <Button
                 className="btn btn-primary full-height-button"
                 onClick={showTestCases ? handleCloseTests : toggleTestCases}
               >
                 {submitButtonText}
-              </Button>
+              </Button> */}
             </Menu.Item>
           </Menu><div className="row">
               <div

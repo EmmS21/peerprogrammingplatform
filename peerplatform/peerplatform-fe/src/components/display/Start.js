@@ -47,7 +47,7 @@ const StartDisplay = ({ setShowStartDisplay, showStartDisplay }) => {
         3: "The questions are designed to help you think through the process of re-creating this answer",
         2: "This will help you think through how to build the optimal solution for the question",
         1: "Since this is a private beta, you will have 30 minutes to test the platform.",
-        0: "Please leave your feedback when you are done. Let's go."
+        0: "Please leave your feedback when you are done. Click refresh if you have issues with the answer or question."
     };
   
     return (

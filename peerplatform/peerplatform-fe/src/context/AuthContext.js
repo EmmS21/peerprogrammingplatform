@@ -312,7 +312,8 @@ export const AuthProvider = ({ children }) => {
 
   //send code and required data to Judge0API
   const sendCodeJudge0 = (requestBody) => {
-    const reqUrl = `${baseURL}?wait=true`;
+    console.log('sendCode triggered')
+    const reqUrl = `${baseURL}?base64_encoded=true&wait=true`;
     axios
       .post(reqUrl, requestBody, {
         headers,
