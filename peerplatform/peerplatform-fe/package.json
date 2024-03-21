@@ -94,7 +94,8 @@
     "ketchup": "git pull origin main",
     "ui-test": "mocha 'src/tests/UITests/*.js' --recursive --timeout 60000 --exit",
     "lint": "eslint . --ext .js,.jsx",
-    "format": "prettier --write \"src/**/*.{js,jsx}\""
+    "format": "prettier --write \"src/**/*.{js,jsx}\"",
+    "hello": "echo Hello World"
   },
   "eslintConfig": {
     "extends": "react-app"

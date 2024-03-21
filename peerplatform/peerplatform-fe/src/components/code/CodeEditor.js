@@ -26,6 +26,8 @@ import axios from "axios";
 import StartDisplay from "../display/Start";
 import CollectData from "../display/CollectData";
 import { parseScript } from 'esprima';
+// import esprima from 'esprima';
+import estraverse from 'estraverse';
 import escodegen from 'escodegen';
 
 
@@ -264,32 +266,101 @@ const CodeEditor = () => {
     return singleLineCommentRegex.test(code) || multiLineCommentRegex.test(code);
   }
   
+  function preprocessCodeForComments(code) {
+    const lines = code.split('\n');
+    let processedLines = [];
+    let inExtendedComment = false;
+  
+    lines.forEach((line, index) => {
+      const trimmedLine = line.trim();
+      const nextLine = lines[index + 1] ? lines[index + 1].trim() : '';
+      if (trimmedLine.startsWith("//")) {
+        inExtendedComment = true;
+        processedLines.push(line); // Keep the comment as is
+      } else if (inExtendedComment && !trimmedLine && (nextLine.startsWith("//") || !nextLine)) {
+        processedLines.push("//" + line); // Add comment marker to empty lines within a comment block
+      } else if (inExtendedComment && !nextLine.startsWith("//") && nextLine && !nextLine.match(/^(const|let|var)\s+\w+|^\w+\s*=|^\}/)) {
+        processedLines.push("//" + line);
+      } else {
+        inExtendedComment = false; // Reset flag if the line is code
+        processedLines.push(line);
+      }
+    });
+  
+    return processedLines.join('\n');
+  }
+  
+  async function removeCustomComments(originalCode) {
+    try {
+      const preprocessedCode = preprocessCodeForComments(originalCode);
+      const ast = parseScript(preprocessedCode, { comment: true, loc: true, range: true });
+      let lastCommentLine = 0;
+      const commentsToRemove = [];
+      ast.comments.forEach((comment, index, array) => {
+        const isSingleLineComment = comment.type === 'Line';
+        const isFirstOfBlock = isSingleLineComment && (!array[index - 1] || comment.loc.start.line !== lastCommentLine + 1);
+        const isContinuation = isSingleLineComment && comment.loc.start.line === lastCommentLine + 1;
+        if (isFirstOfBlock || isContinuation) {
+          commentsToRemove.push(comment.range);
+        }
+        if (isSingleLineComment) {
+          lastCommentLine = comment.loc.end.line;
+        }
+      });
+      ast.comments = ast.comments.filter(comment => 
+        !commentsToRemove.some(range => comment.range[0] >= range[0] && comment.range[1] <= range[1])
+      );
+      return escodegen.generate(ast, {
+        comment: true,
+        format: {
+          indent: {
+            style: '  ',
+            base: 0
+          },
+          quotes: 'auto'
+        }
+      });
+    } catch (error) {
+      console.error('Error parsing code:', error);
+      console.log('Error at index:', error.index);
+      console.log('Error on line:', error.lineNumber);
+      console.log('Error description:', error.description);
+      const lines = originalCode.split('\n');
+      if (error.lineNumber >= 1 && error.lineNumber <= lines.length) {
+        console.log('Code around error:', lines.slice(Math.max(error.lineNumber - 2, 0), error.lineNumber + 1).join('\n'));
+      }
+      throw error;
+    }
+  }
+  
     
 //handle submission
 const makeSubmission = async (e) => {
   e.preventDefault();
   setShowTestCases(false);
-  let code = document.getElementsByClassName("ace_content")[0].innerText;
-  if (containsComments(code)) {
-    alert("Please delete all comments before running the code.");
-    return; 
-  }
-  
-  try {
-    // Encode the code to base64 asynchronously
-    requestBody.source_code = btoa(code);
-    requestBody.stdin = btoa
-    requestBody.base64_encoded = true;
-    console.log("*****", requestBody.source_code);
+  let originalCode = document.getElementsByClassName("ace_content")[0].innerText;
+  const codeWithoutComments = await removeCustomComments(originalCode);
+  console.log('code', codeWithoutComments)
 
-    requestBody.language_id = "63";
-    setSpinnerOn(true);
-    setResp("");
-    toggleRightSidebar();
-    sendCodeJudge0(requestBody);
-  } catch (error) {
-    console.error("Error encoding or sending code:", error);
-  }
+
+  // try {
+  //   const codeWithoutComments = await removeCustomComments(originalCode);
+  //   console.log('code', codeWithoutComments)
+  //   const encodedCode = btoa(codeWithoutComments);
+    
+  //   let requestBody = {
+  //     source_code: encodedCode,
+  //     base64_encoded: true,
+  //     language_id: "63",
+  //   };
+
+  //   setSpinnerOn(true);
+  //   setResp("");
+  //   toggleRightSidebar();
+  //   sendCodeJudge0(requestBody);
+  // } catch (error) {
+  //   console.error("Error processing or sending code:", error);
+  // }
 };
 
   const toggleRightSidebar = () => {
