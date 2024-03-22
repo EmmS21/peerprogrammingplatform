@@ -34,9 +34,6 @@ RUN npm run build
 RUN npm prune --omit=dev --legacy-peer-deps
 
 
-# Final stage for app image
-FROM base
-
 # Copy built application
 COPY --from=build /app /app
 

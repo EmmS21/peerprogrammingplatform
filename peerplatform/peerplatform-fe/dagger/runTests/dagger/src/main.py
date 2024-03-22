@@ -27,7 +27,7 @@ class RunTests:
             .from_(image_address)
             .with_mounted_directory("/app", src)
             .with_workdir("/app")
-            .with_exec(["sh", "-c", "npm run test"])  # Execute 'npm run test' instead of listing files
+            .with_exec(["sh", "-c", "npm ci --legacy-peer-deps"])  # Execute 'npm run test' instead of listing files
             # .with_exec(["sh", "-c", "ls -la"])  # Lists detailed directory contents, including hidden files
             .stdout()
         )
