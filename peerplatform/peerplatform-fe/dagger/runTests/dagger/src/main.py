@@ -20,15 +20,30 @@ from dagger import dag, function, object_type, Directory, Container
 @object_type
 class RunTests:
     @function
-    async def hello_world(self, src: dagger.Directory, op: str) -> str:
-        return  await (
+    async def build_test(self, src: dagger.Directory, repo: str, tag: str) -> str:
+        image_address = f"docker.io/{repo}:{tag}"
+        output = await (
             dag.container()
-            .from_("node:16")
-            # .from_("alpine:latest")
+            .from_(image_address)
             .with_mounted_directory("/app", src)
             .with_workdir("/app")
-            .with_exec(["npm", "ci", "--legacy-peer-deps"])
-            # .with_exec(["sh", "-c", "ls -la"])
-            # .with_exec(["npm", "install", "--legacy-peer-deps"])
-            .with_exec(["npm", "run", "hello"])
+            .with_exec(["sh", "-c", "npm run test"])  # Execute 'npm run test' instead of listing files
+            # .with_exec(["sh", "-c", "ls -la"])  # Lists detailed directory contents, including hidden files
+            .stdout()
         )
+        return output
+
+        # return await (
+            
+        # )
+        # return  await (
+        #     dag.container()
+        #     .from_("node:16")
+        #     # .from_("alpine:latest")
+        #     .with_mounted_directory("/app", src)
+        #     .with_workdir("/app")
+        #     .with_exec(["npm", "ci", "--legacy-peer-deps"])
+        #     # .with_exec(["sh", "-c", "ls -la"])
+        #     # .with_exec(["npm", "install", "--legacy-peer-deps"])
+        #     .with_exec(["npm", "run", "hello"])
+        # )
