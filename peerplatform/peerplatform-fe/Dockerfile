@@ -2,7 +2,7 @@
 
 # Adjust NODE_VERSION as desired
 ARG NODE_VERSION=20.10.0
-FROM node:${NODE_VERSION}-slim as base
+FROM node:${NODE_VERSION} as base
 
 LABEL fly_launch_runtime="Node.js"
 
@@ -11,7 +11,6 @@ WORKDIR /app
 
 # Set production environment
 ENV NODE_ENV="production"
-
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
@@ -33,8 +32,9 @@ RUN npm run build
 # Remove development dependencies
 RUN npm prune --omit=dev --legacy-peer-deps
 
+# Final stage: Copy built application from the 'build' stage
+FROM base as final
 
-# Copy built application
 COPY --from=build /app /app
 
 # Install 'serve' to serve the application on port 3000

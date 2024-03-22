@@ -16,18 +16,24 @@ if appropriate. All modules should have a short description.
 import dagger
 from dagger import dag, function, object_type, Directory, Container
 
-
 @object_type
 class RunTests:
     @function
     async def build_test(self, src: dagger.Directory, repo: str, tag: str) -> str:
         image_address = f"docker.io/{repo}:{tag}"
+        install_commands = """
+        npm ci --legacy-peer-deps &&
+        npm install jest@latest --legacy-peer-deps && 
+        npm install --save-dev @babel/preset-env @babel/preset-react react-test-renderer --legacy-peer-deps
+        """
         output = await (
             dag.container()
             .from_(image_address)
             .with_mounted_directory("/app", src)
             .with_workdir("/app")
-            .with_exec(["sh", "-c", "npm ci --legacy-peer-deps"])  # Execute 'npm run test' instead of listing files
+            .with_exec(["sh", "-c", install_commands])  
+            .with_exec(["sh", "-c", "npm run test"])   
+            # Execute 'npm run test' instead of listing files
             # .with_exec(["sh", "-c", "ls -la"])  # Lists detailed directory contents, including hidden files
             .stdout()
         )
