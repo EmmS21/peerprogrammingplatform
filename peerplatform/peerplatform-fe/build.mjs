@@ -84,7 +84,6 @@ async function repullRetagRepublishImage(repo, oldTag, newTag) {
         console.log(`Pull result for ${repo}:${oldTag}:`, pullResult);
         execSync(`docker tag ${repo}:${oldTag} ${repo}:${newTag}`);
        execSync(`docker push ${repo}:${newTag}`);
-       console.log(`Re-tagged and pushed image from ${repo}:${oldTag} to ${repo}:${newTag}`);
    } catch (err) {
        console.error("Error during image re-tagging:", err);
    }
