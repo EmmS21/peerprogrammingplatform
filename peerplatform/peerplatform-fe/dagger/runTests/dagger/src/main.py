@@ -15,41 +15,22 @@ if appropriate. All modules should have a short description.
 
 import dagger
 from dagger import dag, function, object_type, Directory, Container
+import os
 
 @object_type
 class RunTests:
     @function
+    def test(self) -> str:
+        return "This is a module to run Jest unit tests on a NodeJS application"
+    @function
     async def build_test(self, src: dagger.Directory, repo: str, tag: str) -> str:
         image_address = f"docker.io/{repo}:{tag}"
-        install_commands = """
-        npm ci --legacy-peer-deps &&
-        npm install jest@latest --legacy-peer-deps && 
-        npm install --save-dev @babel/preset-env @babel/preset-react react-test-renderer --legacy-peer-deps
-        """
-        output = await (
+        return await (
             dag.container()
             .from_(image_address)
             .with_mounted_directory("/app", src)
             .with_workdir("/app")
-            .with_exec(["sh", "-c", install_commands])  
-            .with_exec(["sh", "-c", "npm run test"])   
-            # Execute 'npm run test' instead of listing files
-            # .with_exec(["sh", "-c", "ls -la"])  # Lists detailed directory contents, including hidden files
+            .with_exec(["sh", "-c", "npm run test 2>&1"])
             .stdout()
         )
-        return output
 
-        # return await (
-            
-        # )
-        # return  await (
-        #     dag.container()
-        #     .from_("node:16")
-        #     # .from_("alpine:latest")
-        #     .with_mounted_directory("/app", src)
-        #     .with_workdir("/app")
-        #     .with_exec(["npm", "ci", "--legacy-peer-deps"])
-        #     # .with_exec(["sh", "-c", "ls -la"])
-        #     # .with_exec(["npm", "install", "--legacy-peer-deps"])
-        #     .with_exec(["npm", "run", "hello"])
-        # )
